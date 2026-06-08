@@ -1,0 +1,53 @@
+// Firestore security rules — recommended for HEAL
+// Drop into Firebase Console → Firestore → Rules.
+// ──────────────────────────────────────────────────────────────────
+// SECURITY MODEL:
+//   1. /users/{uid} is OWNER-ONLY (read+write == request.auth.uid == uid)
+//   2. Subcollections inherit owner-only access
+//   3. No anonymous reads anywhere (we don't need any — all "public"
+//      content is in PocketBase, not Firestore)
+//   4. No service-account reads from the client (admin SDK only)
+//   5. Validate field types + lengths on write (defense in depth)
+//
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // User-owned root
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+      // Favorites — owner only
+      match /favorites/{favId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid
+          && request.resource.data.kind in ['meditation','scripture','prayer','quote','essay']
+          && request.resource.data.slug is string
+          && request.resource.data.slug.size() > 0
+          && request.resource.data.title is string
+          && request.resource.data.title.size() <= 200;
+      }
+
+      // Journal — owner only
+      match /journal/{entryId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 20000
+          && request.resource.data.kind in ['reflection','prayer','gratitude','free'];
+      }
+
+      // History — owner only
+      match /history/{entryId} {
+        allow read, write: if request.auth != null && request.auth.uid == uid
+          && request.resource.data.kind in ['meditation','scripture','prayer','essay']
+          && request.resource.data.slug is string
+          && request.resource.data.slug.size() > 0;
+      }
+    }
+
+    // Deny everything else by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

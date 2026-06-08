@@ -1,0 +1,20 @@
+{
+  "name": "HEAL — A Quiet Practice",
+  "short_name": "HEAL",
+  "description": "Daily Christian mindfulness. Guided meditations, breathwork, scripture, and prayers.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F4ED",
+  "theme_color": "#F8F4ED",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "Today's meditation", "url": "/", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Breathe", "url": "/breathe", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Scripture", "url": "/scripture", "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

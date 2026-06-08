@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+.git
+.github
+content
+scripts/.cache
+*.log
+.env
+.env.local
+.env.*.local
+README.md

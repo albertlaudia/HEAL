@@ -1,0 +1,15 @@
+node_modules/
+.next/
+out/
+build/
+dist/
+*.log
+.env
+.env*.local
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+content/meditations/*.mp3
+content/meditations/*.json.tmp
+scripts/.cache/
+b2-cache/
