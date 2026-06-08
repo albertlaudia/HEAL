@@ -65,8 +65,8 @@ const collections = [
       { name: 'audio_url', type: 'url', required: false, options: {} },
       { name: 'illustration_url', type: 'url', required: false, options: {} },
       { name: 'duration_seconds', type: 'number', required: false, options: { min: 0, max: 3600 } },
-      { name: 'theme', type: 'select', required: false, options: { maxSelect: 1, values: ['calm', 'gratitude', 'let-go', 'love', 'focus', 'stillness', 'courage', 'rest'] } },
-      { name: 'season', type: 'select', required: false, options: { maxSelect: 1, values: ['ordinary', 'advent', 'christmas', 'lent', 'easter', 'pentecost'] } },
+      { name: 'theme', type: 'select', required: false, maxSelect: 1, values: ['calm', 'gratitude', 'let-go', 'love', 'focus', 'stillness', 'courage', 'rest', 'hope', 'wisdom', 'grace', 'strength', 'joy'] },
+      { name: 'season', type: 'select', required: false, maxSelect: 1, values: ['ordinary', 'advent', 'christmas', 'lent', 'easter', 'pentecost'] },
       { name: 'day_of_year', type: 'number', required: false, options: { min: 1, max: 366 } },
       { name: 'launch_batch', type: 'text', required: false, options: { max: 50 } },
       { name: 'sort_order', type: 'number', required: false, options: { min: 0 } },
@@ -87,7 +87,7 @@ const collections = [
       { name: 'text', type: 'text', required: true, options: { max: 1000 } },
       { name: 'attribution', type: 'text', required: false, options: { max: 200 } },
       { name: 'source', type: 'text', required: false, options: { max: 200 } },
-      { name: 'category', type: 'select', required: false, options: { maxSelect: 1, values: ['courage', 'grace', 'love', 'peace', 'rest', 'hope', 'wisdom', 'gratitude', 'strength'] } },
+      { name: 'category', type: 'select', required: false, maxSelect: 1, values: ['courage', 'grace', 'love', 'peace', 'rest', 'hope', 'wisdom', 'gratitude', 'strength'] },
       { name: 'illustration_url', type: 'url', required: false, options: {} },
       { name: 'day_of_year', type: 'number', required: false, options: { min: 1, max: 366 } },
       { name: 'is_motivation', type: 'bool', required: false, options: {} },
@@ -105,7 +105,7 @@ const collections = [
       { name: 'reference', type: 'text', required: true, options: { max: 100 } },
       { name: 'text', type: 'text', required: true, options: { max: 2000 } },
       { name: 'translation', type: 'text', required: false, options: { max: 20 } },
-      { name: 'theme', type: 'select', required: false, options: { maxSelect: 1, values: ['calm', 'gratitude', 'let-go', 'love', 'focus', 'stillness', 'courage', 'rest', 'hope', 'wisdom'] } },
+      { name: 'theme', type: 'select', required: false, maxSelect: 1, values: ['calm', 'gratitude', 'let-go', 'love', 'focus', 'stillness', 'courage', 'rest', 'hope', 'wisdom'] },
       { name: 'reflection_prompt', type: 'text', required: false, options: { max: 500 } },
       { name: 'day_of_year', type: 'number', required: false, options: { min: 1, max: 366 } },
       { name: 'is_published', type: 'bool', required: false, options: {} },
@@ -130,7 +130,7 @@ const collections = [
       { name: 'cycles', type: 'number', required: false, options: { min: 1, max: 50 } },
       { name: 'illustration_url', type: 'url', required: false, options: {} },
       { name: 'audio_url', type: 'url', required: false, options: {} },
-      { name: 'theme', type: 'select', required: false, options: { maxSelect: 1, values: ['calm', 'focus', 'rest', 'courage', 'energy'] } },
+      { name: 'theme', type: 'select', required: false, maxSelect: 1, values: ['calm', 'focus', 'rest', 'courage', 'energy'] },
       { name: 'sort_order', type: 'number', required: false, options: { min: 0 } },
       { name: 'is_published', type: 'bool', required: false, options: {} },
     ],
@@ -145,7 +145,7 @@ const collections = [
       { name: 'title', type: 'text', required: true, options: { max: 200 } },
       { name: 'slug', type: 'text', required: true, options: { min: 1, max: 200, pattern: '^[a-z0-9-]+$' } },
       { name: 'body', type: 'editor', required: true, options: {} },
-      { name: 'category', type: 'select', required: false, options: { maxSelect: 1, values: ['morning', 'evening', 'anxiety', 'gratitude', 'forgiveness', 'strength', 'rest', 'other'] } },
+      { name: 'category', type: 'select', required: false, maxSelect: 1, values: ['morning', 'evening', 'anxiety', 'gratitude', 'forgiveness', 'strength', 'rest', 'other'] },
       { name: 'attribution', type: 'text', required: false, options: { max: 200 } },
       { name: 'illustration_url', type: 'url', required: false, options: {} },
       { name: 'sort_order', type: 'number', required: false, options: { min: 0 } },
@@ -214,6 +214,9 @@ async function ensureCollection(spec) {
     createRule: null,
     updateRule: null,
     deleteRule: null,
+  }).catch(e => {
+    console.error('  Full PB error:', JSON.stringify(e, null, 2));
+    throw e;
   });
   // Step 2: PATCH to set real rules
   await pb.collections.update(created.id, {

@@ -36,7 +36,10 @@ async function upsertBySlug(colName, payload) {
     await pb.collection(colName).update(existing.id, payload);
     return { action: 'updated', slug: payload.slug };
   }
-  await pb.collection(colName).create(payload);
+  await pb.collection(colName).create(payload).catch(e => {
+    console.error('  seed create err on', colName, 'slug=', payload.slug, JSON.stringify(e?.response || e, null, 2));
+    throw e;
+  });
   return { action: 'created', slug: payload.slug };
 }
 
