@@ -86,8 +86,33 @@ async function main() {
   console.log('🌿 HEAL — content seed');
   await auth();
 
+  // Load the URL map produced by scripts/upload-media-to-b2.mjs
+  // (maps local files like "meditations/audio-begin-again.mp3" → B2 URL)
+  let urlMap = {};
+  try {
+    const raw = await readFile(join(CONTENT_DIR, '.url-map.json'), 'utf8');
+    urlMap = JSON.parse(raw);
+    console.log(`  ✓ loaded ${Object.keys(urlMap).length} URLs from .url-map.json`);
+  } catch {
+    console.log('  (no .url-map.json — illustration/audio URLs will be empty. Run media:upload first.)');
+  }
+
+  const resolveMedia = (p) => {
+    if (!p) return p;
+    const out = { ...p };
+    if (p.illustration_file && urlMap[`meditations/${p.illustration_file}`]) {
+      out.illustration_url = urlMap[`meditations/${p.illustration_file}`];
+    }
+    if (p.audio_file && urlMap[`meditations/${p.audio_file}`]) {
+      out.audio_url = urlMap[`meditations/${p.audio_file}`];
+    }
+    delete out.illustration_file;
+    delete out.audio_file;
+    return out;
+  };
+
   await seedDir(join(CONTENT_DIR, 'meditations'),
-    p => upsertBySlug('HEAL_meditations', p));
+    p => upsertBySlug('HEAL_meditations', resolveMedia(p)));
   await seedDir(join(CONTENT_DIR, 'quotes'),
     p => upsertBySlug('HEAL_quotes', { ...p, slug: p.slug || `quote-${p.text?.slice(0, 30).toLowerCase().replace(/[^a-z0-9]+/g, '-')}` }),
     p => ({ ...p, slug: p.slug || `quote-${p.text?.slice(0, 30).toLowerCase().replace(/[^a-z0-9]+/g, '-')}` }));

@@ -1,0 +1,542 @@
+[
+  {
+    "text": "Be still, and know that I am God.",
+    "attribution": "Psalm 46:10",
+    "category": "stillness",
+    "is_motivation": true,
+    "day_of_year": 1,
+    "slug": "q-001-be-still-and-know-that-i-am-god",
+    "is_published": true
+  },
+  {
+    "text": "The Lord is my shepherd, I shall not want.",
+    "attribution": "Psalm 23:1",
+    "category": "rest",
+    "is_motivation": true,
+    "day_of_year": 2,
+    "slug": "q-002-the-lord-is-my-shepherd-i-shall-not-want",
+    "is_published": true
+  },
+  {
+    "text": "Come to me, all you that are weary, and I will give you rest.",
+    "attribution": "Matthew 11:28",
+    "category": "rest",
+    "is_motivation": true,
+    "day_of_year": 3,
+    "slug": "q-003-come-to-me-all-you-that-are-weary-and-i",
+    "is_published": true
+  },
+  {
+    "text": "Cast all your anxiety on him, because he cares for you.",
+    "attribution": "1 Peter 5:7",
+    "category": "let-go",
+    "is_motivation": true,
+    "day_of_year": 4,
+    "slug": "q-004-cast-all-your-anxiety-on-him-because-he",
+    "is_published": true
+  },
+  {
+    "text": "The steadfast love of the Lord never ceases; his mercies are new every morning.",
+    "attribution": "Lamentations 3:22-23",
+    "category": "gratitude",
+    "is_motivation": true,
+    "day_of_year": 5,
+    "slug": "q-005-the-steadfast-love-of-the-lord-never-cea",
+    "is_published": true
+  },
+  {
+    "text": "Nothing will be able to separate us from the love of God.",
+    "attribution": "Romans 8:39",
+    "category": "love",
+    "is_motivation": true,
+    "day_of_year": 6,
+    "slug": "q-006-nothing-will-be-able-to-separate-us-from",
+    "is_published": true
+  },
+  {
+    "text": "Be strong and courageous; do not be frightened, for the Lord your God is with you wherever you go.",
+    "attribution": "Joshua 1:9",
+    "category": "courage",
+    "is_motivation": true,
+    "day_of_year": 7,
+    "slug": "q-007-be-strong-and-courageous-do-not-be-frigh",
+    "is_published": true
+  },
+  {
+    "text": "Whatever is true, whatever is lovely, whatever is gracious — think about these things.",
+    "attribution": "Philippians 4:8",
+    "category": "focus",
+    "is_motivation": true,
+    "day_of_year": 8,
+    "slug": "q-008-whatever-is-true-whatever-is-lovely-what",
+    "is_published": true
+  },
+  {
+    "text": "He restores my soul. He leads me in paths of righteousness for his name's sake.",
+    "attribution": "Psalm 23:3",
+    "category": "rest",
+    "is_motivation": true,
+    "day_of_year": 9,
+    "slug": "q-009-he-restores-my-soul-he-leads-me-in-paths",
+    "is_published": true
+  },
+  {
+    "text": "Speak, Lord, for your servant is listening.",
+    "attribution": "1 Samuel 3:9",
+    "category": "stillness",
+    "is_motivation": true,
+    "day_of_year": 10,
+    "slug": "q-010-speak-lord-for-your-servant-is-listening",
+    "is_published": true
+  },
+  {
+    "text": "Peace I leave with you; my peace I give to you.",
+    "attribution": "John 14:27",
+    "category": "calm",
+    "is_motivation": true,
+    "day_of_year": 11,
+    "slug": "q-011-peace-i-leave-with-you-my-peace-i-give-t",
+    "is_published": true
+  },
+  {
+    "text": "Do not worry about tomorrow, for tomorrow will bring worries of its own.",
+    "attribution": "Matthew 6:34",
+    "category": "calm",
+    "is_motivation": true,
+    "day_of_year": 12,
+    "slug": "q-012-do-not-worry-about-tomorrow-for-tomorrow",
+    "is_published": true
+  },
+  {
+    "text": "My grace is sufficient for you, for power is made perfect in weakness.",
+    "attribution": "2 Corinthians 12:9",
+    "category": "courage",
+    "is_motivation": true,
+    "day_of_year": 13,
+    "slug": "q-013-my-grace-is-sufficient-for-you-for-power",
+    "is_published": true
+  },
+  {
+    "text": "Be kind to one another, tenderhearted, forgiving one another, as God in Christ forgave you.",
+    "attribution": "Ephesians 4:32",
+    "category": "love",
+    "is_motivation": true,
+    "day_of_year": 14,
+    "slug": "q-014-be-kind-to-one-another-tenderhearted-for",
+    "is_published": true
+  },
+  {
+    "text": "The Lord is near to the brokenhearted, and saves the crushed in spirit.",
+    "attribution": "Psalm 34:18",
+    "category": "hope",
+    "is_motivation": true,
+    "day_of_year": 15,
+    "slug": "q-015-the-lord-is-near-to-the-brokenhearted-an",
+    "is_published": true
+  },
+  {
+    "text": "Trust in the Lord with all your heart, and do not rely on your own insight.",
+    "attribution": "Proverbs 3:5",
+    "category": "wisdom",
+    "is_motivation": true,
+    "day_of_year": 16,
+    "slug": "q-016-trust-in-the-lord-with-all-your-heart-an",
+    "is_published": true
+  },
+  {
+    "text": "For by grace you have been saved through faith, and this is not your own doing; it is the gift of God.",
+    "attribution": "Ephesians 2:8-9",
+    "category": "grace",
+    "is_motivation": true,
+    "day_of_year": 17,
+    "slug": "q-017-for-by-grace-you-have-been-saved-through",
+    "is_published": true
+  },
+  {
+    "text": "Do not be conformed to this world, but be transformed by the renewing of your minds.",
+    "attribution": "Romans 12:2",
+    "category": "wisdom",
+    "is_motivation": true,
+    "day_of_year": 18,
+    "slug": "q-018-do-not-be-conformed-to-this-world-but-be",
+    "is_published": true
+  },
+  {
+    "text": "Let the peace of Christ rule in your hearts. And be thankful.",
+    "attribution": "Colossians 3:15",
+    "category": "gratitude",
+    "is_motivation": true,
+    "day_of_year": 19,
+    "slug": "q-019-let-the-peace-of-christ-rule-in-your-hea",
+    "is_published": true
+  },
+  {
+    "text": "Do not fear, for I am with you; I will strengthen you, I will help you.",
+    "attribution": "Isaiah 41:10",
+    "category": "courage",
+    "is_motivation": true,
+    "day_of_year": 20,
+    "slug": "q-020-do-not-fear-for-i-am-with-you-i-will-str",
+    "is_published": true
+  },
+  {
+    "text": "In returning and rest you shall be saved; in quietness and in trust shall be your strength.",
+    "attribution": "Isaiah 30:15",
+    "category": "rest",
+    "is_motivation": true,
+    "day_of_year": 21,
+    "slug": "q-021-in-returning-and-rest-you-shall-be-saved",
+    "is_published": true
+  },
+  {
+    "text": "The fruit of the Spirit is love, joy, peace, patience, kindness, generosity, faithfulness, gentleness, self-control.",
+    "attribution": "Galatians 5:22-23",
+    "category": "love",
+    "is_motivation": true,
+    "day_of_year": 22,
+    "slug": "q-022-the-fruit-of-the-spirit-is-love-joy-peac",
+    "is_published": true
+  },
+  {
+    "text": "I can do all things through him who strengthens me.",
+    "attribution": "Philippians 4:13",
+    "category": "strength",
+    "is_motivation": true,
+    "day_of_year": 23,
+    "slug": "q-023-i-can-do-all-things-through-him-who-stre",
+    "is_published": true
+  },
+  {
+    "text": "Weeping may linger for the night, but joy comes with the morning.",
+    "attribution": "Psalm 30:5",
+    "category": "hope",
+    "is_motivation": true,
+    "day_of_year": 24,
+    "slug": "q-024-weeping-may-linger-for-the-night-but-joy",
+    "is_published": true
+  },
+  {
+    "text": "God is our refuge and strength, a very present help in trouble.",
+    "attribution": "Psalm 46:1",
+    "category": "courage",
+    "is_motivation": true,
+    "day_of_year": 25,
+    "slug": "q-025-god-is-our-refuge-and-strength-a-very-pr",
+    "is_published": true
+  },
+  {
+    "text": "Where two or three are gathered in my name, I am there among them.",
+    "attribution": "Matthew 18:20",
+    "category": "love",
+    "is_motivation": true,
+    "day_of_year": 26,
+    "slug": "q-026-where-two-or-three-are-gathered-in-my-na",
+    "is_published": true
+  },
+  {
+    "text": "The Lord bless you and keep you; the Lord make his face to shine upon you.",
+    "attribution": "Numbers 6:24-25",
+    "category": "gratitude",
+    "is_motivation": true,
+    "day_of_year": 27,
+    "slug": "q-027-the-lord-bless-you-and-keep-you-the-lord",
+    "is_published": true
+  },
+  {
+    "text": "You are the light of the world. A city built on a hill cannot be hid.",
+    "attribution": "Matthew 5:14",
+    "category": "courage",
+    "is_motivation": true,
+    "day_of_year": 28,
+    "slug": "q-028-you-are-the-light-of-the-world-a-city-bu",
+    "is_published": true
+  },
+  {
+    "text": "I have loved you with an everlasting love; I have drawn you with loving-kindness.",
+    "attribution": "Jeremiah 31:3",
+    "category": "love",
+    "is_motivation": true,
+    "day_of_year": 29,
+    "slug": "q-029-i-have-loved-you-with-an-everlasting-lov",
+    "is_published": true
+  },
+  {
+    "text": "The Lord is my light and my salvation; whom shall I fear?",
+    "attribution": "Psalm 27:1",
+    "category": "courage",
+    "is_motivation": true,
+    "day_of_year": 30,
+    "slug": "q-030-the-lord-is-my-light-and-my-salvation-wh",
+    "is_published": true
+  },
+  {
+    "text": "Be patient, therefore, beloved, until the coming of the Lord.",
+    "attribution": "James 5:7",
+    "category": "rest",
+    "is_motivation": true,
+    "day_of_year": 31,
+    "slug": "q-031-be-patient-therefore-beloved-until-the-c",
+    "is_published": true
+  },
+  {
+    "text": "Set your minds on things that are above, not on things that are on the earth.",
+    "attribution": "Colossians 3:2",
+    "category": "focus",
+    "is_motivation": true,
+    "day_of_year": 32,
+    "slug": "q-032-set-your-minds-on-things-that-are-above",
+    "is_published": true
+  },
+  {
+    "text": "If any of you is lacking in wisdom, ask God, who gives to all generously and ungrudgingly.",
+    "attribution": "James 1:5",
+    "category": "wisdom",
+    "is_motivation": true,
+    "day_of_year": 33,
+    "slug": "q-033-if-any-of-you-is-lacking-in-wisdom-ask-g",
+    "is_published": true
+  },
+  {
+    "text": "Draw near to God, and he will draw near to you.",
+    "attribution": "James 4:8",
+    "category": "stillness",
+    "is_motivation": true,
+    "day_of_year": 34,
+    "slug": "q-034-draw-near-to-god-and-he-will-draw-near-t",
+    "is_published": true
+  },
+  {
+    "text": "Every good and perfect gift is from above, coming down from the Father of lights.",
+    "attribution": "James 1:17",
+    "category": "gratitude",
+    "is_motivation": true,
+    "day_of_year": 35,
+    "slug": "q-035-every-good-and-perfect-gift-is-from-abov",
+    "is_published": true
+  },
+  {
+    "text": "The Lord is compassionate and merciful, slow to anger and abounding in steadfast love.",
+    "attribution": "Psalm 103:8",
+    "category": "love",
+    "is_motivation": true,
+    "day_of_year": 36,
+    "slug": "q-036-the-lord-is-compassionate-and-merciful-s",
+    "is_published": true
+  },
+  {
+    "text": "Wait for the Lord; be strong, and let your heart take courage.",
+    "attribution": "Psalm 27:14",
+    "category": "courage",
+    "is_motivation": true,
+    "day_of_year": 37,
+    "slug": "q-037-wait-for-the-lord-be-strong-and-let-your",
+    "is_published": true
+  },
+  {
+    "text": "Delight yourself in the Lord, and he will give you the desires of your heart.",
+    "attribution": "Psalm 37:4",
+    "category": "gratitude",
+    "is_motivation": true,
+    "day_of_year": 38,
+    "slug": "q-038-delight-yourself-in-the-lord-and-he-will",
+    "is_published": true
+  },
+  {
+    "text": "Blessed are the pure in heart, for they will see God.",
+    "attribution": "Matthew 5:8",
+    "category": "stillness",
+    "is_motivation": true,
+    "day_of_year": 39,
+    "slug": "q-039-blessed-are-the-pure-in-heart-for-they-w",
+    "is_published": true
+  },
+  {
+    "text": "The Lord is close to all who call on him, to all who call on him in truth.",
+    "attribution": "Psalm 145:18",
+    "category": "stillness",
+    "is_motivation": true,
+    "day_of_year": 40,
+    "slug": "q-040-the-lord-is-close-to-all-who-call-on-him",
+    "is_published": true
+  },
+  {
+    "text": "You do not have to figure it all out today. You only have to take the next kind step.",
+    "attribution": "HEAL",
+    "category": "calm",
+    "is_motivation": true,
+    "day_of_year": 41,
+    "slug": "q-041-you-do-not-have-to-figure-it-all-out-tod",
+    "is_published": true
+  },
+  {
+    "text": "Stillness is not the absence of motion. It is the presence of something more than motion.",
+    "attribution": "HEAL",
+    "category": "stillness",
+    "is_motivation": true,
+    "day_of_year": 42,
+    "slug": "q-042-stillness-is-not-the-absence-of-motion-i",
+    "is_published": true
+  },
+  {
+    "text": "The breath is the oldest prayer. It costs nothing. It requires no belief. It is always with you.",
+    "attribution": "HEAL",
+    "category": "calm",
+    "is_motivation": true,
+    "day_of_year": 43,
+    "slug": "q-043-the-breath-is-the-oldest-prayer-it-costs",
+    "is_published": true
+  },
+  {
+    "text": "You are allowed to be a work in progress and a good person at the same time.",
+    "attribution": "HEAL",
+    "category": "grace",
+    "is_motivation": true,
+    "day_of_year": 44,
+    "slug": "q-044-you-are-allowed-to-be-a-work-in-progress",
+    "is_published": true
+  },
+  {
+    "text": "Rest is not a reward for the work. It is the foundation of the work.",
+    "attribution": "HEAL",
+    "category": "rest",
+    "is_motivation": true,
+    "day_of_year": 45,
+    "slug": "q-045-rest-is-not-a-reward-for-the-work-it-is",
+    "is_published": true
+  },
+  {
+    "text": "What you pay attention to grows. Today, pay attention to mercy.",
+    "attribution": "HEAL",
+    "category": "focus",
+    "is_motivation": true,
+    "day_of_year": 46,
+    "slug": "q-046-what-you-pay-attention-to-grows-today-pa",
+    "is_published": true
+  },
+  {
+    "text": "The most spiritual act is sometimes to sit down and stop.",
+    "attribution": "HEAL",
+    "category": "rest",
+    "is_motivation": true,
+    "day_of_year": 47,
+    "slug": "q-047-the-most-spiritual-act-is-sometimes-to-s",
+    "is_published": true
+  },
+  {
+    "text": "Forgiveness is something you do for yourself, not for them.",
+    "attribution": "HEAL",
+    "category": "let-go",
+    "is_motivation": true,
+    "day_of_year": 48,
+    "slug": "q-048-forgiveness-is-something-you-do-for-your",
+    "is_published": true
+  },
+  {
+    "text": "Courage is a small, quiet decision, made again and again.",
+    "attribution": "HEAL",
+    "category": "courage",
+    "is_motivation": true,
+    "day_of_year": 49,
+    "slug": "q-049-courage-is-a-small-quiet-decision-made-a",
+    "is_published": true
+  },
+  {
+    "text": "Gratitude is not a feeling. It is a way of seeing.",
+    "attribution": "HEAL",
+    "category": "gratitude",
+    "is_motivation": true,
+    "day_of_year": 50,
+    "slug": "q-050-gratitude-is-not-a-feeling-it-is-a-way-o",
+    "is_published": true
+  },
+  {
+    "text": "You are not your worst day. You are not your loudest thought.",
+    "attribution": "HEAL",
+    "category": "grace",
+    "is_motivation": true,
+    "day_of_year": 51,
+    "slug": "q-051-you-are-not-your-worst-day-you-are-not-y",
+    "is_published": true
+  },
+  {
+    "text": "Let the next hour be small. Small is enough.",
+    "attribution": "HEAL",
+    "category": "calm",
+    "is_motivation": true,
+    "day_of_year": 52,
+    "slug": "q-052-let-the-next-hour-be-small-small-is-enou",
+    "is_published": true
+  },
+  {
+    "text": "Hope is the practice of imagining a future you cannot yet see.",
+    "attribution": "HEAL",
+    "category": "hope",
+    "is_motivation": true,
+    "day_of_year": 53,
+    "slug": "q-053-hope-is-the-practice-of-imagining-a-futu",
+    "is_published": true
+  },
+  {
+    "text": "Be the person you needed when you were younger.",
+    "attribution": "HEAL",
+    "category": "love",
+    "is_motivation": true,
+    "day_of_year": 54,
+    "slug": "q-054-be-the-person-you-needed-when-you-were-y",
+    "is_published": true
+  },
+  {
+    "text": "Slow is not behind. Slow is the pace of the soul.",
+    "attribution": "HEAL",
+    "category": "stillness",
+    "is_motivation": true,
+    "day_of_year": 55,
+    "slug": "q-055-slow-is-not-behind-slow-is-the-pace-of-t",
+    "is_published": true
+  },
+  {
+    "text": "You are held by something older than your worry.",
+    "attribution": "HEAL",
+    "category": "love",
+    "is_motivation": true,
+    "day_of_year": 56,
+    "slug": "q-056-you-are-held-by-something-older-than-you",
+    "is_published": true
+  },
+  {
+    "text": "The body remembers how to rest. Sometimes the mind just needs to follow.",
+    "attribution": "HEAL",
+    "category": "rest",
+    "is_motivation": true,
+    "day_of_year": 57,
+    "slug": "q-057-the-body-remembers-how-to-rest-sometimes",
+    "is_published": true
+  },
+  {
+    "text": "You do not have to carry it all. Choose one thing to carry today. The rest can wait.",
+    "attribution": "HEAL",
+    "category": "let-go",
+    "is_motivation": true,
+    "day_of_year": 58,
+    "slug": "q-058-you-do-not-have-to-carry-it-all-choose-o",
+    "is_published": true
+  },
+  {
+    "text": "The opposite of rest is not work. The opposite of rest is despair.",
+    "attribution": "HEAL",
+    "category": "rest",
+    "is_motivation": true,
+    "day_of_year": 59,
+    "slug": "q-059-the-opposite-of-rest-is-not-work-the-opp",
+    "is_published": true
+  },
+  {
+    "text": "You are not late. You are not behind. You are exactly where this story needs you to be.",
+    "attribution": "HEAL",
+    "category": "hope",
+    "is_motivation": true,
+    "day_of_year": 60,
+    "slug": "q-060-you-are-not-late-you-are-not-behind-you",
+    "is_published": true
+  }
+]
