@@ -10,6 +10,7 @@ dist/
 *.tsbuildinfo
 next-env.d.ts
 content/meditations/*.mp3
+content/meditations/*.png
 content/meditations/*.json.tmp
 scripts/.cache/
 b2-cache/
