@@ -2,6 +2,8 @@
 
 > Daily Christian mindfulness. Guided meditations, breathwork, scripture, prayers, and a private journal — wrapped in a quiet, beautiful interface.
 
+> **Live preview:** https://app-bypass-wireless-bandwidth-jrb5a7-bd1242-84-247-174-141.sslip.io/
+
 ## Stack
 
 - **Next.js 15** (App Router) + **React 19** + **TypeScript** + **Tailwind CSS**
@@ -131,3 +133,5 @@ Today is computed from `day_of_year()` (1-366) and looked up in `HEAL_meditation
 - Audio: TTS-generated at launch, easily swappable to a cloned voice
 
 ## Built with care. Be still, and begin again.
+
+_Last preview check: 2026-06-08T01:16:51Z_
