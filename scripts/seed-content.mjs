@@ -102,7 +102,7 @@ async function main() {
 
   const resolveMedia = (p) => {
     if (!p) return p;
-    const out = { ...p };
+    const out = { ...p, is_published: p.is_published ?? true };
     if (p.illustration_file && urlMap[`meditations/${p.illustration_file}`]) {
       out.illustration_url = urlMap[`meditations/${p.illustration_file}`];
     }
