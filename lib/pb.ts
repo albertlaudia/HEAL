@@ -48,16 +48,48 @@ export async function getDailyMeditation<T = any>(): Promise<T | null> {
 }
 
 // Helper: get the daily quote (motivation word)
+// Strategy: deterministic pick — dayOfYear % count, so every day of the year
+// has a quote even if we only have 60 records. Stable across rebuilds.
 export async function getDailyQuote<T = any>(): Promise<T | null> {
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 0);
   const dayOfYear = Math.floor((now.getTime() - start.getTime()) / 86400000);
+  // First try exact day match
   try {
     return await pb.collection('HEAL_quotes').getFirstListItem(
       `day_of_year = ${dayOfYear} && is_published = true`
     );
   } catch {
-    return null;
+    // Fallback: pick by deterministic offset
+    try {
+      const all = await pb.collection('HEAL_quotes').getFullList({ filter: 'is_published = true', sort: 'id' });
+      if (all.length === 0) return null;
+      const idx = dayOfYear % all.length;
+      return all[idx] as T;
+    } catch {
+      return null;
+    }
+  }
+}
+
+// Helper: get the daily scripture
+// Strategy: deterministic pick — dayOfYear % count, so every day has a scripture.
+export async function getDailyScripture<T = any>(): Promise<T | null> {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((now.getTime() - start.getTime()) / 86400000);
+  try {
+    return await pb.collection('HEAL_scriptures').getFirstListItem(
+      `day_of_year = ${dayOfYear} && is_published = true`
+    );
+  } catch {
+    try {
+      const all = await pb.collection('HEAL_scriptures').getFullList({ filter: 'is_published = true', sort: 'sort_order' });
+      if (all.length === 0) return null;
+      return all[dayOfYear % all.length] as T;
+    } catch {
+      return null;
+    }
   }
 }
 

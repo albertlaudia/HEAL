@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getDailyMeditation, getDailyQuote, getPublished, pb } from '@/lib/pb';
+import { getDailyMeditation, getDailyQuote, getDailyScripture, getPublished } from '@/lib/pb';
 import { formatDuration, dateLabel, seasonOf, themeHue } from '@/lib/utils';
 import { DailyQuote } from '@/components/home/DailyQuote';
 import { BreathWidget } from '@/components/home/BreathWidget';
@@ -15,7 +15,7 @@ export default async function HomePage() {
     getDailyMeditation(),
     getDailyQuote(),
     getPublished('HEAL_breathwork', 'sort_order', 'is_published = true').then(r => r?.[0]),
-    pb.collection('HEAL_scriptures').getFirstListItem('is_published = true').catch(() => null),
+    getDailyScripture(),
   ]);
 
   const today = new Date();
