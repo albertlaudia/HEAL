@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useRef, useEffect, useCallback, ReactNode } from 'react';
 
-export type AmbientTrack = 'rain' | 'ocean' | 'forest' | 'drone' | 'piano';
+export type AmbientTrack = 'rain' | 'ocean' | 'forest' | 'drone' | 'piano' | 'whitenoise' | 'fire' | 'river' | 'wind' | 'room';
 
 type AudioState = {
   // Voice / meditation audio
@@ -22,6 +22,9 @@ type AudioState = {
   toggleAmbient: (track: AmbientTrack) => void;
   setAmbientVolume: (track: AmbientTrack, vol: number) => void;
   stopAll: () => void;
+  // Room tone — always on under voice for intimacy
+  roomToneVolume: number;
+  setRoomToneVolume: (v: number) => void;
 };
 
 const AudioContext = createContext<AudioState | null>(null);
@@ -32,6 +35,11 @@ const AMBIENT_URLS: Record<AmbientTrack, string> = {
   forest: '/audio/ambient-forest.mp3',
   drone: '/audio/ambient-drone.mp3',
   piano: '/audio/ambient-piano.mp3',
+  whitenoise: '/audio/ambient-whitenoise.mp3',
+  fire: '/audio/ambient-fire.mp3',
+  river: '/audio/ambient-river.mp3',
+  wind: '/audio/ambient-wind.mp3',
+  room: '/audio/ambient-room.mp3',
 };
 
 const AMBIENT_LABELS: Record<AmbientTrack, string> = {
@@ -40,6 +48,11 @@ const AMBIENT_LABELS: Record<AmbientTrack, string> = {
   forest: 'Forest',
   drone: 'Drone',
   piano: 'Piano',
+  whitenoise: 'White',
+  fire: 'Fire',
+  river: 'River',
+  wind: 'Wind',
+  room: 'Room',
 };
 
 export function AudioProvider({ children }: { children: ReactNode }) {
@@ -55,11 +68,19 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     forest: { active: false, volume: 0.4 },
     drone: { active: false, volume: 0.4 },
     piano: { active: false, volume: 0.3 },
+    whitenoise: { active: false, volume: 0.3 },
+    fire: { active: false, volume: 0.4 },
+    river: { active: false, volume: 0.4 },
+    wind: { active: false, volume: 0.4 },
+    room: { active: false, volume: 0.2 },
   });
 
   const voiceRef = useRef<HTMLAudioElement | null>(null);
+  const roomToneRef = useRef<HTMLAudioElement | null>(null);
+  const [roomToneVolume, setRoomToneVolume] = useState(0.15); // very subtle, under voice
   const ambientRefs = useRef<Record<AmbientTrack, HTMLAudioElement | null>>({
     rain: null, ocean: null, forest: null, drone: null, piano: null,
+    whitenoise: null, fire: null, river: null, wind: null, room: null,
   });
 
   // Initialize voice audio element
@@ -84,22 +105,66 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  // Initialize ambient audio elements
+  // Initialize ambient audio elements + room tone
   useEffect(() => {
+    const refs: Record<AmbientTrack, HTMLAudioElement | null> = {
+      rain: null, ocean: null, forest: null, drone: null, piano: null,
+      whitenoise: null, fire: null, river: null, wind: null, room: null,
+    };
     (Object.keys(AMBIENT_URLS) as AmbientTrack[]).forEach(track => {
       const a = new Audio(AMBIENT_URLS[track]);
       a.loop = true;
       a.volume = 0;
       a.preload = 'auto';
+      refs[track] = a;
       ambientRefs.current[track] = a;
     });
+
+    // Room tone — plays ALWAYS under voice for intimacy/calm
+    const rt = new Audio(AMBIENT_URLS.room);
+    rt.loop = true;
+    rt.volume = 0;
+    rt.preload = 'auto';
+    roomToneRef.current = rt;
+
     return () => {
       (Object.keys(AMBIENT_URLS) as AmbientTrack[]).forEach(track => {
-        const a = ambientRefs.current[track];
+        const a = refs[track];
         if (a) { a.pause(); a.src = ''; }
       });
+      rt.pause();
+      rt.src = '';
     };
   }, []);
+
+  // Room tone: auto-fade in when voice plays, fade out when paused
+  useEffect(() => {
+    const rt = roomToneRef.current;
+    if (!rt) return;
+    if (isPlaying) {
+      // fade in
+      rt.play().catch(() => {});
+      const target = roomToneVolume;
+      let cur = 0;
+      const step = () => {
+        cur = Math.min(target, cur + 0.005);
+        rt.volume = cur;
+        if (cur < target) requestAnimationFrame(step);
+      };
+      step();
+    } else {
+      // fade out
+      const startVol = rt.volume;
+      let cur = startVol;
+      const step = () => {
+        cur = Math.max(0, cur - 0.01);
+        rt.volume = cur;
+        if (cur > 0) requestAnimationFrame(step);
+        else rt.pause();
+      };
+      step();
+    }
+  }, [isPlaying, roomToneVolume]);
 
   // Apply voice volume
   useEffect(() => {
@@ -182,6 +247,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       currentTrack, isPlaying, progress, duration, volume, setVolume,
       loadTrack, play, pause, toggle, seek,
       ambient, toggleAmbient, setAmbientVolume, stopAll,
+      roomToneVolume, setRoomToneVolume,
     }}>
       {children}
     </AudioContext.Provider>

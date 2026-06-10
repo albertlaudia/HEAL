@@ -4,6 +4,7 @@ import './globals.css';
 import { Nav } from '@/components/nav/Nav';
 import { Footer } from '@/components/nav/Footer';
 import { InstallPrompt } from '@/components/pwa/InstallPrompt';
+import { ServiceWorkerRegister } from '@/components/pwa/ServiceWorkerRegister';
 import { AuthProvider } from '@/lib/auth-store';
 import { SessionSync } from '@/components/auth/SessionSync';
 import { AudioProvider } from '@/lib/audio-context';
@@ -66,6 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </PageTransition>
             <Footer />
             <MiniPlayer />
+            <ServiceWorkerRegister />
             <InstallPrompt />
           </AudioProvider>
         </AuthProvider>

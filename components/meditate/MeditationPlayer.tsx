@@ -98,6 +98,7 @@ export function MeditationPlayer({
           <button
             onClick={toggle}
             disabled={!hasAudio}
+            data-audio-src={resolvedAudioUrl}
             className={`relative w-32 h-32 rounded-full flex items-center justify-center transition-all duration-500 group ${
               hasAudio
                 ? 'bg-ink text-bone hover:scale-105 active:scale-95 cursor-pointer'

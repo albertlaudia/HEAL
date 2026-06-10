@@ -3,41 +3,79 @@ import Image from 'next/image';
 import { getDailyMeditation, getDailyQuote, getDailyScripture, getPublished, pb } from '@/lib/pb';
 import { formatDuration, dateLabel, seasonOf, themeHue } from '@/lib/utils';
 import { DailyQuote } from '@/components/home/DailyQuote';
-import { BreathWidget } from '@/components/home/BreathWidget';
 import { ScriptureCard } from '@/components/home/ScriptureCard';
+import { QuickBreath } from '@/components/home/QuickBreath';
+import { StreakCounter } from '@/components/home/StreakCounter';
+import { TodayAtAGlance } from '@/components/home/TodayAtAGlance';
+import { QuickActions } from '@/components/home/QuickActions';
+import { FeaturedThisWeek, type FeaturedItem } from '@/components/home/FeaturedThisWeek';
 import { ThemeBadge } from '@/components/content/ThemeBadge';
-import { ArrowRight, Headphones, BookOpen, Wind, Music } from 'lucide-react';
+import { ShareButton } from '@/components/content/ShareButton';
+import { ArrowRight, Headphones, Sparkles } from 'lucide-react';
+import { headers } from 'next/headers';
 
-export const revalidate = 3600; // ISR: refresh hourly so day changes at midnight
+export const revalidate = 3600;
 
 export default async function HomePage() {
-  const [meditation, quote, breathwork, scripture, praiseSong] = await Promise.all([
+  const [meditation, quote, scripture, praiseSong, recentMeditations, recentEssays, recentPraise] = await Promise.all([
     getDailyMeditation(),
     getDailyQuote(),
-    getPublished('HEAL_breathwork', 'sort_order', 'is_published = true').then(r => r?.[0]),
     getDailyScripture(),
     pb.collection('HEAL_praise').getFirstListItem('is_published = true').catch(() => null),
+    getPublished('HEAL_meditations', '-created', 'is_published = true', 4),
+    getPublished('HEAL_essays', '-published_at', 'is_published = true', 2),
+    getPublished('HEAL_praise', '-created', 'is_published = true', 2),
   ]);
+
+  // Get breathwork for the quick breath card
+  const breathwork = await getPublished('HEAL_breathwork', 'sort_order', 'is_published = true', 1).then(r => r?.[0]).catch(() => null);
 
   const today = new Date();
   const season = seasonOf(today);
+  const h = await headers();
+  const proto = h.get('x-forwarded-proto') || 'https';
+  const host = h.get('host') || 'heal.app';
+  const siteUrl = `${proto}://${host}`;
+
+  // Build "This week" featured items
+  const featured: FeaturedItem[] = [
+    ...(recentEssays.slice(0, 1).map((e: any) => ({
+      kind: 'meditation' as const,
+      title: e.title,
+      subtitle: e.subtitle,
+      href: `/essays/${e.slug}`,
+      excerpt: e.excerpt,
+    }))),
+    ...(recentMeditations.slice(0, 2).map((m: any) => ({
+      kind: 'meditation' as const,
+      title: m.title,
+      subtitle: m.scripture_ref ? `— ${m.scripture_ref}` : undefined,
+      href: `/meditate/${m.slug}`,
+      excerpt: m.reflection,
+      illustration: m.illustration_url || `/images/meditations/illustration-${m.slug}.png`,
+      duration: formatDuration(m.duration_seconds),
+    }))),
+    ...(recentPraise.slice(0, 1).map((p: any) => ({
+      kind: 'praise' as const,
+      title: p.title,
+      subtitle: p.subtitle,
+      href: `/praise`,
+      excerpt: (p.lyrics || '').split('\n').filter((l: string) => l && !l.startsWith('[')).slice(0, 2).join(' '),
+    }))),
+  ].filter(Boolean).slice(0, 4);
 
   return (
     <div className="relative">
       {/* ── HERO: Today's meditation ───────────────────────────── */}
       <section className={`relative overflow-hidden bg-gradient-to-b ${themeHue(meditation?.theme)}`}>
-        <div className="container-wide pt-16 pb-24 md:pt-24 md:pb-32">
-          <div className="text-center max-w-2xl mx-auto mb-12 animate-fade-in">
-            <p className="text-xs tracking-[0.3em] uppercase text-ink/50 mb-3">
-              {dateLabel(today)} · {season}
-            </p>
-            <h1 className="serif text-5xl md:text-6xl tracking-tight mb-4">
-              A quiet practice
-            </h1>
-            <p className="serif italic text-xl text-ink/60">
-              for the soul that hasn't quite caught up with the day
-            </p>
-          </div>
+        {/* Decorative breath circle in the background */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-sage-200/20 animate-breath" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-sage-300/10 animate-breath" style={{ animationDelay: '1s' }} />
+        </div>
+
+        <div className="container-wide pt-12 pb-20 md:pt-20 md:pb-28 relative">
+          <TodayAtAGlance />
 
           {meditation ? (
             <article className="card-quiet max-w-3xl mx-auto overflow-hidden">
@@ -51,98 +89,121 @@ export default async function HomePage() {
                     priority
                     sizes="(max-width: 768px) 100vw, 768px"
                   />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                  <div className="absolute bottom-4 left-4 right-4 text-bone">
+                    <p className="text-[10px] tracking-widest uppercase opacity-80 mb-1">Today's meditation</p>
+                    <p className="serif text-2xl md:text-3xl">{meditation.title}</p>
+                  </div>
                 </div>
               )}
-              <div className="p-8 md:p-12">
+              <div className="p-8 md:p-10">
                 <div className="flex items-center gap-2 mb-4">
                   <ThemeBadge theme={meditation.theme} />
                   <span className="text-xs text-ink/50">·</span>
                   <span className="text-xs text-ink/50">{formatDuration(meditation.duration_seconds)}</span>
+                  <span className="text-xs text-ink/50">·</span>
+                  <span className="text-xs text-ink/50">{dateLabel(today)}</span>
                 </div>
-                <h2 className="serif text-3xl md:text-4xl mb-3">{meditation.title}</h2>
                 {meditation.scripture_ref && (
-                  <p className="serif italic text-ink/60 mb-6">— {meditation.scripture_ref}</p>
+                  <p className="serif italic text-ink/60 mb-4">— {meditation.scripture_ref}</p>
                 )}
                 {meditation.reflection && (
-                  <p className="text-ink/75 leading-relaxed mb-8">{meditation.reflection}</p>
+                  <p className="text-ink/75 leading-relaxed mb-6 line-clamp-3">{meditation.reflection}</p>
                 )}
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   <Link href={`/meditate/${meditation.slug}`} className="btn-primary">
                     <Headphones size={16} />
-                    Begin the meditation
+                    Begin
                     <ArrowRight size={16} />
                   </Link>
                   <Link href="/meditate" className="btn-ghost">
-                    Browse library
+                    Library
                   </Link>
+                  <span className="ml-auto">
+                    <ShareButton
+                      title={meditation.title}
+                      url={`${siteUrl}/meditate/${meditation.slug}`}
+                      text={meditation.reflection || meditation.title}
+                    />
+                  </span>
                 </div>
               </div>
             </article>
           ) : (
             <div className="card-quiet max-w-3xl mx-auto p-12 text-center">
               <p className="serif italic text-ink/60">Today's meditation is still being prepared.</p>
-              <p className="mt-2 text-sm text-ink/50">Come back in a moment, or browse the library.</p>
             </div>
           )}
         </div>
       </section>
 
-      {/* ── TODAY'S PRAISE SONG (only if available) ────────────── */}
+      {/* ── STREAK + QUICK ACTIONS ────────────────────────────── */}
+      <section className="container-wide py-10">
+        <div className="grid md:grid-cols-3 gap-4">
+          <StreakCounter />
+          <div className="md:col-span-2">
+            <QuickActions />
+          </div>
+        </div>
+      </section>
+
+      {/* ── QUOTE + BREATH + SCRIPTURE ────────────────────────── */}
+      <section className="container-wide py-12">
+        <div className="grid md:grid-cols-3 gap-6">
+          <DailyQuote quote={quote} />
+          <QuickBreath />
+          <ScriptureCard scripture={scripture} />
+        </div>
+      </section>
+
+      {/* ── THIS WEEK FEATURED ────────────────────────────────── */}
+      {featured.length > 0 && (
+        <FeaturedThisWeek items={featured} />
+      )}
+
+      {/* ── PRAISE SONG OF THE DAY ────────────────────────────── */}
       {praiseSong && (
-        <section className="container-wide pb-20">
+        <section className="container-wide py-12">
           <Link href="/praise" className="block group">
-            <div className="max-w-3xl mx-auto card-quiet p-8 md:p-10 hover:scale-[1.005] transition-transform">
-              <div className="flex items-center gap-2 mb-4">
-                <Music size={14} className="text-sage-600" />
-                <p className="text-xs tracking-widest uppercase text-ink/40">Praise — A Song for You</p>
+            <div className="max-w-4xl mx-auto card-quiet p-8 md:p-10 hover:scale-[1.005] transition-transform relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-100/20 rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+              <div className="relative flex items-start gap-4">
+                <div className="w-14 h-14 rounded-full bg-indigo-50 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <Sparkles size={22} className="text-indigo-700" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2">
+                    <p className="text-xs tracking-widest uppercase text-ink/40">Praise</p>
+                    {praiseSong.category && <p className="text-xs text-ink/40">· {praiseSong.category}</p>}
+                  </div>
+                  <h3 className="serif text-2xl md:text-3xl mb-1 group-hover:text-indigo-700 transition-colors">
+                    {praiseSong.title}
+                  </h3>
+                  {praiseSong.subtitle && (
+                    <p className="serif italic text-ink/60 mb-3">{praiseSong.subtitle}</p>
+                  )}
+                  <p className="text-ink/70 text-sm leading-relaxed line-clamp-2 italic">
+                    {(praiseSong.lyrics || '').split('\n').filter((l: string) => l && !l.startsWith('[')).slice(0, 2).join(' ')}
+                  </p>
+                  <div className="mt-4 flex items-center gap-1 text-sm text-ink/40 group-hover:text-ink group-hover:gap-2 transition-all">
+                    Read & sing <ArrowRight size={14} />
+                  </div>
+                </div>
               </div>
-              <h3 className="serif text-2xl md:text-3xl mb-2 group-hover:text-sage-700 transition-colors">
-                {praiseSong.title}
-              </h3>
-              {praiseSong.subtitle && (
-                <p className="serif italic text-ink/60 mb-4">{praiseSong.subtitle}</p>
-              )}
-              <p className="text-ink/70 text-sm leading-relaxed line-clamp-3">
-                {(praiseSong.lyrics || '').split('\n').filter((l: string) => l && !l.startsWith('[')).slice(0, 2).join(' ')}
-              </p>
-              <p className="mt-4 inline-flex items-center gap-1 text-sm text-ink/40 group-hover:text-ink group-hover:gap-2 transition-all">
-                Read & sing <ArrowRight size={14} />
-              </p>
             </div>
           </Link>
         </section>
       )}
 
-      {/* ── THREE COLUMNS: Quote, Breath, Scripture ─────────────── */}
+      {/* ── FOOTER NOTE: THE PRACTICE ─────────────────────────── */}
       <section className="container-wide py-20">
-        <div className="grid md:grid-cols-3 gap-6">
-          <DailyQuote quote={quote} />
-          <BreathWidget practice={breathwork} />
-          <ScriptureCard scripture={scripture} />
-        </div>
-      </section>
-
-      {/* ── ENTRY POINTS ───────────────────────────────────────── */}
-      <section className="container-wide pb-24">
-        <div className="grid md:grid-cols-3 gap-4">
-          <EntryCard href="/meditate" icon={<Headphones size={20} />} title="Meditations" body="A library of guided practices, organised by season and theme." />
-          <EntryCard href="/breathe" icon={<Wind size={20} />} title="Breathwork" body="Slow your nervous system with simple breath patterns." />
-          <EntryCard href="/scripture" icon={<BookOpen size={20} />} title="Scripture" body="Short passages for reflection, paired with a single question." />
+        <div className="max-w-2xl mx-auto text-center">
+          <p className="serif italic text-2xl md:text-3xl text-ink/70 leading-relaxed">
+            "Be still, and know that I am God."
+          </p>
+          <p className="text-xs tracking-widest uppercase text-ink/40 mt-4">— Psalm 46:10</p>
         </div>
       </section>
     </div>
-  );
-}
-
-function EntryCard({ href, icon, title, body }: { href: string; icon: React.ReactNode; title: string; body: string }) {
-  return (
-    <Link href={href} className="group card-quiet p-8 hover:scale-[1.01] transition-transform duration-500">
-      <div className="text-sage-600 mb-4">{icon}</div>
-      <h3 className="serif text-2xl mb-2 group-hover:text-sage-700 transition-colors">{title}</h3>
-      <p className="text-ink/60 text-sm leading-relaxed">{body}</p>
-      <div className="mt-6 flex items-center gap-1 text-sm text-ink/40 group-hover:text-ink group-hover:gap-2 transition-all">
-        Open <ArrowRight size={14} />
-      </div>
-    </Link>
   );
 }

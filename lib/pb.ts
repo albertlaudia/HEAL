@@ -19,10 +19,11 @@ export async function getBySlug<T = any>(col: string, slug: string): Promise<T |
   }
 }
 
-// Helper: get all published records
-export async function getPublished<T = any>(col: string, sort = '-created', filter = 'is_published = true'): Promise<T[]> {
+// Helper: get all published records (or top N if limit is provided)
+export async function getPublished<T = any>(col: string, sort = '-created', filter = 'is_published = true', limit?: number): Promise<T[]> {
   try {
-    return await pb.collection(col).getFullList({ sort, filter });
+    const all = (await pb.collection(col).getFullList({ sort, filter })) as unknown as T[];
+    return limit ? all.slice(0, limit) : all;
   } catch {
     return [];
   }
