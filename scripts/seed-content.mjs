@@ -127,6 +127,8 @@ async function main() {
     p => upsertBySlug('HEAL_breathwork', p));
   await seedDir(join(CONTENT_DIR, 'essays'),
     p => upsertBySlug('HEAL_essays', p));
+  await seedDir(join(CONTENT_DIR, 'praise'),
+    p => upsertBySlug('HEAL_praise', p));
   await seedDir(join(CONTENT_DIR, 'pages'),
     p => upsertByKey('HEAL_pages', p));
 

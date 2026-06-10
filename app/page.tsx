@@ -1,21 +1,22 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getDailyMeditation, getDailyQuote, getDailyScripture, getPublished } from '@/lib/pb';
+import { getDailyMeditation, getDailyQuote, getDailyScripture, getPublished, pb } from '@/lib/pb';
 import { formatDuration, dateLabel, seasonOf, themeHue } from '@/lib/utils';
 import { DailyQuote } from '@/components/home/DailyQuote';
 import { BreathWidget } from '@/components/home/BreathWidget';
 import { ScriptureCard } from '@/components/home/ScriptureCard';
 import { ThemeBadge } from '@/components/content/ThemeBadge';
-import { ArrowRight, Headphones, BookOpen, Wind } from 'lucide-react';
+import { ArrowRight, Headphones, BookOpen, Wind, Music } from 'lucide-react';
 
 export const revalidate = 3600; // ISR: refresh hourly so day changes at midnight
 
 export default async function HomePage() {
-  const [meditation, quote, breathwork, scripture] = await Promise.all([
+  const [meditation, quote, breathwork, scripture, praiseSong] = await Promise.all([
     getDailyMeditation(),
     getDailyQuote(),
     getPublished('HEAL_breathwork', 'sort_order', 'is_published = true').then(r => r?.[0]),
     getDailyScripture(),
+    pb.collection('HEAL_praise').getFirstListItem('is_published = true').catch(() => null),
   ]);
 
   const today = new Date();
@@ -85,6 +86,32 @@ export default async function HomePage() {
           )}
         </div>
       </section>
+
+      {/* ── TODAY'S PRAISE SONG (only if available) ────────────── */}
+      {praiseSong && (
+        <section className="container-wide pb-20">
+          <Link href="/praise" className="block group">
+            <div className="max-w-3xl mx-auto card-quiet p-8 md:p-10 hover:scale-[1.005] transition-transform">
+              <div className="flex items-center gap-2 mb-4">
+                <Music size={14} className="text-sage-600" />
+                <p className="text-xs tracking-widest uppercase text-ink/40">Praise — A Song for You</p>
+              </div>
+              <h3 className="serif text-2xl md:text-3xl mb-2 group-hover:text-sage-700 transition-colors">
+                {praiseSong.title}
+              </h3>
+              {praiseSong.subtitle && (
+                <p className="serif italic text-ink/60 mb-4">{praiseSong.subtitle}</p>
+              )}
+              <p className="text-ink/70 text-sm leading-relaxed line-clamp-3">
+                {(praiseSong.lyrics || '').split('\n').filter((l: string) => l && !l.startsWith('[')).slice(0, 2).join(' ')}
+              </p>
+              <p className="mt-4 inline-flex items-center gap-1 text-sm text-ink/40 group-hover:text-ink group-hover:gap-2 transition-all">
+                Read & sing <ArrowRight size={14} />
+              </p>
+            </div>
+          </Link>
+        </section>
+      )}
 
       {/* ── THREE COLUMNS: Quote, Breath, Scripture ─────────────── */}
       <section className="container-wide py-20">

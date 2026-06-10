@@ -1,0 +1,19 @@
+{
+  "title": "Amazing Grace (Common Meter)",
+  "slug": "amazing-grace-common-meter",
+  "subtitle": "After John Newton",
+  "lyrics": "[Verse 1]\nAmazing grace! How sweet the sound\nThat saved a wretch like me!\nI once was lost, but now am found,\nWas blind, but now I see.\n\n[Verse 2]\n'Twas grace that taught my heart to fear,\nAnd grace my fears relieved;\nHow precious did that grace appear\nThe hour I first believed.\n\n[Verse 3]\nThrough many dangers, toils, and snares,\nI have already come;\n'Tis grace hath brought me safe thus far,\nAnd grace will lead me home.\n\n[Verse 4]\nWhen we've been there ten thousand years,\nBright shining as the sun,\nWe've no less days to sing God's praise\nThan when we'd first begun.",
+  "chords": "G              C         G\nAmazing grace, how sweet the sound\nD              C         G\nThat saved a wretch like me\nG              C         G\nI once was lost but now am found\nD              C         G\nWas blind but now I see",
+  "scripture_refs": [
+    "Ephesians 2:8-9",
+    "Titus 2:11"
+  ],
+  "reflection": "Grace does not ask us to be good first. Grace meets us in the middle of the mess.",
+  "category": "gratitude",
+  "key_signature": "G",
+  "tempo_bpm": 72,
+  "meter": "3/4",
+  "day_of_year": 8,
+  "sort_order": 8,
+  "is_published": true
+}

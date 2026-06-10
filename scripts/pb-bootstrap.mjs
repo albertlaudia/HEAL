@@ -158,6 +158,32 @@ const collections = [
     rules: { list: '', view: '', create: '', update: '', delete: '' },
   },
   {
+    name: 'HEAL_praise',
+    fields: [
+      { name: 'title', type: 'text', required: true, options: { max: 200 } },
+      { name: 'slug', type: 'text', required: true, options: { min: 1, max: 200, pattern: '^[a-z0-9-]+$' } },
+      { name: 'subtitle', type: 'text', required: false, options: { max: 300 } },
+      { name: 'lyrics', type: 'editor', required: true, options: {} },
+      { name: 'chords', type: 'text', required: false, options: { max: 5000 } },
+      { name: 'scripture_refs', type: 'json', required: false, options: {} },
+      { name: 'reflection', type: 'editor', required: false, options: {} },
+      { name: 'category', type: 'select', required: false, maxSelect: 1, values: ['adoration', 'gratitude', 'lament', 'hope', 'comfort', 'celebration', 'repentance', 'other'] },
+      { name: 'key_signature', type: 'text', required: false, options: { max: 10 } },
+      { name: 'tempo_bpm', type: 'number', required: false, options: { min: 30, max: 240 } },
+      { name: 'meter', type: 'text', required: false, options: { max: 20 } },
+      { name: 'audio_url', type: 'url', required: false, options: {} },
+      { name: 'illustration_url', type: 'url', required: false, options: {} },
+      { name: 'day_of_year', type: 'number', required: false, options: { min: 1, max: 366 } },
+      { name: 'sort_order', type: 'number', required: false, options: { min: 0 } },
+      { name: 'is_published', type: 'bool', required: false, options: {} },
+    ],
+    indexes: [
+      'CREATE UNIQUE INDEX idx_HEAL_praise_slug ON HEAL_praise (slug)',
+      'CREATE INDEX idx_HEAL_praise_day ON HEAL_praise (day_of_year)',
+    ],
+    rules: { list: '', view: '', create: '', update: '', delete: '' },
+  },
+  {
     name: 'HEAL_essays',
     fields: [
       { name: 'title', type: 'text', required: true, options: { max: 200 } },
