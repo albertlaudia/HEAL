@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getDailyMeditation, getDailyQuote, getDailyScripture, getPublished, pb } from '@/lib/pb';
+import { getDailyMeditation, getDailyQuote, getDailyScripture, getDailyPraise, getPublished, getCalendarCoord } from '@/lib/pb';
 import { formatDuration, dateLabel, seasonOf, themeHue } from '@/lib/utils';
 import { DailyQuote } from '@/components/home/DailyQuote';
 import { ScriptureCard } from '@/components/home/ScriptureCard';
@@ -11,17 +11,28 @@ import { QuickActions } from '@/components/home/QuickActions';
 import { FeaturedThisWeek, type FeaturedItem } from '@/components/home/FeaturedThisWeek';
 import { ThemeBadge } from '@/components/content/ThemeBadge';
 import { ShareButton } from '@/components/content/ShareButton';
+import { YearCycleBadge } from '@/components/home/YearCycleBadge';
 import { ArrowRight, Headphones, Sparkles } from 'lucide-react';
 import { headers } from 'next/headers';
 
 export const revalidate = 3600;
 
+export async function generateMetadata() {
+  const coord = getCalendarCoord();
+  return {
+    title: `HEAL — ${coord.label}`,
+    description: `A daily Christian mindfulness practice. ${coord.label}.`,
+  };
+}
+
 export default async function HomePage() {
+  const coord = getCalendarCoord();
+
   const [meditation, quote, scripture, praiseSong, recentMeditations, recentEssays, recentPraise] = await Promise.all([
-    getDailyMeditation(),
-    getDailyQuote(),
-    getDailyScripture(),
-    pb.collection('HEAL_praise').getFirstListItem('is_published = true').catch(() => null),
+    getDailyMeditation(coord),
+    getDailyQuote(coord),
+    getDailyScripture(coord),
+    getDailyPraise(coord),
     getPublished('HEAL_meditations', '-created', 'is_published = true', 4),
     getPublished('HEAL_essays', '-published_at', 'is_published = true', 2),
     getPublished('HEAL_praise', '-created', 'is_published = true', 2),
@@ -75,6 +86,13 @@ export default async function HomePage() {
         </div>
 
         <div className="container-wide pt-12 pb-20 md:pt-20 md:pb-28 relative">
+          <div className="flex justify-center mb-6 animate-fade-in">
+            <YearCycleBadge
+              yearCycle={coord.yearCycle}
+              dayOfYear={coord.dayOfYear}
+              label={coord.label}
+            />
+          </div>
           <TodayAtAGlance />
 
           {meditation ? (
