@@ -6,6 +6,9 @@ import { Footer } from '@/components/nav/Footer';
 import { InstallPrompt } from '@/components/pwa/InstallPrompt';
 import { AuthProvider } from '@/lib/auth-store';
 import { SessionSync } from '@/components/auth/SessionSync';
+import { AudioProvider } from '@/lib/audio-context';
+import { MiniPlayer } from '@/components/audio/MiniPlayer';
+import { PageTransition } from '@/components/PageTransition';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
 const serif = Cormorant_Garamond({
@@ -56,10 +59,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-paper focus:px-4 focus:py-2 focus:rounded-full">
             Skip to main content
           </a>
-          <Nav />
-          <main id="main" className="min-h-[calc(100vh-160px)]">{children}</main>
-          <Footer />
-          <InstallPrompt />
+          <AudioProvider>
+            <Nav />
+            <PageTransition>
+              <main id="main" className="min-h-[calc(100vh-160px)]">{children}</main>
+            </PageTransition>
+            <Footer />
+            <MiniPlayer />
+            <InstallPrompt />
+          </AudioProvider>
         </AuthProvider>
       </body>
     </html>

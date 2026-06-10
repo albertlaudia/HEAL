@@ -41,10 +41,10 @@ export default async function HomePage() {
 
           {meditation ? (
             <article className="card-quiet max-w-3xl mx-auto overflow-hidden">
-              {meditation.illustration_url && (
+              {(meditation.illustration_url || meditation.slug) && (
                 <div className="relative aspect-[2/1] bg-sage-100">
                   <Image
-                    src={meditation.illustration_url}
+                    src={meditation.illustration_url || `/images/meditations/illustration-${meditation.slug}.png`}
                     alt={meditation.title}
                     fill
                     className="object-cover"

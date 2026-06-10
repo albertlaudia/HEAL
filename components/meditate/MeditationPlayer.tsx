@@ -1,120 +1,211 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
+import { useEffect } from 'react';
+import { Play, Pause, Volume2, VolumeX, Headphones } from 'lucide-react';
+import { useAudio } from '@/lib/audio-context';
+import { AudioVisualizer } from '@/components/audio/AudioVisualizer';
+import { AmbientMixer } from '@/components/audio/AmbientMixer';
+
+function formatTime(s: number) {
+  if (!s || isNaN(s)) return '0:00';
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60).toString().padStart(2, '0');
+  return `${m}:${sec}`;
+}
 
 export function MeditationPlayer({
   title,
   audioUrl,
+  fallbackSlug,
   duration,
   body,
   prayer,
+  scriptureRef,
+  scriptureText,
+  reflection,
+  illustrationUrl,
 }: {
   title: string;
   audioUrl?: string;
+  fallbackSlug?: string;
   duration?: number;
   body: string;
   prayer?: string;
+  scriptureRef?: string;
+  scriptureText?: string;
+  reflection?: string;
+  illustrationUrl?: string;
 }) {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [playing, setPlaying] = useState(false);
-  const [muted, setMuted] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [actualDuration, setActualDuration] = useState(duration || 0);
+  const { currentTrack, isPlaying, progress, duration: actualDuration, volume, setVolume, loadTrack, toggle, seek } = useAudio();
+
+  // Resolve audio URL: prefer B2 URL, fall back to local /audio/meditations/
+  const resolvedAudioUrl = audioUrl
+    ? audioUrl
+    : fallbackSlug
+      ? `/audio/meditations/audio-${fallbackSlug}.mp3`
+      : undefined;
 
   useEffect(() => {
-    const a = audioRef.current;
-    if (!a) return;
-    const onTime = () => setProgress(a.currentTime);
-    const onMeta = () => setActualDuration(a.duration);
-    const onEnd = () => setPlaying(false);
-    a.addEventListener('timeupdate', onTime);
-    a.addEventListener('loadedmetadata', onMeta);
-    a.addEventListener('ended', onEnd);
-    return () => {
-      a.removeEventListener('timeupdate', onTime);
-      a.removeEventListener('loadedmetadata', onMeta);
-      a.removeEventListener('ended', onEnd);
-    };
-  }, []);
+    if (resolvedAudioUrl) {
+      loadTrack({
+        title,
+        audioUrl: resolvedAudioUrl,
+        duration: duration,
+        illustrationUrl: illustrationUrl,
+      });
+    }
+  }, [resolvedAudioUrl, title, duration, illustrationUrl, loadTrack]);
 
-  const toggle = () => {
-    const a = audioRef.current;
-    if (!a) return;
-    if (playing) { a.pause(); setPlaying(false); }
-    else { a.play().catch(() => {}); setPlaying(true); }
-  };
+  const hasAudio = !!resolvedAudioUrl;
+  const effectiveDuration = actualDuration || duration || 0;
+  const progressPct = effectiveDuration > 0 ? (progress / effectiveDuration) * 100 : 0;
+  const playing = hasAudio && isPlaying && currentTrack?.title === title;
 
-  const seek = (e: React.MouseEvent<HTMLDivElement>) => {
-    const a = audioRef.current;
-    if (!a || !actualDuration) return;
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!hasAudio || !effectiveDuration) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = (e.clientX - rect.left) / rect.width;
-    a.currentTime = x * actualDuration;
-    setProgress(a.currentTime);
-  };
-
-  const formatTime = (s: number) => {
-    const m = Math.floor(s / 60);
-    const sec = Math.floor(s % 60).toString().padStart(2, '0');
-    return `${m}:${sec}`;
+    seek(Math.max(0, Math.min(1, x)) * effectiveDuration);
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      {/* Player card */}
-      <div className="card-quiet p-8 md:p-10">
-        <div className="flex items-center gap-6">
+    <div className="relative max-w-2xl mx-auto">
+      {/* Hero player */}
+      <div className="relative card-quiet p-8 md:p-12 overflow-hidden min-h-[440px] flex flex-col items-center justify-center">
+        {/* Audio-reactive background */}
+        <AudioVisualizer />
+
+        {/* Soft tone gradient that intensifies when playing */}
+        <div
+          className={`absolute inset-0 transition-opacity duration-1000 ${
+            playing ? 'opacity-100' : 'opacity-40'
+          }`}
+          style={{
+            background: 'radial-gradient(circle at 50% 40%, rgba(210, 200, 175, 0.25) 0%, rgba(255, 250, 240, 0) 60%)',
+          }}
+        />
+
+        {/* Play button — the breath of the whole experience */}
+        <div className="relative">
+          {/* Pulse rings while playing */}
+          {playing && (
+            <>
+              <div className="absolute inset-0 -m-8 rounded-full bg-sage-300/20 animate-ping" style={{ animationDuration: '4s' }} />
+              <div className="absolute inset-0 -m-4 rounded-full bg-sage-300/15 animate-pulse" style={{ animationDuration: '6s' }} />
+            </>
+          )}
+
           <button
             onClick={toggle}
-            className="w-16 h-16 rounded-full bg-ink text-bone flex items-center justify-center hover:scale-105 active:scale-95 transition-transform shrink-0"
-            aria-label={playing ? 'Pause' : 'Play'}
+            disabled={!hasAudio}
+            className={`relative w-32 h-32 rounded-full flex items-center justify-center transition-all duration-500 group ${
+              hasAudio
+                ? 'bg-ink text-bone hover:scale-105 active:scale-95 cursor-pointer'
+                : 'bg-ink/30 text-bone/60 cursor-not-allowed'
+            }`}
+            aria-label={playing ? 'Pause' : 'Begin meditation'}
           >
-            {playing ? <Pause size={22} /> : <Play size={22} className="ml-1" />}
-          </button>
-
-          <div className="flex-1 min-w-0">
-            <p className="text-xs text-ink/50 mb-2 uppercase tracking-wider">
-              {audioUrl ? 'Guided audio' : 'Read at your own pace'}
-            </p>
-            <p className="serif text-lg truncate">{title}</p>
-            {audioUrl && (
-              <div className="mt-3 flex items-center gap-3">
-                <div
-                  className="flex-1 h-1 bg-ink/10 rounded-full cursor-pointer relative"
-                  onClick={seek}
-                >
-                  <div
-                    className="absolute inset-y-0 left-0 bg-sage-500 rounded-full transition-all"
-                    style={{ width: `${(progress / actualDuration) * 100 || 0}%` }}
-                  />
-                </div>
-                <span className="text-xs text-ink/50 tabular-nums w-20 text-right">
-                  {formatTime(progress)} / {formatTime(actualDuration)}
-                </span>
-                <button
-                  onClick={() => { if (audioRef.current) audioRef.current.muted = !audioRef.current.muted; setMuted(m => !m); }}
-                  className="text-ink/50 hover:text-ink"
-                  aria-label="Toggle mute"
-                >
-                  {muted ? <VolumeX size={16} /> : <Volume2 size={16} />}
-                </button>
-              </div>
+            {/* Circular progress ring */}
+            {hasAudio && effectiveDuration > 0 && (
+              <svg className="absolute inset-0 -m-1 w-[calc(100%+8px)] h-[calc(100%+8px)] -rotate-90" viewBox="0 0 132 132">
+                <circle cx="66" cy="66" r="64" fill="none" stroke="rgba(180, 195, 175, 0.2)" strokeWidth="1.5" />
+                <circle
+                  cx="66" cy="66" r="64" fill="none"
+                  stroke="rgba(180, 195, 175, 0.9)"
+                  strokeWidth="2"
+                  strokeDasharray={`${(progressPct / 100) * 402.12} 402.12`}
+                  strokeLinecap="round"
+                  className="transition-all duration-300"
+                />
+              </svg>
             )}
-          </div>
+            {playing ? <Pause size={36} /> : <Play size={36} className="ml-1.5" />}
+          </button>
         </div>
 
-        {audioUrl && <audio ref={audioRef} src={audioUrl} preload="metadata" />}
+        <p className="relative mt-8 text-xs tracking-[0.3em] uppercase text-ink/50">
+          {hasAudio
+            ? playing
+              ? 'Listen. Breathe.'
+              : 'Press play to begin'
+            : 'Read at your own pace'}
+        </p>
+
+        {/* Progress bar (smaller, below) */}
+        {hasAudio && effectiveDuration > 0 && (
+          <div className="relative w-full max-w-md mt-6">
+            <div
+              className="h-1 bg-ink/10 rounded-full cursor-pointer"
+              onClick={handleSeek}
+            >
+              <div
+                className="h-full bg-gradient-to-r from-sage-400 to-sage-600 rounded-full transition-all"
+                style={{ width: `${progressPct}%` }}
+              />
+            </div>
+            <div className="flex justify-between mt-2 text-[11px] text-ink/50 tabular-nums">
+              <span>{formatTime(progress)}</span>
+              <span>{formatTime(effectiveDuration)}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Volume */}
+        {hasAudio && (
+          <div className="relative mt-4 flex items-center gap-2">
+            <button
+              onClick={() => setVolume(volume === 0 ? 0.85 : 0)}
+              className="text-ink/50 hover:text-ink"
+              aria-label="Toggle volume"
+            >
+              {volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
+            </button>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value={volume}
+              onChange={e => setVolume(parseFloat(e.target.value))}
+              className="w-24 h-0.5 appearance-none bg-ink/10 rounded-full accent-sage-600"
+              aria-label="Volume"
+            />
+          </div>
+        )}
       </div>
 
-      {/* Body */}
-      <section className="prose-quiet mt-12 text-lg">
+      {/* Ambient mixer */}
+      {hasAudio && (
+        <div className="mt-8 card-quiet p-6 md:p-8">
+          <AmbientMixer />
+        </div>
+      )}
+
+      {/* Body — slow reveal */}
+      <section className="prose-quiet mt-16 text-lg">
         {body.split('\n\n').map((p, i) => (
-          <p key={i} className={i === 0 ? 'first-letter:text-3xl' : ''}>
+          <p key={i} className={`mb-6 ${i === 0 ? 'first-letter:serif first-letter:text-4xl first-letter:font-light first-letter:mr-2 first-letter:float-left first-letter:leading-none' : ''}`}>
             {p}
           </p>
         ))}
       </section>
+
+      {scriptureText && (
+        <section className="mt-16 p-8 md:p-12 bg-paper border border-ink/5 rounded-2xl">
+          <p className="text-xs tracking-widest uppercase text-ink/40 mb-4">Scripture</p>
+          <blockquote className="serif text-2xl leading-relaxed text-ink/85">
+            "{scriptureText}"
+          </blockquote>
+          {scriptureRef && <p className="mt-4 serif italic text-ink/60">— {scriptureRef}</p>}
+        </section>
+      )}
+
+      {reflection && (
+        <section className="mt-12">
+          <p className="text-xs tracking-widest uppercase text-ink/40 mb-4">For reflection</p>
+          <p className="serif text-xl leading-relaxed text-ink/80 italic">{reflection}</p>
+        </section>
+      )}
 
       {prayer && (
         <section className="mt-12 p-8 bg-sage-50/50 border-l-2 border-sage-400 rounded-r-xl">

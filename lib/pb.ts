@@ -106,7 +106,7 @@ export async function getQuoteByDay<T = any>(offset = 0): Promise<T | null> {
     // pick deterministically by day
     if (list.items.length) {
       const all = await pb.collection('HEAL_quotes').getFullList({ filter: 'is_published = true' });
-      return all[day % all.length] as T;
+      return all[((day % all.length) + all.length) % all.length] as T;
     }
     return null;
   } catch {

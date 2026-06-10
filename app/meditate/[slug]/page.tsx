@@ -66,18 +66,29 @@ export default async function MeditationPage({ params }: { params: Promise<{ slu
         )}
       </header>
 
-      {m.illustration_url && (
-        <div className="relative max-w-3xl mx-auto aspect-[2/1] rounded-2xl overflow-hidden mb-12">
-          <Image src={m.illustration_url} alt={m.title} fill className="object-cover" priority />
+      {(m.illustration_url || m.slug) && (
+        <div className="relative max-w-3xl mx-auto aspect-[2/1] rounded-2xl overflow-hidden mb-12 bg-sage-100">
+          <Image
+            src={m.illustration_url || `/images/meditations/illustration-${m.slug}.png`}
+            alt={m.title}
+            fill
+            className="object-cover"
+            priority
+          />
         </div>
       )}
 
       <MeditationPlayer
         title={m.title}
         audioUrl={m.audio_url}
+        fallbackSlug={m.slug}
         duration={m.duration_seconds}
         body={m.body}
         prayer={m.prayer}
+        scriptureRef={m.scripture_ref}
+        scriptureText={m.scripture_text}
+        reflection={m.reflection}
+        illustrationUrl={m.illustration_url}
       />
 
       {m.scripture_text && (
