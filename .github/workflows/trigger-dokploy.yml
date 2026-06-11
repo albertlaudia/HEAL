@@ -7,9 +7,14 @@ jobs:
   trigger:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Dokploy redeploy
+      - name: Trigger Dokploy redeploy via API
+        env:
+          DOKPLOY_URL: ${{ vars.DOKPLOY_URL }}
+          DOKPLOY_KEY: ${{ vars.DOKPLOY_KEY }}
         run: |
-          curl -s -X POST "${{ secrets.DOKPLOY_URL }}/api/trpc/application.redeploy" \
-            -H "x-api-key: ${{ secrets.DOKPLOY_API_KEY }}" \
+          echo "Triggering deploy for $DOKPLOY_URL"
+          curl -s -X POST "${DOKPLOY_URL}/api/trpc/application.redeploy" \
+            -H "x-api-key: ${DOKPLOY_KEY}" \
             -H "Content-Type: application/json" \
-            -d '{"json":{"applicationId":"${{ secrets.HEAL_DOKPLOY_APP_ID }}"}}'
+            -d '{"json":{"applicationId":"3UHHbFdDgkIklUHCHSkTg"}}' \
+            -w "\nHTTP %{http_code}\n"
