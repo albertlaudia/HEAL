@@ -30,7 +30,7 @@ const AMBIENT_GRADIENTS: Record<AmbientTrack, string> = {
 };
 
 export function AmbientMixer() {
-  const { ambient, toggleAmbient, setAmbientVolume, roomToneVolume, setRoomToneVolume } = useAudio();
+  const { ambient, toggleAmbient, setAmbientSlider, roomToneVolume, setRoomToneVolume } = useAudio();
 
   const anyActive = (Object.keys(AMBIENT_LABELS) as AmbientTrack[]).some(t => ambient[t].active);
 
@@ -46,7 +46,7 @@ export function AmbientMixer() {
         {(Object.keys(AMBIENT_LABELS) as AmbientTrack[]).map(track => {
           const Icon = AMBIENT_ICONS[track];
           const isActive = ambient[track].active;
-          const vol = ambient[track].volume;
+          const slider = ambient[track].slider;
           return (
             <button
               key={track}
@@ -72,10 +72,10 @@ export function AmbientMixer() {
                     min="0"
                     max="1"
                     step="0.05"
-                    value={vol}
-                    onChange={e => setAmbientVolume(track, parseFloat(e.target.value))}
+                    value={slider}
+                    onChange={e => setAmbientSlider(track, parseFloat(e.target.value))}
                     className="w-full h-0.5 appearance-none bg-sage-200 rounded-full accent-sage-600"
-                    aria-label={`${AMBIENT_LABELS[track]} volume`}
+                    aria-label={`${AMBIENT_LABELS[track]} level`}
                   />
                 </div>
               )}
@@ -88,8 +88,8 @@ export function AmbientMixer() {
         <input
           type="range"
           min="0"
-          max="0.4"
-          step="0.02"
+          max="0.15"
+          step="0.01"
           value={roomToneVolume}
           onChange={e => setRoomToneVolume(parseFloat(e.target.value))}
           className="flex-1 h-0.5 appearance-none bg-ink/10 rounded-full accent-sage-600"
@@ -97,7 +97,9 @@ export function AmbientMixer() {
         />
         <span className="text-[10px] text-ink/40 tabular-nums w-8">{Math.round(roomToneVolume * 100)}%</span>
       </div>
-      <p className="text-xs text-ink/40 italic">Tap to layer under the voice. Room tone adds gentle texture to the silence.</p>
+      <p className="text-xs text-ink/40 italic">
+        Tap to layer under the voice. Layers duck automatically so the meditation stays clear. Room tone adds gentle texture to the silence.
+      </p>
     </div>
   );
 }

@@ -172,3 +172,75 @@ export async function getQuoteByDay<T = any>(offset = 0, coord: CalendarCoord = 
     return null;
   }
 }
+
+// ─── Programs ──────────────────────────────────────────────────────────────────
+
+export type HEALProgram = {
+  id: string;
+  slug: string;
+  title: string;
+  tagline: string;
+  description: string;
+  duration_label: string;
+  category: string;
+  theme_color: string;
+  illustration_url: string;
+  illustration_prompt: string;
+  badge_name: string;
+  badge_affirmation: string;
+  badge_scripture_ref: string;
+  badge_scripture_text: string;
+  badge_image_prompt: string;
+  badge_image_path: string;
+  step_count: number;
+  sort_order: number;
+  is_published: boolean;
+};
+
+export type HEALProgramStep = {
+  id: string;
+  program: string;
+  order_index: number;
+  title: string;
+  reflection: string;
+  scripture_ref: string;
+  scripture_text: string;
+  practice_kind: string;
+  practice_title: string;
+  practice_slug: string;
+  response_headline: string;
+  response_body: string;
+  response_scripture: string;
+  sort_order: number;
+  is_published: boolean;
+};
+
+export async function getAllPrograms<T = HEALProgram>(): Promise<T[]> {
+  return getPublished<T>('HEAL_programs', 'sort_order,id');
+}
+
+export async function getProgramBySlug<T = HEALProgram>(slug: string): Promise<T | null> {
+  return getBySlug<T>('HEAL_programs', slug);
+}
+
+export async function getProgramSteps<T = HEALProgramStep>(programSlug: string): Promise<T[]> {
+  try {
+    const all = await pb.collection('HEAL_program_steps').getFullList({
+      filter: `program = "${programSlug}" && is_published = true`,
+      sort: 'order_index',
+    }) as unknown as T[];
+    return all;
+  } catch {
+    return [];
+  }
+}
+
+export async function getProgramStep<T = HEALProgramStep>(programSlug: string, orderIndex: number): Promise<T | null> {
+  try {
+    return await pb.collection('HEAL_program_steps').getFirstListItem(
+      `program = "${programSlug}" && order_index = ${orderIndex} && is_published = true`
+    ) as unknown as T;
+  } catch {
+    return null;
+  }
+}

@@ -36,7 +36,7 @@ export function MeditationPlayer({
   reflection?: string;
   illustrationUrl?: string;
 }) {
-  const { currentTrack, isPlaying, progress, duration: actualDuration, volume, setVolume, loadTrack, toggle, seek } = useAudio();
+  const { currentTrack, isPlaying, progress, duration: actualDuration, voiceVolume, setVoiceVolume, loadTrack, toggle, seek } = useAudio();
 
   // Resolve audio URL: prefer B2 URL, fall back to local /audio/meditations/
   const resolvedAudioUrl = audioUrl
@@ -155,19 +155,19 @@ export function MeditationPlayer({
         {hasAudio && (
           <div className="relative mt-4 flex items-center gap-2">
             <button
-              onClick={() => setVolume(volume === 0 ? 0.85 : 0)}
+              onClick={() => setVoiceVolume(voiceVolume === 0 ? 0.85 : 0)}
               className="text-ink/50 hover:text-ink"
               aria-label="Toggle volume"
             >
-              {volume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
+              {voiceVolume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
             </button>
             <input
               type="range"
               min="0"
               max="1"
               step="0.05"
-              value={volume}
-              onChange={e => setVolume(parseFloat(e.target.value))}
+              value={voiceVolume}
+              onChange={e => setVoiceVolume(parseFloat(e.target.value))}
               className="w-24 h-0.5 appearance-none bg-ink/10 rounded-full accent-sage-600"
               aria-label="Volume"
             />

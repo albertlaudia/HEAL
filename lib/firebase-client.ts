@@ -61,3 +61,7 @@ export function watchAuth(cb: (u: User | null) => void) {
   if (!_auth) return () => {};
   return onAuthStateChanged(_auth, cb);
 }
+
+export function getAuthSafe() {
+  return _auth;
+}

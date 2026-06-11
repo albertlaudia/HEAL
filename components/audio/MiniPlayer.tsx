@@ -13,14 +13,14 @@ function formatTime(s: number) {
 }
 
 export function MiniPlayer() {
-  const { currentTrack, isPlaying, progress, duration, toggle, stopAll, volume, setVolume } = useAudio();
+  const { currentTrack, isPlaying, progress, duration, toggle, stopAll, voiceVolume, setVoiceVolume } = useAudio();
   const pathname = usePathname();
 
   // Hide mini player on the meditation page itself (where the full player is)
   if (!currentTrack) return null;
   if (pathname?.startsWith('/meditate/') && pathname !== '/meditate') return null;
 
-  const VolIcon = volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2;
+  const VolIcon = voiceVolume === 0 ? VolumeX : voiceVolume < 0.5 ? Volume1 : Volume2;
   const progressPct = duration > 0 ? (progress / duration) * 100 : 0;
 
   return (
@@ -59,7 +59,7 @@ export function MiniPlayer() {
           </span>
 
           <button
-            onClick={() => setVolume(volume === 0 ? 0.85 : 0)}
+            onClick={() => setVoiceVolume(voiceVolume === 0 ? 0.85 : 0)}
             className="text-ink/50 hover:text-ink transition-colors shrink-0"
             aria-label="Toggle volume"
           >
