@@ -10,12 +10,18 @@ type AudioState = {
   isPlaying: boolean;
   progress: number;
   duration: number;
-  voiceVolume: number;        // 0..1 — separate from ambient
+
+  // Voice volume (0..1) — separate from master
+  voiceVolume: number;
   setVoiceVolume: (v: number) => void;
 
-  // Master output gain (safety limiter)
-  masterGain: number;
-  setMasterGain: (v: number) => void;
+  // Master output gain (0..1) — final stage, applies to everything
+  masterVolume: number;
+  setMasterVolume: (v: number) => void;
+
+  // Mute toggle
+  muted: boolean;
+  toggleMute: () => void;
 
   loadTrack: (t: { title: string; audioUrl: string; duration?: number; illustrationUrl?: string }) => void;
   play: () => void;
@@ -30,12 +36,17 @@ type AudioState = {
   stopAll: () => void;
 
   // Room tone — always plays under voice for intimacy
-  roomToneVolume: number;    // slider 0..1
+  roomToneVolume: number;
   setRoomToneVolume: (v: number) => void;
 
-  // Ducking: when voice plays, ambient is reduced to this fraction
-  duckRatio: number;          // 0..1 — typically 0.35
+  // Ducking: when voice plays, ambient is multiplied by this
+  duckRatio: number;
   setDuckRatio: (v: number) => void;
+
+  // Diagnostics for the user — what is actually being heard right now
+  effectiveVoiceGain: number;
+  effectiveAmbientGain: number;
+  effectiveRoomToneGain: number;
 };
 
 const AudioContext = createContext<AudioState | null>(null);
@@ -67,44 +78,32 @@ const AMBIENT_LABELS: Record<AmbientTrack, string> = {
 };
 
 // ─────────────────────────────────────────────────────────────────────
-// Audio mixing rules (the heart of why voice now stays clear)
-// ─────────────────────────────────────────────────────────────────────
-//   • Voice is the lead. It always plays at voiceVolume (0.85 default).
-//   • Room tone is a quiet floor under the voice (0.06 default, hard cap 0.12).
-//   • Each ambient track has a slider 0..1, but the *applied* gain is:
-//         applied = slider * perTrackCap * (isPlaying ? duckRatio : 1)
-//   • perTrackCap = 0.25 (max one track can contribute) — strict
-//   • duckRatio = 0.20 (when voice is playing, ambient drops to 20% of slider)
-//   • Effective mix headroom when voice + 1 ambient at slider 0.5:
-//         voice 0.85 + roomTone 0.06 + ambient 0.5 * 0.25 * 0.20 = 0.885 → safe
-//   • If multiple ambient tracks are active, they *share* the headroom so
-//     the total ambient sum is capped (no additive clipping).
+// AUDIO MIXING DESIGN (v3 — Web Audio API, proper gain staging)
+//
+// Sources: voice ≈ -8 dBFS, ambient ≈ -15 dBFS, all normalized.
+//
+// Signal flow per source:
+//
+//   <audio>  ──►  MediaElementSource  ──►  GainNode  ──┐
+//                                                     │
+//   (master)  ─────────────────────────────────────────►  Compressor
+//                                                            ──►  GainNode (master)
+//                                                            ──►  destination
+//
+// All real-time mixing happens in Web Audio API so the user's gain
+// changes are audibly instant and the compressor prevents any clipping.
 // ─────────────────────────────────────────────────────────────────────
 
-const PER_TRACK_CAP = 0.5;          // max slider contribution to a single track
-const ROOM_TONE_MAX = 0.12;          // hard ceiling for the always-on room tone
-const AMBIENT_TOTAL_HEADROOM = 0.40; // total sum of active ambient when voice is playing
-const AMBIENT_TOTAL_HEADROOM_NOVOICE = 0.85; // when no voice, ambient can be louder
-
-// Smooth log-scale fade — used for all gain transitions
-function fadeGain(audio: HTMLAudioElement, target: number, durationMs = 600) {
-  const start = audio.volume;
-  const steps = Math.max(8, Math.floor(durationMs / 30));
-  const delta = (target - start) / steps;
-  let i = 0;
-  const tick = () => {
-    i++;
-    if (i >= steps) {
-      audio.volume = target;
-      return;
-    }
-    audio.volume = Math.max(0, Math.min(1, start + delta * i));
-    requestAnimationFrame(tick);
-  };
-  // Cancel any prior in-flight fades by jumping to start
-  audio.volume = start;
-  requestAnimationFrame(tick);
-}
+const ROOM_TONE_MAX = 0.12;          // hard ceiling for the always-on room tone slider
+const AMBIENT_HEADROOM_WITH_VOICE = 0.30; // total ambient sum (after duck) when voice is on
+const AMBIENT_HEADROOM_NO_VOICE = 0.70;   // when no voice, ambient can be louder
+const DUCK_RATIO = 0.25;             // ambient is multiplied by 0.25 when voice is on
+const PER_TRACK_CAP = 0.5;          // any single track can contribute at most this
+const COMPRESSOR_THRESHOLD = -18;   // dB — soft knee starts here
+const COMPRESSOR_RATIO = 6;          // 6:1 above threshold
+const COMPRESSOR_ATTACK = 0.003;     // 3ms — fast enough to catch transients
+const COMPRESSOR_RELEASE = 0.25;     // 250ms — smooth musical release
+const COMPRESSOR_KNEE = 6;           // dB — soft knee
 
 export function AudioProvider({ children }: { children: ReactNode }) {
   const [currentTrack, setCurrentTrack] = useState<AudioState['currentTrack']>(null);
@@ -112,28 +111,28 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  // Master volumes
+  // Volumes
   const [voiceVolume, setVoiceVolume] = useState(0.9);
-  const [masterGain, setMasterGain] = useState(0.9);
-  const [roomToneVolume, setRoomToneVolume] = useState(0.06);
-  const [duckRatio, setDuckRatio] = useState(0.30);
+  const [masterVolume, setMasterVolume] = useState(0.85);
+  const [muted, setMuted] = useState(false);
+  const [roomToneVolume, setRoomToneVolume] = useState(0.05);
+  const [duckRatio, setDuckRatio] = useState(DUCK_RATIO);
 
-  // Per-track slider 0..1. Defaults are LOWER now (0.3-0.4) so first-use isn't loud.
-  // Most users want ambient as a subtle bed, not a wall of sound.
+  // Per-track slider 0..1. Defaults LOWER than before — first use should be subtle.
   const [ambient, setAmbient] = useState<Record<AmbientTrack, { active: boolean; slider: number }>>({
-    rain: { active: false, slider: 0.35 },
-    ocean: { active: false, slider: 0.35 },
-    forest: { active: false, slider: 0.35 },
-    drone: { active: false, slider: 0.35 },
-    piano: { active: false, slider: 0.3 },
-    whitenoise: { active: false, slider: 0.25 },
-    fire: { active: false, slider: 0.35 },
-    river: { active: false, slider: 0.35 },
-    wind: { active: false, slider: 0.35 },
+    rain: { active: false, slider: 0.4 },
+    ocean: { active: false, slider: 0.4 },
+    forest: { active: false, slider: 0.4 },
+    drone: { active: false, slider: 0.4 },
+    piano: { active: false, slider: 0.35 },
+    whitenoise: { active: false, slider: 0.3 },
+    fire: { active: false, slider: 0.4 },
+    river: { active: false, slider: 0.4 },
+    wind: { active: false, slider: 0.4 },
     room: { active: false, slider: 0.3 },
   });
 
-  // Refs to live HTMLAudioElement instances (we never re-render audio elements)
+  // ── Refs to audio infrastructure ──────────────────────────────────
   const voiceRef = useRef<HTMLAudioElement | null>(null);
   const roomToneRef = useRef<HTMLAudioElement | null>(null);
   const ambientRefs = useRef<Record<AmbientTrack, HTMLAudioElement | null>>({
@@ -141,7 +140,55 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     whitenoise: null, fire: null, river: null, wind: null, room: null,
   });
 
-  // ── Voice audio element ────────────────────────────────────────────
+  // Web Audio API graph
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const masterGainRef = useRef<GainNode | null>(null);
+  const compressorRef = useRef<DynamicsCompressorNode | null>(null);
+  const voiceGainRef = useRef<GainNode | null>(null);
+  const roomToneGainRef = useRef<GainNode | null>(null);
+  const ambientGainsRef = useRef<Record<AmbientTrack, GainNode | null>>({
+    rain: null, ocean: null, forest: null, drone: null, piano: null,
+    whitenoise: null, fire: null, river: null, wind: null, room: null,
+  });
+
+  // Diagnostics — what is actually being heard?
+  const [effectiveVoiceGain, setEffectiveVoiceGain] = useState(0);
+  const [effectiveAmbientGain, setEffectiveAmbientGain] = useState(0);
+  const [effectiveRoomToneGain, setEffectiveRoomToneGain] = useState(0);
+
+  // ── Initialize Web Audio API once ──────────────────────────────────
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const AudioCtor = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioCtor) return;
+      const ctx = new AudioCtor();
+      audioCtxRef.current = ctx;
+
+      // Master chain: compressor → master gain → destination
+      const compressor = ctx.createDynamicsCompressor();
+      compressor.threshold.value = COMPRESSOR_THRESHOLD;
+      compressor.ratio.value = COMPRESSOR_RATIO;
+      compressor.attack.value = COMPRESSOR_ATTACK;
+      compressor.release.value = COMPRESSOR_RELEASE;
+      compressor.knee.value = COMPRESSOR_KNEE;
+      compressorRef.current = compressor;
+
+      const masterGain = ctx.createGain();
+      masterGain.gain.value = masterVolume;
+      masterGainRef.current = masterGain;
+
+      compressor.connect(masterGain).connect(ctx.destination);
+    } catch (e) {
+      console.warn('Web Audio API init failed; falling back to element volume', e);
+    }
+    return () => {
+      try { audioCtxRef.current?.close(); } catch {}
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // ── Voice audio element (MediaElementSource) ─────────────────────
   useEffect(() => {
     const a = new Audio();
     a.preload = 'metadata';
@@ -157,82 +204,147 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       setIsPlaying(false);
     });
     voiceRef.current = a;
+
+    // Wire into Web Audio API if available
+    const ctx = audioCtxRef.current;
+    if (ctx && compressorRef.current) {
+      try {
+        const src = ctx.createMediaElementSource(a);
+        const gain = ctx.createGain();
+        gain.gain.value = voiceVolume;
+        voiceGainRef.current = gain;
+        src.connect(gain).connect(compressorRef.current);
+      } catch (e) {
+        console.warn('voice MediaElementSource failed', e);
+      }
+    }
+
     return () => {
       a.pause();
       a.src = '';
     };
   }, []);
 
-  // ── Ambient + room tone audio elements (created once) ──────────────
+  // ── Ambient + room tone audio elements ───────────────────────────
   useEffect(() => {
+    const ctx = audioCtxRef.current;
+    const compressor = compressorRef.current;
     (Object.keys(AMBIENT_URLS) as AmbientTrack[]).forEach(track => {
       const a = new Audio(AMBIENT_URLS[track]);
       a.loop = true;
-      a.volume = 0;
+      a.volume = 1; // We control gain via Web Audio; element volume is 1 (full source)
       a.preload = 'auto';
       ambientRefs.current[track] = a;
+
+      if (ctx && compressor) {
+        try {
+          const src = ctx.createMediaElementSource(a);
+          const gain = ctx.createGain();
+          gain.gain.value = 0;
+          ambientGainsRef.current[track] = gain;
+          src.connect(gain).connect(compressor);
+        } catch (e) {
+          console.warn(`ambient ${track} Web Audio failed`, e);
+        }
+      }
     });
     const rt = new Audio(AMBIENT_URLS.room);
     rt.loop = true;
-    rt.volume = 0;
+    rt.volume = 1;
     rt.preload = 'auto';
     roomToneRef.current = rt;
+    if (ctx && compressor) {
+      try {
+        const src = ctx.createMediaElementSource(rt);
+        const gain = ctx.createGain();
+        gain.gain.value = 0;
+        roomToneGainRef.current = gain;
+        src.connect(gain).connect(compressor);
+      } catch (e) {
+        console.warn('room tone Web Audio failed', e);
+      }
+    }
 
     return () => {
       (Object.keys(AMBIENT_URLS) as AmbientTrack[]).forEach(track => {
         const a = ambientRefs.current[track];
         if (a) { a.pause(); a.src = ''; }
       });
-      rt.pause();
-      rt.src = '';
+      rt.pause(); rt.src = '';
     };
   }, []);
 
-  // ── Compute and apply mix gains whenever any input changes ─────────
-  // This is the central mixer. Single source of truth.
+  // ── Apply master volume ───────────────────────────────────────────
   useEffect(() => {
-    // 1. Compute room tone (always, but only audible when voice is playing or room is in active list)
-    const rt = roomToneRef.current;
-    if (rt) {
-      const roomTarget = Math.min(ROOM_TONE_MAX, roomToneVolume);
-      // Room tone plays quietly whenever ANY audio is active, but extra-subtle when voice is on
-      const baseTarget = isPlaying ? roomTarget : (roomTarget * 0.4);
-      fadeGain(rt, baseTarget, 1200);
-      if (baseTarget > 0.001 && rt.paused) rt.play().catch(() => {});
-      if (baseTarget < 0.001 && !rt.paused) rt.pause();
+    if (masterGainRef.current) {
+      const target = muted ? 0 : masterVolume;
+      masterGainRef.current.gain.setTargetAtTime(target, audioCtxRef.current?.currentTime || 0, 0.05);
+    } else {
+      // Fallback: HTMLAudioElement.volume
+      const factor = muted ? 0 : masterVolume;
+      voiceRef.current && (voiceRef.current.volume = voiceVolume * factor);
+      roomToneRef.current && (roomToneRef.current.volume = roomToneVolume * factor);
+      (Object.keys(ambient) as AmbientTrack[]).forEach(t => {
+        const a = ambientRefs.current[t];
+        if (a) a.volume = (ambient[t].active ? ambient[t].slider * 0.4 : 0) * factor;
+      });
     }
+  }, [masterVolume, muted]);
 
-    // 2. Compute ambient mix
+  // ── Apply voice gain ──────────────────────────────────────────────
+  useEffect(() => {
+    if (voiceGainRef.current) {
+      voiceGainRef.current.gain.setTargetAtTime(voiceVolume, audioCtxRef.current?.currentTime || 0, 0.05);
+      setEffectiveVoiceGain(voiceVolume * (muted ? 0 : masterVolume));
+    } else if (voiceRef.current) {
+      voiceRef.current.volume = voiceVolume * (muted ? 0 : masterVolume);
+    }
+  }, [voiceVolume, masterVolume, muted]);
+
+  // ── Compute and apply ambient mix ─────────────────────────────────
+  useEffect(() => {
     const activeTracks = (Object.keys(ambient) as AmbientTrack[]).filter(t => ambient[t].active);
-    const headroom = isPlaying ? AMBIENT_TOTAL_HEADROOM : AMBIENT_TOTAL_HEADROOM_NOVOICE;
-    // Sum of slider values for active tracks
+    const headroom = isPlaying ? AMBIENT_HEADROOM_WITH_VOICE : AMBIENT_HEADROOM_NO_VOICE;
     const totalSlider = activeTracks.reduce((sum, t) => sum + ambient[t].slider, 0);
-    // Normalize so the active set shares the headroom proportionally to slider
-    // (so enabling 3 tracks doesn't triple the volume — it redistributes)
+    // Active tracks share the headroom proportionally — enabling 3 doesn't triple volume
     const share = totalSlider > 0 ? headroom / totalSlider : 0;
 
+    let totalEffective = 0;
     (Object.keys(ambient) as AmbientTrack[]).forEach(track => {
-      const a = ambientRefs.current[track];
-      if (!a) return;
+      const gainNode = ambientGainsRef.current[track];
       const isActive = ambient[track].active;
-      if (!isActive) {
-        fadeGain(a, 0, 600);
-        // Pause after fade
-        setTimeout(() => { if (a.paused === false && a.volume < 0.01) a.pause(); }, 700);
-        return;
-      }
-      // Per-track applied gain: slider × per-track cap × share-of-headroom × duck-ratio
-      const duck = isPlaying ? duckRatio : 1.0;
-      const target = Math.min(PER_TRACK_CAP, ambient[track].slider * share * duck);
-      fadeGain(a, target, 800);
-      if (a.paused) a.play().catch(() => {});
-    });
-  }, [ambient, roomToneVolume, isPlaying, duckRatio]);
+      const slider = ambient[track].slider;
 
-  // ── Voice volume ───────────────────────────────────────────────────
-  useEffect(() => {
-    if (voiceRef.current) voiceRef.current.volume = Math.min(1, voiceVolume * masterGain);
-  }, [voiceVolume, masterGain]);
+      // Computed target: slider × share-of-headroom × cap × duck
+      const duck = isPlaying ? duckRatio : 1.0;
+      const targetRaw = isActive ? Math.min(PER_TRACK_CAP, slider * share) * duck : 0;
+      const finalTarget = muted ? 0 : targetRaw;
+
+      if (gainNode) {
+        // Web Audio API path
+        const t = audioCtxRef.current?.currentTime || 0;
+        gainNode.gain.setTargetAtTime(finalTarget, t, 0.08);
+      } else {
+        // HTMLAudioElement fallback
+        const a = ambientRefs.current[track];
+        if (a) a.volume = finalTarget;
+      }
+      if (isActive) totalEffective += finalTarget;
+    });
+    setEffectiveAmbientGain(totalEffective);
+
+    // Room tone — always plays quietly under voice
+    const roomTarget = Math.min(ROOM_TONE_MAX, roomToneVolume);
+    const roomBase = isPlaying ? roomTarget : (roomTarget * 0.5);
+    const roomFinal = muted ? 0 : (isPlaying || activeTracks.length > 0 ? roomBase : 0);
+    if (roomToneGainRef.current) {
+      const t = audioCtxRef.current?.currentTime || 0;
+      roomToneGainRef.current.gain.setTargetAtTime(roomFinal, t, 0.12);
+    } else if (roomToneRef.current) {
+      roomToneRef.current.volume = roomFinal;
+    }
+    setEffectiveRoomToneGain(roomFinal);
+  }, [ambient, isPlaying, duckRatio, roomToneVolume, muted]);
 
   // ── Track controls ────────────────────────────────────────────────
   const loadTrack: AudioState['loadTrack'] = useCallback((t) => {
@@ -252,6 +364,10 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       console.warn('play failed', e);
       setIsPlaying(false);
     });
+    // Resume Web Audio context (browser autoplay policy)
+    if (audioCtxRef.current?.state === 'suspended') {
+      audioCtxRef.current.resume().catch(() => {});
+    }
   }, [currentTrack]);
 
   const pause = useCallback(() => {
@@ -288,15 +404,21 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     });
   }, [pause]);
 
+  const toggleMute = useCallback(() => {
+    setMuted(m => !m);
+  }, []);
+
   return (
     <AudioContext.Provider value={{
       currentTrack, isPlaying, progress, duration,
       voiceVolume, setVoiceVolume,
-      masterGain, setMasterGain,
+      masterVolume, setMasterVolume,
+      muted, toggleMute,
       loadTrack, play, pause, toggle, seek,
       ambient, toggleAmbient, setAmbientSlider, stopAll,
       roomToneVolume, setRoomToneVolume,
       duckRatio, setDuckRatio,
+      effectiveVoiceGain, effectiveAmbientGain, effectiveRoomToneGain,
     }}>
       {children}
     </AudioContext.Provider>

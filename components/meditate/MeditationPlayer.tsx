@@ -36,7 +36,7 @@ export function MeditationPlayer({
   reflection?: string;
   illustrationUrl?: string;
 }) {
-  const { currentTrack, isPlaying, progress, duration: actualDuration, voiceVolume, setVoiceVolume, loadTrack, toggle, seek } = useAudio();
+  const { currentTrack, isPlaying, progress, duration: actualDuration, voiceVolume, setVoiceVolume, masterVolume, setMasterVolume, loadTrack, toggle, seek } = useAudio();
 
   // Resolve audio URL: prefer B2 URL, fall back to local /audio/meditations/
   const resolvedAudioUrl = audioUrl
@@ -153,24 +153,43 @@ export function MeditationPlayer({
 
         {/* Volume */}
         {hasAudio && (
-          <div className="relative mt-4 flex items-center gap-2">
-            <button
-              onClick={() => setVoiceVolume(voiceVolume === 0 ? 0.85 : 0)}
-              className="text-ink/50 hover:text-ink"
-              aria-label="Toggle volume"
-            >
-              {voiceVolume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
-            </button>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.05"
-              value={voiceVolume}
-              onChange={e => setVoiceVolume(parseFloat(e.target.value))}
-              className="w-24 h-0.5 appearance-none bg-ink/10 rounded-full accent-sage-600"
-              aria-label="Volume"
-            />
+          <div className="relative mt-4 space-y-2">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setVoiceVolume(voiceVolume === 0 ? 0.9 : 0)}
+                className="text-ink/50 hover:text-ink"
+                aria-label="Toggle voice"
+                title={`Voice: ${Math.round(voiceVolume * 100)}%`}
+              >
+                {voiceVolume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
+              </button>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={voiceVolume}
+                onChange={e => setVoiceVolume(parseFloat(e.target.value))}
+                className="flex-1 h-0.5 appearance-none bg-ink/10 rounded-full accent-sage-600"
+                aria-label="Voice volume"
+              />
+              <span className="text-[10px] text-ink/40 tabular-nums w-8 text-right">Voice</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-ink/40 text-[10px] uppercase tracking-wider w-4">M</span>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={masterVolume}
+                onChange={e => setMasterVolume(parseFloat(e.target.value))}
+                className="flex-1 h-0.5 appearance-none bg-ink/10 rounded-full accent-sage-600"
+                aria-label="Master volume"
+                title={`Master: ${Math.round(masterVolume * 100)}%`}
+              />
+              <span className="text-[10px] text-ink/40 tabular-nums w-8 text-right">Master</span>
+            </div>
           </div>
         )}
       </div>
