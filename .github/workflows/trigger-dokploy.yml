@@ -1,0 +1,15 @@
+name: Trigger Dokploy deploy
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Dokploy redeploy
+        run: |
+          curl -s -X POST "${{ secrets.DOKPLOY_URL }}/api/trpc/application.redeploy" \
+            -H "x-api-key: ${{ secrets.DOKPLOY_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{"json":{"applicationId":"${{ secrets.HEAL_DOKPLOY_APP_ID }}"}}'
