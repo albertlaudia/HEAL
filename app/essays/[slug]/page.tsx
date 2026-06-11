@@ -33,7 +33,7 @@ export default async function EssayPage({ params }: { params: Promise<{ slug: st
       </header>
 
       {essay.illustration_url && (
-        <div className="relative aspect-[2/1] rounded-2xl overflow-hidden mb-12">
+        <div className="relative aspect-[3/2] rounded-2xl overflow-hidden mb-12">
           <Image src={essay.illustration_url} alt={essay.title} fill className="object-cover" />
         </div>
       )}

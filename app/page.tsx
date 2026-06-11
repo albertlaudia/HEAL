@@ -12,6 +12,7 @@ import { FeaturedThisWeek, type FeaturedItem } from '@/components/home/FeaturedT
 import { ThemeBadge } from '@/components/content/ThemeBadge';
 import { ShareButton } from '@/components/content/ShareButton';
 import { YearCycleBadge } from '@/components/home/YearCycleBadge';
+import { ContinueProgram } from '@/components/home/ContinueProgram';
 import { ArrowRight, Headphones, Sparkles } from 'lucide-react';
 import { headers } from 'next/headers';
 
@@ -98,7 +99,7 @@ export default async function HomePage() {
           {meditation ? (
             <article className="card-quiet max-w-3xl mx-auto overflow-hidden">
               {(meditation.illustration_url || meditation.slug) && (
-                <div className="relative aspect-[2/1] bg-sage-100">
+                <div className="relative aspect-[3/2] bg-sage-100">
                   <Image
                     src={meditation.illustration_url || `/images/meditations/illustration-${meditation.slug}.png`}
                     alt={meditation.title}
@@ -164,6 +165,11 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── CONTINUE A PROGRAM ──────────────────────────────────── */}
+      <div className="container-wide">
+        <ContinueProgram />
+      </div>
 
       {/* ── QUOTE + BREATH + SCRIPTURE ────────────────────────── */}
       <section className="container-wide py-12">

@@ -1,0 +1,127 @@
+{
+  "programs": [
+    {
+      "id": "when-you-are-afraid",
+      "title": "When You Are Afraid",
+      "tagline": "Six steps for the nights when the dark feels heavy",
+      "description": "This program is for the nights when the dark is heavy. When the news is too much. When the future feels uncertain. When your body is bracing for something you cannot name. It does not promise to make the fear go away. It does not try to convince you that everything will be fine. It walks alongside you, one small step at a time, and offers the oldest promise in the book — you are not alone. Take what you need. Skip what doesn't fit. The work is to keep going, even one breath at a time.",
+      "duration_label": "6 steps · self-paced",
+      "category": "fear",
+      "theme_color": "indigo",
+      "illustration_url": "",
+      "illustration_prompt": "Soft watercolor meditation illustration. HEAL design language: hand-painted feel, loose washes, soft edges, no text, no people, no sharp details, calming negative space. Theme: When You Are Afraid. Mood: deep indigo, soft moon, holding space.",
+      "badge": {
+        "name": "Brave",
+        "affirmation": "Courage is not the absence of fear. It is the choice to keep going while afraid.",
+        "scripture_ref": "Joshua 1:9",
+        "scripture_text": "Be strong and courageous. Do not be frightened, and do not be dismayed, for the LORD your God is with you wherever you go.",
+        "image_prompt": "Soft watercolor badge medallion. HEAL design language: hand-painted feel, loose washes, no text, no people, no sharp details. Round circular shape with deep indigo and soft cream gradient, soft gold leaf border, simple inner glow at center. Sacred geometry: a small single star above a horizon line, no text.",
+        "image_path": "/images/badges/when-you-are-afraid.png"
+      },
+      "steps": [
+        {
+          "order": 1,
+          "title": "Name the fear — out loud or in writing",
+          "reflection": "Naming a fear is not the same as feeding it. It is the opposite. It is putting a shape on something formless so that you can see it, hold it, and decide what to do next. Today, name the fear. Out loud, if you can. In writing, if that's easier. Just name it.",
+          "scripture_ref": "Psalm 56:3",
+          "scripture_text": "When I am afraid, I put my trust in you.",
+          "practice": {
+            "kind": "breath",
+            "title": "Long, slow exhale",
+            "slug": "extended-exhale"
+          },
+          "response": {
+            "headline": "You put the fear into words.",
+            "body": "The 56th Psalm — written by David when he was captured by the Philistines — opens with three small words: 'When I am afraid.' Not 'if.' When. The psalmist is not pretending. He is naming. The second half of the line is the pivot — 'I put my trust in you.' The first half is the honesty. You offered both today.",
+            "scripture": "Psalm 56:3"
+          }
+        },
+        {
+          "order": 2,
+          "title": "Place your hand on your chest",
+          "reflection": "Today, place your hand on your chest. Just for a moment. Notice the warmth of your own palm. Notice the rise and fall. You are the same person you were ten minutes ago. The fear is real, but so are you. The hand on the chest is a way of coming home.",
+          "scripture_ref": "Isaiah 41:10",
+          "scripture_text": "Fear not, for I am with you; be not dismayed, for I am your God; I will strengthen you, I will help you, I will uphold you with my righteous right hand.",
+          "practice": {
+            "kind": "breath",
+            "title": "Hand on heart breath",
+            "slug": "hand-on-heart"
+          },
+          "response": {
+            "headline": "You came home to your own body.",
+            "body": "The 41st chapter of Isaiah is one of the most repeated passages in the Bible — 'Fear not, for I am with you.' Note the verb. Not 'have been.' Not 'will be.' 'Am.' Present tense. You put a hand on your own chest, and in that small gesture, you practiced a present-tense kind of trust.",
+            "scripture": "Isaiah 41:10"
+          }
+        },
+        {
+          "order": 3,
+          "title": "Notice five things you can see",
+          "reflection": "Grounding in the senses is one of the oldest ways through fear. Today, name five things you can see. A wall. A window. A cup. A tree. The sky. Name them slowly, in your mind. The naming is the practice. It brings you back to the room, to the day, to the body that is still here.",
+          "scripture_ref": "1 Kings 19:13",
+          "scripture_text": "And behold, the LORD passed by, and a great and strong wind tore the mountains and broke in pieces the rocks before the LORD, but the LORD was not in the wind. And after the wind an earthquake, but the LORD was not in the earthquake.",
+          "practice": {
+            "kind": "meditation",
+            "title": "A short grounding meditation",
+            "slug": "grounded-in-the-room"
+          },
+          "response": {
+            "headline": "You came back to the room.",
+            "body": "The prophet Elijah, hiding in a cave, sees a great wind, an earthquake, a fire. None of them, the text says, is the Lord. Then comes a still, small voice. The way the Lord found Elijah was not through the dramatic. It was through the small, the close, the present. By naming five things you could see, you let yourself be found by the small, too.",
+            "scripture": "1 Kings 19:13"
+          }
+        },
+        {
+          "order": 4,
+          "title": "Remember a time you were afraid before — and survived",
+          "reflection": "You have been afraid before. You are still here. Today, name one time you were afraid — about a thing, a season, a relationship — and you got through it. Even if 'through it' just means you woke up the next morning. That counts.",
+          "scripture_ref": "2 Timothy 1:7",
+          "scripture_text": "For God gave us a spirit not of fear but of power and love and self-control.",
+          "practice": {
+            "kind": "meditation",
+            "title": "On remembering survival",
+            "slug": "you-got-through-it"
+          },
+          "response": {
+            "headline": "You remembered your own survival.",
+            "body": "The second letter to Timothy has one of the most-quoted lines in the New Testament — 'God gave us a spirit not of fear but of power and love and self-control.' Note — it is not 'God gave us the absence of fear.' It is 'a spirit not of fear.' The fear can still be there. The spirit is something different. Today, by remembering your own survival, you practiced being on the side of that different spirit.",
+            "scripture": "2 Timothy 1:7"
+          }
+        },
+        {
+          "order": 5,
+          "title": "Pray one sentence — even a fragment",
+          "reflection": "You do not need a long prayer. You do not need a beautiful prayer. Today, pray one sentence. 'Help.' 'Stay with me.' 'I'm scared.' 'Thank you.' 'Please.' Even a fragment is a prayer.",
+          "scripture_ref": "Romans 8:26",
+          "scripture_text": "Likewise the Spirit helps us in our weakness. For we do not know what to pray for as we ought, but the Spirit himself intercedes for us with groanings too deep for words.",
+          "practice": {
+            "kind": "prayer",
+            "title": "A short prayer for the anxious heart",
+            "slug": "prayer-for-anxiety"
+          },
+          "response": {
+            "headline": "You prayed.",
+            "body": "The eighth chapter of Romans says that we do not know what to pray for as we ought — and that the Spirit himself intercedes for us with 'groanings too deep for words.' The implication is striking. You do not have to find the right words. You do not have to be eloquent. The Spirit is already at work in the gap. By praying one sentence, you let the Spirit do what the Spirit does. You just got out of the way.",
+            "scripture": "Romans 8:26"
+          }
+        },
+        {
+          "order": 6,
+          "title": "Finish with: I am still here, and so is the morning",
+          "reflection": "This is the last step. Take a breath. Notice that the fear, while real, did not finish you. Notice that the morning is here. Notice that you are still you. Say, to yourself: 'I am still here, and so is the morning.' That is enough. That is the whole practice.",
+          "scripture_ref": "Psalm 30:5",
+          "scripture_text": "Weeping may endure for a night, but joy comes in the morning.",
+          "practice": {
+            "kind": "prayer",
+            "title": "A closing prayer for courage",
+            "slug": "prayer-for-strength"
+          },
+          "response": {
+            "headline": "You finished. The morning is here.",
+            "body": "You walked through six steps. The fear may not be gone. That is not the point. The point is that you did not let the fear finish the day. The 30th Psalm says, simply, 'Weeping may endure for a night, but joy comes in the morning.' The verse is not a denial of the night. It is a promise that the night is not the end. You have reached the morning. Welcome to it.",
+            "scripture": "Psalm 30:5"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,161 @@
+{
+  "programs": [
+    {
+      "id": "path-through-grief",
+      "title": "A Path Through Grief",
+      "tagline": "Eight gentle steps for the days after a loss",
+      "description": "Grief does not follow a schedule. It does not care about our calendars, our work deadlines, or the new year. It arrives in waves, sometimes in the middle of a sentence. This eight-step program is not a 'cure' for grief. Nothing on this platform is. It is a small companion for the days, weeks, and months after a loss — a series of gentle invitations to keep going, to notice what is still here, and to let the love you carry find a place to rest. Take it at your own pace. There is no wrong way to grieve, and there is no wrong time to begin.",
+      "duration_label": "8 steps · self-paced",
+      "category": "grief",
+      "theme_color": "muted-blue",
+      "illustration_url": "",
+      "illustration_prompt": "Soft watercolor meditation illustration. HEAL design language: hand-painted feel, loose washes, soft edges, no text, no people, no sharp details, calming negative space. Theme: Path Through Grief. Mood: gentle rain, muted blues, holding space.",
+      "badge": {
+        "name": "Held",
+        "affirmation": "I am allowed to grieve. I am allowed to keep going. I am allowed to do both.",
+        "scripture_ref": "Psalm 34:18",
+        "scripture_text": "The LORD is near to the brokenhearted and saves the crushed in spirit.",
+        "image_prompt": "Soft watercolor badge medallion. HEAL design language: hand-painted feel, loose washes, no text, no people, no sharp details. Round circular shape with muted blue and soft cream gradient, soft gold leaf border, simple inner glow at center. Sacred geometry: a small single candle flame inside a circle, no text.",
+        "image_path": "/images/badges/path-through-grief.png"
+      },
+      "steps": [
+        {
+          "order": 1,
+          "title": "You are allowed to be where you are",
+          "reflection": "Grief is not a problem to be solved. It is a love that has lost its place to land. Today, give yourself permission to be wherever you are. You do not have to be further along. You do not have to be 'okay.' You just have to be here, this morning, on this page.",
+          "scripture_ref": "Psalm 34:18",
+          "scripture_text": "The LORD is near to the brokenhearted and saves the crushed in spirit.",
+          "practice": {
+            "kind": "breath",
+            "title": "Long, slow exhale",
+            "slug": "extended-exhale"
+          },
+          "response": {
+            "headline": "You let yourself be here.",
+            "body": "The most countercultural thing a grieving person can do is to stop performing. To stop pretending to be fine. To stop measuring themselves against a timeline. The psalmist says the Lord is near to the brokenhearted. 'Near' is the word. Not 'fixing.' Not 'rushing.' Near. You let yourself be near to your own heart today. That is the practice.",
+            "scripture": "Psalm 34:18"
+          }
+        },
+        {
+          "order": 2,
+          "title": "Name the person, the pet, the thing you lost — out loud",
+          "reflection": "Saying the name keeps the love alive. Today, if you can, say the name of what you have lost — out loud, or in writing, or in a prayer. A name. A nickname. A small phrase that belongs to them. Saying it is not reopening the wound. It is keeping the connection alive in a different form.",
+          "scripture_ref": "John 11:25–26",
+          "scripture_text": "I am the resurrection and the life. Whoever believes in me, though he die, yet shall he live.",
+          "practice": {
+            "kind": "prayer",
+            "title": "A prayer for a grieving heart",
+            "slug": "prayer-grieving-heart"
+          },
+          "response": {
+            "headline": "You said the name.",
+            "body": "Saying the name is a small, brave thing. In a culture that often asks us to 'move on,' saying the name is a quiet rebellion. The gospel of John has Jesus standing at a tomb, speaking a name — 'Lazarus, come out' — and the dead man hears it. There is something in the speaking of a name that keeps a love present. You did that today.",
+            "scripture": "John 11:25–26"
+          }
+        },
+        {
+          "order": 3,
+          "title": "Let the body do what it needs to do",
+          "reflection": "Grief lives in the body. Sometimes it is a tight chest. Sometimes it is exhaustion. Sometimes it is crying for no apparent reason. Today, give the body permission. If you need to cry, cry. If you need to sleep, sleep. If you need to walk without a destination, walk. The body is not betraying you. It is mourning with you.",
+          "scripture_ref": "Psalm 42:3",
+          "scripture_text": "My tears have been my food day and night, while they say to me all the day long, 'Where is your God?'",
+          "practice": {
+            "kind": "breath",
+            "title": "Gentle breath, no count",
+            "slug": "gentle-breath"
+          },
+          "response": {
+            "headline": "You let the body do its work.",
+            "body": "There is a psalm — Psalm 42 — that says, simply, 'My tears have been my food day and night.' It is not a psalm about how to stop crying. It is a psalm that names crying as something holy. The body is not a problem to be fixed. It is a place where the heart is allowed to live. You let it live there today.",
+            "scripture": "Psalm 42:3"
+          }
+        },
+        {
+          "order": 4,
+          "title": "Notice one thing that has not been taken from you",
+          "reflection": "Grief often convinces us that everything has been taken. But the truth is more complicated. Right now, name one thing that has not been taken from you. A song. A memory. A relationship. A part of yourself you thought was lost but is not.",
+          "scripture_ref": "Isaiah 43:1",
+          "scripture_text": "Do not fear, for I have redeemed you; I have called you by name, you are mine.",
+          "practice": {
+            "kind": "meditation",
+            "title": "A short meditation on what remains",
+            "slug": "what-remains"
+          },
+          "response": {
+            "headline": "You noticed what is still here.",
+            "body": "It is not a denial of the loss to notice what is still here. It is, in fact, the most honest thing a grieving person can do. The prophet Isaiah writes 'I have called you by name, you are mine.' Even in loss, even in the days when it feels like everything has been taken, the writer of Isaiah insists that something remains. You named one of those things today.",
+            "scripture": "Isaiah 43:1"
+          }
+        },
+        {
+          "order": 5,
+          "title": "Write one sentence to the person or thing you lost",
+          "reflection": "Write one sentence — even a fragment — to the person, the pet, the place, the version of yourself that is gone. It can be 'I miss you.' It can be 'I'm sorry I didn't say it.' It can be 'Thank you for the years.' You do not have to send it. You do not have to keep it. Just write it.",
+          "scripture_ref": "2 Corinthians 1:3–4",
+          "scripture_text": "Blessed be the God and Father of our Lord Jesus Christ, the Father of mercies and God of all comfort, who comforts us in all our affliction.",
+          "practice": {
+            "kind": "prayer",
+            "title": "A prayer for the anniversary of a death",
+            "slug": "prayer-for-the-anniversary-of-a-death"
+          },
+          "response": {
+            "headline": "You wrote to the one who is gone.",
+            "body": "Writing to the dead is a strange, holy thing. We do it, in part, because we still have things to say. The second letter to the Corinthians names God as 'the Father of mercies and God of all comfort, who comforts us in all our affliction.' Note the verb — 'comforts.' It is present tense. Not past. Not future. Present. Today you let yourself be comforted. That is not weakness. It is the practice.",
+            "scripture": "2 Corinthians 1:3–4"
+          }
+        },
+        {
+          "order": 6,
+          "title": "Step outside for one minute",
+          "reflection": "Grief keeps us inside ourselves. The world, with all its demands, can feel impossible. But outside — even a doorstep, a window, a single tree — the world is still here. Step outside for one minute. Notice the sky. Notice the air. Notice that the world did not stop.",
+          "scripture_ref": "Genesis 1:1",
+          "scripture_text": "In the beginning, God created the heavens and the earth.",
+          "practice": {
+            "kind": "meditation",
+            "title": "A short reflection on what continues",
+            "slug": "the-world-continues"
+          },
+          "response": {
+            "headline": "You noticed the world is still here.",
+            "body": "There is a strange comfort in stepping outside. Not because the sky fixes anything. But because the sky has not gone. The air is still here. The trees are still here. Genesis 1:1 — 'In the beginning, God created the heavens and the earth' — is also a promise that the heavens and the earth are still in the middle of being. So are you.",
+            "scripture": "Genesis 1:1"
+          }
+        },
+        {
+          "order": 7,
+          "title": "Identify one small ritual to remember by",
+          "reflection": "A ritual is a small, repeatable act that keeps a love present. Today, identify one small ritual you could keep — a candle lit on a certain day, a song on a birthday, a meal made in a certain way. A ritual does not have to be big. It just has to be yours.",
+          "scripture_ref": "Deuteronomy 6:7",
+          "scripture_text": "You shall teach them diligently to your children, and shall talk of them when you sit in your house, and when you walk by the way, and when you lie down, and when you rise.",
+          "practice": {
+            "kind": "meditation",
+            "title": "On the practice of memory",
+            "slug": "the-practice-of-memory"
+          },
+          "response": {
+            "headline": "You chose a way to remember.",
+            "body": "Rituals are how love stays alive in a different form. The book of Deuteronomy tells the Israelites to talk of the holy things 'when you sit in your house, and when you walk by the way.' Notice the smallness. The everyday-ness. That is where ritual lives — not in cathedrals, but in the kitchen, the table, the morning. You just chose one of your own.",
+            "scripture": "Deuteronomy 6:7"
+          }
+        },
+        {
+          "order": 8,
+          "title": "Tell yourself: I will keep going, one small step at a time",
+          "reflection": "Grief is not the opposite of living. It is part of loving. Today, take one small step forward. It can be a meal. A shower. A walk. A phone call. Then say, to yourself: 'I will keep going, one small step at a time.' You are not the same as you were. You never will be. You are also still here.",
+          "scripture_ref": "Psalm 23:4",
+          "scripture_text": "Even though I walk through the valley of the shadow of death, I will fear no evil, for you are with me.",
+          "practice": {
+            "kind": "prayer",
+            "title": "A closing prayer for the path",
+            "slug": "prayer-for-strength"
+          },
+          "response": {
+            "headline": "You finished. You are still here.",
+            "body": "You have walked through eight steps. You did not have to. You chose to. The 23rd Psalm — perhaps the most loved psalm of all — does not say 'you will be carried out of the valley.' It says 'I will fear no evil, for you are with me.' 'With me' is the verb. You are not alone in the valley. You never have been. Welcome to the other side of this step.",
+            "scripture": "Psalm 23:4"
+          }
+        }
+      ]
+    }
+  ]
+}

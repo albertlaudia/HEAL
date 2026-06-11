@@ -67,7 +67,7 @@ export default async function MeditationPage({ params }: { params: Promise<{ slu
       </header>
 
       {(m.illustration_url || m.slug) && (
-        <div className="relative max-w-3xl mx-auto aspect-[2/1] rounded-2xl overflow-hidden mb-12 bg-sage-100">
+        <div className="relative max-w-3xl mx-auto aspect-[3/2] rounded-2xl overflow-hidden mb-12 bg-sage-100">
           <Image
             src={m.illustration_url || `/images/meditations/illustration-${m.slug}.png`}
             alt={m.title}

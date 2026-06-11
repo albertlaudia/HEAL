@@ -15,6 +15,7 @@ const links = [
   { href: '/prayers', label: 'Prayers' },
   { href: '/essays', label: 'Essays' },
   { href: '/praise', label: 'Praise' },
+  { href: '/programs', label: 'Programs' },
   { href: '/about', label: 'About' },
 ];
 
