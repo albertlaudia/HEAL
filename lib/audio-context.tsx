@@ -70,19 +70,20 @@ const AMBIENT_LABELS: Record<AmbientTrack, string> = {
 // Audio mixing rules (the heart of why voice now stays clear)
 // ─────────────────────────────────────────────────────────────────────
 //   • Voice is the lead. It always plays at voiceVolume (0.85 default).
-//   • Room tone is a quiet floor under the voice (0.08 default, hard cap 0.15).
+//   • Room tone is a quiet floor under the voice (0.06 default, hard cap 0.12).
 //   • Each ambient track has a slider 0..1, but the *applied* gain is:
 //         applied = slider * perTrackCap * (isPlaying ? duckRatio : 1)
-//   • perTrackCap = 0.5 (max one track can contribute)
-//   • duckRatio = 0.35 (when voice is playing, ambient drops to 35% of slider)
-//   • Effective mix headroom: voice 0.85 + roomTone 0.08 + 1 ambient 0.5*0.35 = 0.92 → safe
+//   • perTrackCap = 0.25 (max one track can contribute) — strict
+//   • duckRatio = 0.20 (when voice is playing, ambient drops to 20% of slider)
+//   • Effective mix headroom when voice + 1 ambient at slider 0.5:
+//         voice 0.85 + roomTone 0.06 + ambient 0.5 * 0.25 * 0.20 = 0.885 → safe
 //   • If multiple ambient tracks are active, they *share* the headroom so
 //     the total ambient sum is capped (no additive clipping).
 // ─────────────────────────────────────────────────────────────────────
 
 const PER_TRACK_CAP = 0.5;          // max slider contribution to a single track
-const ROOM_TONE_MAX = 0.15;          // hard ceiling for the always-on room tone
-const AMBIENT_TOTAL_HEADROOM = 0.45; // total sum of active ambient tracks cannot exceed this when voice is playing
+const ROOM_TONE_MAX = 0.12;          // hard ceiling for the always-on room tone
+const AMBIENT_TOTAL_HEADROOM = 0.40; // total sum of active ambient when voice is playing
 const AMBIENT_TOTAL_HEADROOM_NOVOICE = 0.85; // when no voice, ambient can be louder
 
 // Smooth log-scale fade — used for all gain transitions
@@ -112,22 +113,23 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const [duration, setDuration] = useState(0);
 
   // Master volumes
-  const [voiceVolume, setVoiceVolume] = useState(0.85);
+  const [voiceVolume, setVoiceVolume] = useState(0.9);
   const [masterGain, setMasterGain] = useState(0.9);
-  const [roomToneVolume, setRoomToneVolume] = useState(0.08);
-  const [duckRatio, setDuckRatio] = useState(0.35);
+  const [roomToneVolume, setRoomToneVolume] = useState(0.06);
+  const [duckRatio, setDuckRatio] = useState(0.30);
 
-  // Per-track slider 0..1. Default 0.5 (down from 0.4 — quieter start).
+  // Per-track slider 0..1. Defaults are LOWER now (0.3-0.4) so first-use isn't loud.
+  // Most users want ambient as a subtle bed, not a wall of sound.
   const [ambient, setAmbient] = useState<Record<AmbientTrack, { active: boolean; slider: number }>>({
-    rain: { active: false, slider: 0.5 },
-    ocean: { active: false, slider: 0.5 },
-    forest: { active: false, slider: 0.5 },
-    drone: { active: false, slider: 0.5 },
-    piano: { active: false, slider: 0.4 },
-    whitenoise: { active: false, slider: 0.3 },
-    fire: { active: false, slider: 0.5 },
-    river: { active: false, slider: 0.5 },
-    wind: { active: false, slider: 0.5 },
+    rain: { active: false, slider: 0.35 },
+    ocean: { active: false, slider: 0.35 },
+    forest: { active: false, slider: 0.35 },
+    drone: { active: false, slider: 0.35 },
+    piano: { active: false, slider: 0.3 },
+    whitenoise: { active: false, slider: 0.25 },
+    fire: { active: false, slider: 0.35 },
+    river: { active: false, slider: 0.35 },
+    wind: { active: false, slider: 0.35 },
     room: { active: false, slider: 0.3 },
   });
 
