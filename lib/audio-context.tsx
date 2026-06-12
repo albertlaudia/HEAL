@@ -370,6 +370,30 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     }
   }, [currentTrack]);
 
+  // Listen for the ritual "start meditation" event
+  useEffect(() => {
+    const onStart = (e: Event) => {
+      const t = (e as CustomEvent).detail;
+      if (t?.slug && currentTrack?.title) {
+        // play() is on next tick so the audio element is ready
+        setTimeout(() => play(), 50);
+      }
+    };
+    window.addEventListener('heal:start-meditation', onStart as EventListener);
+    return () => window.removeEventListener('heal:start-meditation', onStart as EventListener);
+  }, [play, currentTrack]);
+
+  // Dispatch a meditation-ended event when audio finishes
+  useEffect(() => {
+    const a = voiceRef.current;
+    if (!a) return;
+    const onEnded = () => {
+      window.dispatchEvent(new CustomEvent('heal:meditation-ended', { detail: { title: currentTrack?.title } }));
+    };
+    a.addEventListener('ended', onEnded);
+    return () => a.removeEventListener('ended', onEnded);
+  }, [currentTrack]);
+
   const pause = useCallback(() => {
     if (!voiceRef.current) return;
     voiceRef.current.pause();

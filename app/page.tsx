@@ -12,7 +12,8 @@ import { FeaturedThisWeek, type FeaturedItem } from '@/components/home/FeaturedT
 import { ThemeBadge } from '@/components/content/ThemeBadge';
 import { ShareButton } from '@/components/content/ShareButton';
 import { YearCycleBadge } from '@/components/home/YearCycleBadge';
-import { ContinueProgram } from '@/components/home/ContinueProgram';
+import { ContinueProgram } from "@/components/home/ContinueProgram";
+import { HealPrinciples } from "@/components/home/HealPrinciples";
 import { ArrowRight, Headphones, Sparkles } from 'lucide-react';
 import { headers } from 'next/headers';
 
@@ -170,6 +171,9 @@ export default async function HomePage() {
       <div className="container-wide">
         <ContinueProgram />
       </div>
+
+      {/* ── THE H.E.A.L. PRACTICE ─────────────────────────────── */}
+      <HealPrinciples />
 
       {/* ── QUOTE + BREATH + SCRIPTURE ────────────────────────── */}
       <section className="container-wide py-12">
