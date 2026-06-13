@@ -11,6 +11,10 @@ type AudioState = {
   progress: number;
   duration: number;
 
+  // Loading state — true when audio is being fetched/decoded
+  audioLoading: boolean;
+  audioLoadProgress: number; // 0-100
+
   // Voice volume (0..1) — separate from master
   voiceVolume: number;
   setVoiceVolume: (v: number) => void;
@@ -110,6 +114,8 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [audioLoading, setAudioLoading] = useState(false);
+  const [audioLoadProgress, setAudioLoadProgress] = useState(0);
 
   // Volumes
   const [voiceVolume, setVoiceVolume] = useState(0.9);
@@ -194,14 +200,45 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     a.preload = 'metadata';
     a.loop = false;
     a.addEventListener('timeupdate', () => setProgress(a.currentTime));
-    a.addEventListener('loadedmetadata', () => setDuration(a.duration || 0));
+    a.addEventListener('loadedmetadata', () => {
+      setDuration(a.duration || 0);
+      setAudioLoading(false);
+      setAudioLoadProgress(100);
+    });
+    a.addEventListener('durationchange', () => {
+      if (a.duration && !isNaN(a.duration)) setDuration(a.duration);
+    });
+    a.addEventListener('canplay', () => {
+      setAudioLoading(false);
+      setAudioLoadProgress(100);
+    });
+    a.addEventListener('waiting', () => {
+      setAudioLoading(true);
+    });
+    a.addEventListener('stalled', () => {
+      setAudioLoading(true);
+    });
+    a.addEventListener('progress', () => {
+      if (a.duration && !isNaN(a.duration) && a.buffered.length > 0) {
+        const bufferedEnd = a.buffered.end(a.buffered.length - 1);
+        const pct = (bufferedEnd / a.duration) * 100;
+        setAudioLoadProgress(pct);
+        if (pct >= 99) setAudioLoading(false);
+      }
+    });
     a.addEventListener('ended', () => {
       setIsPlaying(false);
       setProgress(0);
+      setAudioLoading(false);
     });
     a.addEventListener('error', () => {
       console.warn('voice audio error', a.src);
       setIsPlaying(false);
+      setAudioLoading(false);
+    });
+    a.addEventListener('loadstart', () => {
+      setAudioLoading(true);
+      setAudioLoadProgress(0);
     });
     voiceRef.current = a;
 
@@ -356,6 +393,8 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     setProgress(0);
     setDuration(t.duration || 0);
     setIsPlaying(false);
+    setAudioLoading(true);
+    setAudioLoadProgress(0);
   }, [currentTrack]);
 
   const play = useCallback(() => {
@@ -435,6 +474,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   return (
     <AudioContext.Provider value={{
       currentTrack, isPlaying, progress, duration,
+      audioLoading, audioLoadProgress,
       voiceVolume, setVoiceVolume,
       masterVolume, setMasterVolume,
       muted, toggleMute,

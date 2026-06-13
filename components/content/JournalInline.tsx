@@ -58,7 +58,16 @@ export function JournalInline({ refKind, refSlug, refTitle }: { refKind: 'medita
         <div className="flex items-center justify-between mt-2">
           <p className="text-xs text-ink/40">Private to you · synced to your account</p>
           <button onClick={save} disabled={!text.trim() || busy} className="btn-pill">
-            <Plus size={14} /> Save
+            {busy ? (
+              <>
+                <span className="inline-block w-3 h-3 rounded-full bg-sage-500 animate-pulse" />
+                <span>Keeping it safe…</span>
+              </>
+            ) : (
+              <>
+                <Plus size={14} /> Save
+              </>
+            )}
           </button>
         </div>
       </div>

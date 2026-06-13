@@ -121,6 +121,18 @@ audio::-webkit-media-controls-panel { background-color: rgba(248,244,237,0.85); 
   animation: fade-in 600ms ease-out both;
 }
 
+/* Heart-save: small heart pulse + ring */
+@keyframes heart-save {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.4) rotate(-5deg); }
+  60%  { transform: scale(0.9) rotate(2deg); }
+  100% { transform: scale(1); }
+}
+.animate-heart-save {
+  animation: heart-save 600ms ease-out;
+  transform-origin: center;
+}
+
 /* Reveal-up for sections */
 @keyframes reveal-up {
   from {

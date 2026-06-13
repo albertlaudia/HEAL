@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-store';
 import { signInWithGoogle, signInWithEmail, signUpWithEmail, signOut } from '@/lib/firebase-client';
 import { LogIn, LogOut, User as UserIcon, BookMarked, Heart, History as HistoryIcon } from 'lucide-react';
@@ -15,6 +15,13 @@ export function AuthMenu() {
   const [pwd, setPwd] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [busyWord, setBusyWord] = useState(0);
+  const BUSY_WORDS = ['Settling you in…', 'A small breath…', 'Drawing near…', 'Almost home…'];
+  useEffect(() => {
+    if (!busy) { setBusyWord(0); return; }
+    const i = setInterval(() => setBusyWord(w => (w + 1) % BUSY_WORDS.length), 1800);
+    return () => clearInterval(i);
+  }, [busy]);
   const router = useRouter();
 
   const close = () => { setOpen(false); setMode('menu'); setErr(null); setEmail(''); setPwd(''); };
@@ -84,7 +91,7 @@ export function AuthMenu() {
                 <h2 className="serif text-2xl mb-2">Welcome to HEAL</h2>
                 <p className="text-ink/60 text-sm mb-6">Sign in to keep a journal, save favorites, and track your daily practice.</p>
                 <button onClick={onGoogle} disabled={busy} className="w-full btn-primary mb-3">
-                  Continue with Google
+                  {busy ? BUSY_WORDS[busyWord] : 'Continue with Google'}
                 </button>
                 <div className="flex gap-2 mt-2">
                   <button onClick={() => setMode('signin')} className="flex-1 btn-ghost">Email</button>
@@ -107,7 +114,7 @@ export function AuthMenu() {
                   />
                   {err && <p className="text-sm text-red-600">{err}</p>}
                   <button type="submit" disabled={busy} className="w-full btn-primary">
-                    {busy ? '…' : (mode === 'signin' ? 'Sign in' : 'Create account')}
+                    {busy ? BUSY_WORDS[busyWord] : (mode === 'signin' ? 'Sign in' : 'Create account')}
                   </button>
                 </form>
                 <button onClick={() => setMode('menu')} className="mt-4 text-sm text-ink/50 hover:text-ink">← Back</button>

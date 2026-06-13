@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Music, ChevronDown, ChevronUp, Play, Pause } from 'lucide-react';
 import { useAudio } from '@/lib/audio-context';
+import { AudioPreparing } from '@/components/audio/AudioPreparing';
 
 function formatTime(s: number) {
   if (!s || isNaN(s)) return '0:00';
@@ -13,7 +14,7 @@ function formatTime(s: number) {
 
 export function SongCard({ song }: { song: any }) {
   const [open, setOpen] = useState(false);
-  const { currentTrack, isPlaying, progress, duration, loadTrack, toggle } = useAudio();
+  const { currentTrack, isPlaying, progress, duration, audioLoading, audioLoadProgress, loadTrack, toggle } = useAudio();
 
   // Build audio URL: prefer B2 if set, else fallback to local /audio/praise/<filename>.mp3
   const audioUrl = song.audio_url
@@ -35,6 +36,7 @@ export function SongCard({ song }: { song: any }) {
   // Is THIS song the one currently loaded AND playing?
   const isThisSong = currentTrack?.title === song.title && isPlaying;
   const isThisLoaded = currentTrack?.title === song.title;
+  const isThisLoading = isThisLoaded && audioLoading;
   const progressPct = isThisLoaded && duration > 0 ? (progress / duration) * 100 : 0;
 
   const handlePlay = () => {
@@ -112,6 +114,13 @@ export function SongCard({ song }: { song: any }) {
               style={{ width: `${progressPct}%` }}
             />
           </div>
+        </div>
+      )}
+
+      {/* Preparing state */}
+      {isThisLoading && !isPlaying && (
+        <div className="mb-4 -mx-1">
+          <AudioPreparing progress={audioLoadProgress} visible kind="praise" />
         </div>
       )}
 

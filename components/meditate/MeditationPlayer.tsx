@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Play, Pause, Volume2, VolumeX, Headphones } from 'lucide-react';
 import { useAudio } from '@/lib/audio-context';
 import { AudioVisualizer } from '@/components/audio/AudioVisualizer';
+import { AudioPreparing } from '@/components/audio/AudioPreparing';
 import { AmbientMixer } from '@/components/audio/AmbientMixer';
 
 function formatTime(s: number) {
@@ -36,7 +37,7 @@ export function MeditationPlayer({
   reflection?: string;
   illustrationUrl?: string;
 }) {
-  const { currentTrack, isPlaying, progress, duration: actualDuration, voiceVolume, setVoiceVolume, masterVolume, setMasterVolume, loadTrack, toggle, seek } = useAudio();
+  const { currentTrack, isPlaying, progress, duration: actualDuration, audioLoading, audioLoadProgress, voiceVolume, setVoiceVolume, masterVolume, setMasterVolume, loadTrack, toggle, seek } = useAudio();
 
   // Resolve audio URL: prefer B2 URL, fall back to local /audio/meditations/
   const resolvedAudioUrl = audioUrl
@@ -148,6 +149,12 @@ export function MeditationPlayer({
               <span>{formatTime(progress)}</span>
               <span>{formatTime(effectiveDuration)}</span>
             </div>
+          </div>
+        )}
+
+        {hasAudio && audioLoading && !isPlaying && (
+          <div className="relative w-full max-w-md mt-4">
+            <AudioPreparing progress={audioLoadProgress} visible={audioLoading} kind="meditation" />
           </div>
         )}
 

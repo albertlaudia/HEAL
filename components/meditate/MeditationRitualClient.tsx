@@ -11,6 +11,7 @@ import { BeginRitual } from '@/components/meditate/BeginRitual';
 import { AfterSilence } from '@/components/meditate/AfterSilence';
 import { formatDuration } from '@/lib/utils';
 import { ArrowLeft, ArrowRight, Play, Heart } from 'lucide-react';
+import { ScrollProgress } from '@/components/ScrollProgress';
 import Link from 'next/link';
 
 type Track = { title: string; audioUrl: string; duration?: number; illustrationUrl?: string };
@@ -66,7 +67,9 @@ export function MeditationRitualClient({ m, shareUrl, prev, next }: { m: any; sh
   };
 
   return (
-    <article className="container-wide py-12">
+    <>
+      <ScrollProgress color="sage" />
+      <article className="container-wide py-12">
       <Link href="/meditate" className="inline-flex items-center gap-2 text-sm text-ink/60 hover:text-ink mb-8">
         <ArrowLeft size={14} /> Library
       </Link>
@@ -204,5 +207,6 @@ export function MeditationRitualClient({ m, shareUrl, prev, next }: { m: any; sh
         ) : <span />}
       </nav>
     </article>
+    </>
   );
 }

@@ -9,6 +9,7 @@ import { AuthProvider } from '@/lib/auth-store';
 import { SessionSync } from '@/components/auth/SessionSync';
 import { AudioProvider } from '@/lib/audio-context';
 import { MiniPlayer } from '@/components/audio/MiniPlayer';
+import { OfflineBanner } from '@/components/OfflineBanner';
 import { PageTransition } from '@/components/PageTransition';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans', display: 'swap' });
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:bg-paper focus:px-4 focus:py-2 focus:rounded-full">
             Skip to main content
           </a>
+          <OfflineBanner />
           <AudioProvider>
             <Nav />
             <PageTransition>
