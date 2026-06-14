@@ -21,10 +21,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let dynamicRoutes: MetadataRoute.Sitemap = [];
   try {
     const [meditations, essays, prayers, praise] = await Promise.all([
-      getPublished('HEAL_meditations', '-created', 'is_published = true'),
-      getPublished('HEAL_essays', '-created', 'is_published = true'),
-      getPublished('HEAL_prayers', '-created', 'is_published = true'),
-      getPublished('HEAL_praise', '-created', 'is_published = true'),
+      getPublished('HEAL_meditations', '-id', 'is_published = true'),
+      getPublished('HEAL_essays', '-id', 'is_published = true'),
+      getPublished('HEAL_prayers', '-id', 'is_published = true'),
+      getPublished('HEAL_praise', '-id', 'is_published = true'),
     ]);
 
     dynamicRoutes = [

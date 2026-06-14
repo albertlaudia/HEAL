@@ -57,14 +57,27 @@ export async function getBySlug<T = any>(col: string, slug: string): Promise<T |
   }
 }
 
-// Helper: get all published records (or top N if limit is provided)
-export async function getPublished<T = any>(col: string, sort = '-created', filter = 'is_published = true', limit?: number): Promise<T[]> {
-  try {
-    const all = (await pb.collection(col).getFullList({ sort, filter })) as unknown as T[];
-    return limit ? all.slice(0, limit) : all;
-  } catch {
-    return [];
+// Helper: get all published records (or top N if limit is provided).
+// Production-hardened: if the requested sort field doesn't exist on the
+// collection (e.g. PB was migrated and -created / -updated are gone),
+// we fall back to -id. If the collection is missing or unreachable,
+// we return [] rather than throwing, so a single bad call can't break
+// the whole page.
+export async function getPublished<T = any>(col: string, sort = '-id', filter = 'is_published = true', limit?: number): Promise<T[]> {
+  const fallbacks = [sort, '-id', 'id', 'sort_order', 'day_of_year'];
+  for (const trySort of fallbacks) {
+    try {
+      const all = (await pb.collection(col).getFullList({ sort: trySort, filter })) as unknown as T[];
+      return limit ? all.slice(0, limit) : all;
+    } catch (e: any) {
+      // 400 = bad sort/filter, 404 = collection gone, 401 = auth required
+      if (e?.status === 400) continue; // try the next fallback
+      // Any other error: log once and bail with []
+      if (typeof console !== 'undefined') console.warn(`getPublished(${col}) failed:`, e?.message);
+      return [];
+    }
   }
+  return [];
 }
 
 // Helper: pick a deterministic record from a list given a (yearCycle, dayOfYear) pair.

@@ -31,18 +31,22 @@ export async function generateMetadata() {
 export default async function HomePage() {
   const coord = getCalendarCoord();
 
-  const [meditation, quote, scripture, praiseSong, recentMeditations, recentEssays, recentPraise] = await Promise.all([
-    getDailyMeditation(coord),
-    getDailyQuote(coord),
-    getDailyScripture(coord),
-    getDailyPraise(coord),
-    getPublished('HEAL_meditations', '-created', 'is_published = true', 4),
-    getPublished('HEAL_essays', '-published_at', 'is_published = true', 2),
-    getPublished('HEAL_praise', '-created', 'is_published = true', 2),
-  ]);
+  // Resolve every data call independently. If PB is unreachable or a
+  // collection is missing, we still render the page with empty/placeholder
+  // data rather than letting Promise.all reject and break the whole page.
+  const safeGet = <T,>(p: Promise<T>, fallback: T): Promise<T> =>
+    p.catch((e) => { if (typeof console !== 'undefined') console.warn('home data fetch failed:', e?.message); return fallback; });
 
-  // Get breathwork for the quick breath card
-  const breathwork = await getPublished('HEAL_breathwork', 'sort_order', 'is_published = true', 1).then(r => r?.[0]).catch(() => null);
+  const [meditation, quote, scripture, praiseSong, recentMeditations, recentEssays, recentPraise, breathwork] = await Promise.all([
+    safeGet(getDailyMeditation(coord), null as any),
+    safeGet(getDailyQuote(coord), null as any),
+    safeGet(getDailyScripture(coord), null as any),
+    safeGet(getDailyPraise(coord), null as any),
+    safeGet(getPublished('HEAL_meditations', '-id', 'is_published = true', 4), [] as any[]),
+    safeGet(getPublished('HEAL_essays', '-published_at', 'is_published = true', 2), [] as any[]),
+    safeGet(getPublished('HEAL_praise', '-id', 'is_published = true', 2), [] as any[]),
+    safeGet(getPublished('HEAL_breathwork', 'sort_order', 'is_published = true', 1).then(r => r?.[0]), null as any),
+  ]);
 
   const today = new Date();
   const season = seasonOf(today);
