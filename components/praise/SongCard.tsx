@@ -18,7 +18,7 @@ export function SongCard({ song }: { song: any }) {
 
   // Build audio URL: prefer B2 if set, else fallback to local /audio/praise/<filename>.mp3
   const audioUrl = song.audio_url
-    || (song.slug ? `/audio/praise/${song.slug}.mp3` : undefined);
+    || (song.slug ? `/audio/praise/song-${song.slug}.mp3` : undefined);
 
   // Load this song into the audio context if it has audio
   useEffect(() => {
@@ -75,7 +75,7 @@ export function SongCard({ song }: { song: any }) {
             {song.key_signature && <span>· Key {song.key_signature}</span>}
             {song.tempo_bpm && <span>· {song.tempo_bpm} bpm</span>}
             {song.meter && <span>· {song.meter}</span>}
-            {canPlay && <span className="text-sage-700">· instrumental ready</span>}
+            {canPlay && <span className="text-sage-700">· sung lead ready</span>}
           </div>
           <h3 className="serif text-2xl md:text-3xl mb-1">{song.title}</h3>
           {song.subtitle && (

@@ -20,7 +20,7 @@ export default async function PraisePage() {
           A library of worship songs, hymns, and chants — old and new — for prayer, for singing, for the times when the only thing left is to lift a voice.
         </p>
         <p className="text-ink/60 leading-relaxed">
-          Click any song to read the lyrics. Expand to see chords and a short reflection.
+          Press play to hear a sung lead over a quiet instrumental — sing along, or just listen. Click any song to read the lyrics, chords, and a short reflection.
         </p>
       </header>
 
