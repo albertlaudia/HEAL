@@ -1,20 +1,33 @@
-name: Trigger Dokploy deploy
+name: Deploy to Dokploy
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
+
 jobs:
-  trigger:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Dokploy redeploy via API
         env:
-          DOKPLOY_URL: ${{ vars.DOKPLOY_URL }}
-          DOKPLOY_KEY: ${{ vars.DOKPLOY_KEY }}
+          DOKPLOY_URL: ${{ secrets.DOKPLOY_URL }}
+          DOKPLOY_API_KEY: ${{ secrets.DOKPLOY_API_KEY }}
+          HEAL_DOKPLOY_APP_ID: ${{ secrets.HEAL_DOKPLOY_APP_ID }}
         run: |
-          echo "Triggering deploy for $DOKPLOY_URL"
-          curl -s -X POST "${DOKPLOY_URL}/api/trpc/application.redeploy" \
-            -H "x-api-key: ${DOKPLOY_KEY}" \
+          echo "Deploying ${HEAL_DOKPLOY_APP_ID} on ${DOKPLOY_URL}..."
+          # Build the tRPC payload via the format expected by the API
+          PAYLOAD=$(node -e "console.log(JSON.stringify({json: {applicationId: process.env.HEAL_DOKPLOY_APP_ID}}))")
+          RESPONSE=$(curl -s -X POST "${DOKPLOY_URL}/api/trpc/application.redeploy" \
+            -H "x-api-key: ${DOKPLOY_API_KEY}" \
             -H "Content-Type: application/json" \
-            -d '{"json":{"applicationId":"3UHHbFdDgkIklUHCHSkTg"}}' \
-            -w "\nHTTP %{http_code}\n"
+            -d "$PAYLOAD" \
+            -w "\n__HTTP__%{http_code}")
+          echo "$RESPONSE"
+          HTTP_CODE=$(echo "$RESPONSE" | grep "__HTTP__" | sed 's/__HTTP__//')
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ Deploy queued"
+          else
+            echo "⚠️ Deploy API returned $HTTP_CODE — may need manual UI deploy"
+            exit 1
+          fi
