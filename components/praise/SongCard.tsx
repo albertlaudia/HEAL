@@ -92,7 +92,7 @@ export function SongCard({ song }: { song: any }) {
                 : 'border border-ink/15 text-ink/70 hover:border-ink/40 hover:text-ink hover:scale-105'
             }`}
             aria-label={isThisSong ? 'Pause' : `Play ${song.title}`}
-            title={isThisSong ? 'Pause instrumental' : 'Play instrumental'}
+            title={isThisSong ? 'Pause song' : 'Play song'}
           >
             {isThisSong ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}
           </button>
