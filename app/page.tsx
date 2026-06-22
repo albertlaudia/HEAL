@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getDailyMeditation, getDailyQuote, getDailyScripture, getDailyPraise, getPublished, getCalendarCoord } from '@/lib/pb';
-import { formatDuration, dateLabel, seasonOf, themeHue } from '@/lib/utils';
+import { getDailyMeditation, getDailyQuote, getDailyScripture, getPublished, getCalendarCoord } from '@/lib/pb';
+import { formatDuration, themeHue } from '@/lib/utils';
 import { QuickBreath } from '@/components/home/QuickBreath';
 import { TodayAtAGlance } from '@/components/home/TodayAtAGlance';
 import { YearCycleBadge } from '@/components/home/YearCycleBadge';
@@ -9,7 +9,6 @@ import { ContinueProgram } from "@/components/home/ContinueProgram";
 import { HealPrinciples } from "@/components/home/HealPrinciples";
 import { WelcomeOverlay, WelcomePill } from "@/components/home/WelcomeOverlay";
 import { ArrowRight } from 'lucide-react';
-import { headers } from 'next/headers';
 
 export const revalidate = 3600;
 
@@ -30,22 +29,14 @@ export default async function HomePage() {
   const safeGet = <T,>(p: Promise<T>, fallback: T): Promise<T> =>
     p.catch((e) => { if (typeof console !== 'undefined') console.warn('home data fetch failed:', e?.message); return fallback; });
 
-  const [meditation, quote, scripture, praiseSong, recentMeditations, recentEssays, recentPraise] = await Promise.all([
+  const [meditation, quote, scripture, recentMeditations, recentEssays, recentPraise] = await Promise.all([
     safeGet(getDailyMeditation(coord), null as any),
     safeGet(getDailyQuote(coord), null as any),
     safeGet(getDailyScripture(coord), null as any),
-    safeGet(getDailyPraise(coord), null as any),
     safeGet(getPublished('HEAL_meditations', '-id', 'is_published = true', 6), [] as any[]),
     safeGet(getPublished('HEAL_essays', '-published_at', 'is_published = true', 3), [] as any[]),
     safeGet(getPublished('HEAL_praise', '-id', 'is_published = true', 3), [] as any[]),
   ]);
-
-  const today = new Date();
-  const season = seasonOf(today);
-  const h = await headers();
-  const proto = h.get('x-forwarded-proto') || 'https';
-  const host = h.get('host') || 'heal.app';
-  const siteUrl = `${proto}://${host}`;
 
   // A single soft "from the practice" rail — recent meditations, essays, and praise.
   const recentItems: { kind: 'meditation' | 'essay' | 'praise'; title: string; subtitle?: string; href: string; excerpt?: string; illustration?: string }[] = [
