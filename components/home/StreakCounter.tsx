@@ -53,15 +53,25 @@ export function StreakCounter() {
         <Flame size={18} className={streak.current > 0 ? 'text-amber-700' : 'text-sage-700'} />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium">
+        <p className="serif text-base">
           {streak.current === 0
             ? 'A new day to begin'
             : streak.current === 1
-              ? 'Day 1 of your practice'
-              : `Day ${streak.current} of your practice`}
+              ? 'You began today'
+              : streak.current < 7
+                ? 'A gentle rhythm forming'
+                : streak.current < 21
+                  ? 'A practice taking root'
+                  : streak.current < 60
+                    ? 'A quiet habit'
+                    : 'You walk this daily'}
         </p>
-        <p className="text-xs text-ink/50">
-          {streak.longest > 0 ? `Longest: ${streak.longest} day${streak.longest === 1 ? '' : 's'}` : 'One breath at a time.'}
+        <p className="text-xs text-ink/45 italic mt-0.5">
+          {streak.longest > 0
+            ? streak.current === streak.longest
+              ? `the longest you've gone — day ${streak.current}`
+              : `your longest was ${streak.longest} days`
+            : 'One breath at a time.'}
         </p>
       </div>
     </div>
