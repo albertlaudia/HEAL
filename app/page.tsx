@@ -14,7 +14,7 @@ import { ShareButton } from '@/components/content/ShareButton';
 import { YearCycleBadge } from '@/components/home/YearCycleBadge';
 import { ContinueProgram } from "@/components/home/ContinueProgram";
 import { HealPrinciples } from "@/components/home/HealPrinciples";
-import { WelcomeOverlay } from "@/components/home/WelcomeOverlay";
+import { WelcomeOverlay, WelcomePill } from "@/components/home/WelcomeOverlay";
 import { ArrowRight, Headphones, Sparkles } from 'lucide-react';
 import { headers } from 'next/headers';
 
@@ -85,6 +85,7 @@ export default async function HomePage() {
   return (
     <>
     <WelcomeOverlay />
+    <WelcomePill />
     <div className="relative">
       {/* ── HERO: Today's meditation ───────────────────────────── */}
       <section className={`relative overflow-hidden bg-gradient-to-b ${themeHue(meditation?.theme)}`}>
