@@ -257,3 +257,30 @@ export async function getProgramStep<T = HEALProgramStep>(programSlug: string, o
     return null;
   }
 }
+
+// HEALPraise — a worship song entry
+export type HEALPraise = {
+  id: string;
+  title: string;
+  slug: string;
+  subtitle?: string;
+  description?: string;        // 1-2 sentences about when to use this song
+  tags?: string[];             // scripture themes, musical style
+  emotion?: string;             // 'companioned', 'settled', 'lifted', 'restored', 'awestruck', 'honest', 'reverent'
+  mood?: string;                // musical mood adjective
+  voice?: string;               // AI voice that sang the lead
+  best_for?: string[];          // contexts like 'morning', 'grief', 'family_table'
+  lyrics?: string;
+  chords?: string;
+  scripture_refs?: string[];
+  reflection?: string;
+  category?: string;
+  key_signature?: string;
+  tempo_bpm?: number;
+  meter?: string;
+  audio_url?: string;
+  illustration_url?: string;
+  day_of_year?: number;
+  sort_order?: number;
+  is_published?: boolean;
+};
