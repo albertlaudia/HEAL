@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { formatDuration } from '@/lib/utils';
+import { formatDuration, cdnUrl } from '@/lib/utils';
 import { ThemeBadge } from '@/components/content/ThemeBadge';
 import { Search } from 'lucide-react';
 
@@ -82,7 +82,7 @@ export function MeditationFilters({
             {m.illustration_url ? (
               <div className="relative aspect-[4/3] bg-sage-100 overflow-hidden">
                 <Image
-                  src={m.illustration_url}
+                  src={cdnUrl(m.illustration_url) || ''}
                   alt={m.title}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

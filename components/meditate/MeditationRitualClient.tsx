@@ -13,6 +13,7 @@ import { formatDuration } from '@/lib/utils';
 import { ArrowLeft, ArrowRight, Play, Heart } from 'lucide-react';
 import { ScrollProgress } from '@/components/ScrollProgress';
 import Link from 'next/link';
+import { cdnUrl } from '@/lib/utils';
 
 type Track = { title: string; audioUrl: string; duration?: number; illustrationUrl?: string };
 
@@ -23,7 +24,7 @@ export function MeditationRitualClient({ m, shareUrl, prev, next }: { m: any; sh
   const [showBeginCTA, setShowBeginCTA] = useState(true);
   const afterSilenceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const audioUrl = m.audio_url || (m.slug ? `/audio/meditations/audio-${m.slug}.mp3` : undefined);
+  const audioUrl = cdnUrl(m.audio_url || (m.slug ? `/audio/meditations/audio-${m.slug}.mp3` : undefined));
   const hasAudio = !!audioUrl;
 
   // Listen for meditation ended event — open silence moment
@@ -89,7 +90,7 @@ export function MeditationRitualClient({ m, shareUrl, prev, next }: { m: any; sh
       {(m.illustration_url || m.slug) && (
         <div className="relative max-w-3xl mx-auto aspect-[3/2] rounded-2xl overflow-hidden mb-12 bg-sage-100">
           <Image
-            src={m.illustration_url || `/images/meditations/illustration-${m.slug}.png`}
+            src={cdnUrl(m.illustration_url || `/images/meditations/illustration-${m.slug}.png`) || ''}
             alt={m.title}
             fill
             className="object-cover"
@@ -134,7 +135,7 @@ export function MeditationRitualClient({ m, shareUrl, prev, next }: { m: any; sh
           scriptureRef={m.scripture_ref}
           scriptureText={m.scripture_text}
           reflection={m.reflection}
-          illustrationUrl={m.illustration_url}
+          illustrationUrl={cdnUrl(m.illustration_url)}
         />
       </div>
 

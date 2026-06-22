@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { ChevronRight, Award } from 'lucide-react';
+import { cdnUrl } from '@/lib/utils';
 import type { HEALProgram } from '@/lib/pb';
 
 const themeColors: Record<string, { accent: string; soft: string }> = {
@@ -18,7 +19,7 @@ const themeColors: Record<string, { accent: string; soft: string }> = {
 export function ProgramCard({ program }: { program: HEALProgram }) {
   const colors = themeColors[program.theme_color] || themeColors.sage;
   const badgeSrc = program.badge_image_path
-    ? (program.illustration_url?.startsWith('http') ? program.illustration_url : program.badge_image_path)
+    ? cdnUrl(program.illustration_url || program.badge_image_path)
     : null;
 
   return (

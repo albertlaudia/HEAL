@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Music, ChevronDown, ChevronUp, Play, Pause, Headphones, Clock } from 'lucide-react';
 import { useAudio } from '@/lib/audio-context';
 import { AudioPreparing } from '@/components/audio/AudioPreparing';
+import { cdnUrl } from '@/lib/utils';
 import type { HEALPraise } from '@/lib/pb';
 
 function formatTime(s: number) {
@@ -37,9 +38,9 @@ export function SongCard({ song }: { song: HEALPraise }) {
   const [audioError, setAudioError] = useState<string | null>(null);
   const { currentTrack, isPlaying, progress, duration, audioLoading, audioLoadProgress, loadTrack, toggle } = useAudio();
 
-  // Build audio URL: prefer B2 if set, else fallback to local /audio/praise/song-{slug}.mp3
-  const audioUrl = song.audio_url
-    || (song.slug ? `/audio/praise/song-${song.slug}.mp3` : undefined);
+  // Build audio URL: prefer PB url, else fallback to local /audio/praise/song-{slug}.mp3
+  // Always wrap through cdnUrl() so the resolution points to the CDN, not local /public.
+  const audioUrl = cdnUrl(song.audio_url || (song.slug ? `/audio/praise/song-${song.slug}.mp3` : undefined));
 
   // Load this song into the audio context if it has audio
   useEffect(() => {
@@ -47,7 +48,7 @@ export function SongCard({ song }: { song: HEALPraise }) {
       loadTrack({
         title: song.title,
         audioUrl,
-        illustrationUrl: song.illustration_url || `/images/praises/${song.slug}.png`,
+        illustrationUrl: cdnUrl(song.illustration_url || `/images/praises/${song.slug}.png`),
       });
       setAudioError(null);
     }

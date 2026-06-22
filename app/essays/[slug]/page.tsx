@@ -3,6 +3,7 @@ import { getBySlug, getPublished } from '@/lib/pb';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { cdnUrl } from '@/lib/utils';
 
 export const revalidate = 3600;
 
@@ -34,7 +35,7 @@ export default async function EssayPage({ params }: { params: Promise<{ slug: st
 
       {essay.illustration_url && (
         <div className="relative aspect-[3/2] rounded-2xl overflow-hidden mb-12">
-          <Image src={essay.illustration_url} alt={essay.title} fill className="object-cover" />
+          <Image src={cdnUrl(essay.illustration_url) || ''} alt={essay.title} fill className="object-cover" />
         </div>
       )}
 

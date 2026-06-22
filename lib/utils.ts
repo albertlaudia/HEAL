@@ -5,6 +5,29 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// HEAL media is served from a Cloudflare-fronted IIS at
+// https://resources.positiveness.club/heal/<path>.
+// This env var can override the URL at runtime for testing/local dev.
+const HEAL_CDN_BASE =
+  process.env.NEXT_PUBLIC_HEAL_CDN_URL ||
+  process.env.HEAL_CDN_URL ||
+  'https://resources.positiveness.club/heal';
+
+/**
+ * Build the public URL for a HEAL media asset.
+ * - Pass the canonical local path like `/images/meditations/illustration-foo.png`
+ *   or the `/heal/images/meditations/illustration-foo.png` style absolute path.
+ * - Returns the absolute CDN URL.
+ * - If the path is already a fully-qualified URL (https:// or http://),
+ *   it is returned unchanged.
+ */
+export function cdnUrl(path?: string | null): string | undefined {
+  if (!path) return undefined;
+  if (/^https?:\/\//i.test(path)) return path;
+  const clean = path.replace(/^\/+/, '');
+  return `${HEAL_CDN_BASE}/${clean}`;
+}
+
 export function formatDuration(seconds: number) {
   if (!seconds) return '—';
   const m = Math.floor(seconds / 60);

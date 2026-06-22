@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { getDailyMeditation, getDailyQuote, getDailyScripture, getPublished, getCalendarCoord } from '@/lib/pb';
-import { formatDuration, themeHue } from '@/lib/utils';
+import { formatDuration, themeHue, cdnUrl } from '@/lib/utils';
 import { QuickBreath } from '@/components/home/QuickBreath';
 import { TodayAtAGlance } from '@/components/home/TodayAtAGlance';
 import { YearCycleBadge } from '@/components/home/YearCycleBadge';
@@ -46,7 +46,7 @@ export default async function HomePage() {
       subtitle: m.scripture_ref ? `— ${m.scripture_ref}` : undefined,
       href: `/meditate/${m.slug}`,
       excerpt: m.reflection,
-      illustration: m.illustration_url || `/images/meditations/illustration-${m.slug}.png`,
+      illustration: cdnUrl(m.illustration_url || `/images/meditations/illustration-${m.slug}.png`),
     })),
     ...recentEssays.slice(0, 1).map((e: any) => ({
       kind: 'essay' as const,

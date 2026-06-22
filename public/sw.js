@@ -6,7 +6,7 @@
 // - API/data: stale-while-revalidate
 // - Cleanup: drop old caches on activate
 
-const CACHE_VERSION = 'heal-v3';
+const CACHE_VERSION = 'heal-v4';
 const CACHE_AUDIO = `${CACHE_VERSION}-audio`;
 const CACHE_IMAGES = `${CACHE_VERSION}-images`;
 const CACHE_STATIC = `${CACHE_VERSION}-static`;
@@ -57,6 +57,11 @@ const putCache = async (cacheName, request, response) => {
 
 const isAudio = (url) => /\.(mp3|m4a|wav|ogg)$/i.test(url.pathname);
 const isImage = (url) => /\.(png|jpg|jpeg|webp|avif|svg|gif|ico)$/i.test(url.pathname);
+
+// HEAL media is served from a Cloudflare-fronted IIS at resources.positiveness.club
+// We want the SW to also cache those responses (same cache-first strategy).
+const HEAL_CDN_HOST = 'resources.positiveness.club';
+const isHealCdn = (url) => url.hostname === HEAL_CDN_HOST && url.pathname.startsWith('/heal/');
 const isStatic = (url) => /\/_next\/static\//.test(url.pathname) || /\.(js|css|woff2?|ttf)$/i.test(url.pathname);
 const isData = (url) => /\/api\//.test(url.pathname) || /\/api\/collections\//.test(url.pathname);
 const isPage = (url) => url.pathname === '/' || !/\.[a-z0-9]+$/i.test(url.pathname);
@@ -66,8 +71,8 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
 
-  // Don't cache other origins
-  if (url.origin !== self.location.origin) return;
+  // Don't cache other origins (except our own CDN)
+  if (url.origin !== self.location.origin && !isHealCdn(url)) return;
 
   // Audio — cache first, fall back to network, then put in cache
   if (isAudio(url)) {
