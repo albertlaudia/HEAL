@@ -10,8 +10,8 @@ import json
 import urllib.request
 import subprocess
 
-FTP_USER = "Ressup"
-FTP_PASS = "R3sourceSc4leupCRM!"
+FTP_USER = os.environ.get("SMARTERASP_FTP_USER", "respc")
+FTP_PASS = os.environ.get("SMARTERASP_FTP_PASSWORD", "R3sourceSc4leupCRM!")
 FTP_HOST = "win8108.site4now.net"
 LOCAL_ROOT = "/workspace/HEAL/public"
 URL_BASE = "https://resources.positiveness.club/heal"

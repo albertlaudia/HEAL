@@ -8,8 +8,8 @@
 set +e
 
 FTP_HOST="win8108.site4now.net"
-FTP_USER="Ressup"
-FTP_PASS="R3sourceSc4leupCRM!"
+FTP_USER="${SMARTERASP_FTP_USER:-respc}"
+FTP_PASS="${SMARTERASP_FTP_PASSWORD:-R3sourceSc4leupCRM!}"
 LOCAL_ROOT="/workspace/HEAL/public"
 REMOTE_BASE="heal"
 URL_BASE="https://resources.positiveness.club/heal"
