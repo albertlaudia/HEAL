@@ -7,6 +7,7 @@ const nextConfig = {
       { protocol: 'https', hostname: '**.backblazeb2.com' },
       { protocol: 'https', hostname: 'f004.backblazeb2.com' },
       { protocol: 'https', hostname: 'pocketbase.scaleupcrm.com' },
+      { protocol: 'https', hostname: 'resources.positiveness.club' },
     ],
   },
   async headers() {
@@ -25,7 +26,7 @@ const nextConfig = {
           "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.firebaseio.com https://*.googleapis.com https://*.firebaseapp.com", // Next.js needs unsafe-inline for hydration, Firebase SDK
           "style-src 'self' 'unsafe-inline'", // Tailwind inlines styles
           "img-src 'self' data: blob: https: http:",
-          "media-src 'self' https://*.backblazeb2.com https://f004.backblazeb2.com https://s3.us-west-004.backblazeb2.com blob:",
+          "media-src 'self' https://*.backblazeb2.com https://f004.backblazeb2.com https://s3.us-west-004.backblazeb2.com https://resources.positiveness.club blob:",
           "font-src 'self' data:",
           "connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.firebaseapp.com wss://*.firebaseio.com https://pocketbase.scaleupcrm.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com",
           "frame-ancestors 'self'",
@@ -47,18 +48,6 @@ const nextConfig = {
         headers: securityHeaders,
       },
       // Cache static assets aggressively
-      {
-        source: '/audio/(.*)',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
-        ],
-      },
-      {
-        source: '/images/(.*)',
-        headers: [
-          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
-        ],
-      },
       {
         source: '/_next/static/(.*)',
         headers: [

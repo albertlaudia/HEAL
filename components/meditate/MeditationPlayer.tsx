@@ -6,6 +6,7 @@ import { useAudio } from '@/lib/audio-context';
 import { AudioVisualizer } from '@/components/audio/AudioVisualizer';
 import { AudioPreparing } from '@/components/audio/AudioPreparing';
 import { AmbientMixer } from '@/components/audio/AmbientMixer';
+import { cdnUrl } from '@/lib/utils';
 
 function formatTime(s: number) {
   if (!s || isNaN(s)) return '0:00';
@@ -39,11 +40,11 @@ export function MeditationPlayer({
 }) {
   const { currentTrack, isPlaying, progress, duration: actualDuration, audioLoading, audioLoadProgress, voiceVolume, setVoiceVolume, masterVolume, setMasterVolume, loadTrack, toggle, seek } = useAudio();
 
-  // Resolve audio URL: prefer B2 URL, fall back to local /audio/meditations/
+  // Resolve audio URL: prefer PB url, fall back to local path through CDN
   const resolvedAudioUrl = audioUrl
     ? audioUrl
     : fallbackSlug
-      ? `/audio/meditations/audio-${fallbackSlug}.mp3`
+      ? cdnUrl(`/audio/meditations/audio-${fallbackSlug}.mp3`) || undefined
       : undefined;
 
   useEffect(() => {

@@ -19,6 +19,11 @@ b2-cache
 docs
 content/.url-map.json
 public/.gitkeep
+# All media lives on the CDN now (https://resources.positiveness.club/heal/).
+# Don't ship any of it to Dokploy — the build context should be tiny.
+public/images/**
+public/audio/meditations/**
+public/audio/praise/**
 tests
 coverage
 playwright-report

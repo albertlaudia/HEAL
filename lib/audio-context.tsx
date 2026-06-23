@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useRef, useEffect, useCallback, ReactNode } from 'react';
+import { cdnUrl } from '@/lib/utils';
 
 export type AmbientTrack = 'rain' | 'ocean' | 'forest' | 'drone' | 'piano' | 'whitenoise' | 'fire' | 'river' | 'wind' | 'room';
 
@@ -55,17 +56,18 @@ type AudioState = {
 
 const AudioContext = createContext<AudioState | null>(null);
 
+// All ambient tracks live on the CDN — see scripts/upload-heal-ftp.sh
 const AMBIENT_URLS: Record<AmbientTrack, string> = {
-  rain: '/audio/ambient-rain.mp3',
-  ocean: '/audio/ambient-ocean.mp3',
-  forest: '/audio/ambient-forest.mp3',
-  drone: '/audio/ambient-drone.mp3',
-  piano: '/audio/ambient-piano.mp3',
-  whitenoise: '/audio/ambient-whitenoise.mp3',
-  fire: '/audio/ambient-fire.mp3',
-  river: '/audio/ambient-river.mp3',
-  wind: '/audio/ambient-wind.mp3',
-  room: '/audio/ambient-room.mp3',
+  rain: cdnUrl('/audio/ambient-rain.mp3')!,
+  ocean: cdnUrl('/audio/ambient-ocean.mp3')!,
+  forest: cdnUrl('/audio/ambient-forest.mp3')!,
+  drone: cdnUrl('/audio/ambient-drone.mp3')!,
+  piano: cdnUrl('/audio/ambient-piano.mp3')!,
+  whitenoise: cdnUrl('/audio/ambient-whitenoise.mp3')!,
+  fire: cdnUrl('/audio/ambient-fire.mp3')!,
+  river: cdnUrl('/audio/ambient-river.mp3')!,
+  wind: cdnUrl('/audio/ambient-wind.mp3')!,
+  room: cdnUrl('/audio/ambient-room.mp3')!,
 };
 
 const AMBIENT_LABELS: Record<AmbientTrack, string> = {
