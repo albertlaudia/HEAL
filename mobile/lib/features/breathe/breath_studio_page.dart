@@ -226,7 +226,6 @@ class _BreathRunner extends HookConsumerWidget {
     );
 
     final phase = useState<BreathPhase>(BreathPhase.ready);
-    final phaseProgress = useState<double>(0);
     final tickInterval = useRef<Timer?>(null);
 
     // Step through phases sequentially.
@@ -251,7 +250,6 @@ class _BreathRunner extends HookConsumerWidget {
         phaseCtrl.stop();
         phase.value = BreathPhase.ready;
         ref.read(_activePhaseProvider.notifier).state = BreathPhase.ready;
-        phaseProgress.value = 0;
         tickInterval.value?.cancel();
         return;
       }
@@ -296,20 +294,17 @@ class _BreathRunner extends HookConsumerWidget {
     }, []);
 
     // Compute ring scale as a function of phase + phaseCtrl value.
+    // IMPORTANT: do not call setState inside builder — only compute values.
     double computeScale() {
       final v = phaseCtrl.value;
       switch (phase.value) {
         case BreathPhase.inhale:
-          phaseProgress.value = v;
           return 0.8 + 0.8 * Curves.easeInOutSine.transform(v);
         case BreathPhase.holdIn:
-          phaseProgress.value = v;
           return 1.6;
         case BreathPhase.exhale:
-          phaseProgress.value = v;
           return 1.6 - 0.8 * Curves.easeInOutSine.transform(v);
         case BreathPhase.holdOut:
-          phaseProgress.value = v;
           return 0.8;
         case BreathPhase.ready:
           return 1.0;
@@ -327,7 +322,7 @@ class _BreathRunner extends HookConsumerWidget {
               painter: BreathRingPainter(
                 progress: phaseCtrl.value,
                 phase: phase.value,
-                phaseProgress: phaseProgress.value,
+                phaseProgress: phaseCtrl.value,
                 ringScale: computeScale(),
                 pulse: pulseCtrl.value,
               ),
