@@ -134,21 +134,29 @@ export function MeditationPlayer({
             : 'Read at your own pace'}
         </p>
 
-        {/* Progress bar (smaller, below) */}
+        {/* Progress bar (visible, tappable, with prominent timestamps) */}
         {hasAudio && effectiveDuration > 0 && (
           <div className="relative w-full max-w-md mt-6">
             <div
-              className="h-1 bg-ink/10 rounded-full cursor-pointer"
+              className="h-2 bg-ink/10 rounded-full cursor-pointer group/seek"
               onClick={handleSeek}
+              role="slider"
+              aria-label="Seek meditation playback"
+              aria-valuemin={0}
+              aria-valuemax={Math.round(effectiveDuration)}
+              aria-valuenow={Math.round(progress)}
+              tabIndex={0}
             >
               <div
-                className="h-full bg-gradient-to-r from-sage-400 to-sage-600 rounded-full transition-all"
+                className="h-full bg-gradient-to-r from-sage-400 to-sage-600 rounded-full transition-all relative"
                 style={{ width: `${progressPct}%` }}
-              />
+              >
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-3 h-3 rounded-full bg-sage-700 opacity-0 group-hover/seek:opacity-100 transition-opacity" />
+              </div>
             </div>
-            <div className="flex justify-between mt-2 text-[11px] text-ink/50 tabular-nums">
+            <div className="flex justify-between mt-2.5 text-xs text-ink/60 tabular-nums font-medium">
               <span>{formatTime(progress)}</span>
-              <span>{formatTime(effectiveDuration)}</span>
+              <span className="text-ink/40">{formatTime(effectiveDuration)}</span>
             </div>
           </div>
         )}
@@ -159,14 +167,14 @@ export function MeditationPlayer({
           </div>
         )}
 
-        {/* Volume */}
+        {/* Volume — visible sliders with proper hit targets */}
         {hasAudio && (
-          <div className="relative mt-4 space-y-2">
+          <div className="relative mt-6 max-w-md mx-auto grid grid-cols-2 gap-4">
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setVoiceVolume(voiceVolume === 0 ? 0.9 : 0)}
-                className="text-ink/50 hover:text-ink"
-                aria-label="Toggle voice"
+                className="text-ink/55 hover:text-ink p-1"
+                aria-label={voiceVolume === 0 ? 'Unmute voice' : 'Mute voice'}
                 title={`Voice: ${Math.round(voiceVolume * 100)}%`}
               >
                 {voiceVolume === 0 ? <VolumeX size={16} /> : <Volume2 size={16} />}
@@ -178,13 +186,16 @@ export function MeditationPlayer({
                 step="0.05"
                 value={voiceVolume}
                 onChange={e => setVoiceVolume(parseFloat(e.target.value))}
-                className="flex-1 h-0.5 appearance-none bg-ink/10 rounded-full accent-sage-600"
+                className="flex-1 h-1 appearance-none bg-ink/10 rounded-full accent-sage-600 cursor-pointer"
                 aria-label="Voice volume"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(voiceVolume * 100)}
               />
-              <span className="text-[10px] text-ink/40 tabular-nums w-8 text-right">Voice</span>
+              <span className="text-[10px] text-ink/40 tabular-nums w-9 text-right font-medium">{Math.round(voiceVolume * 100)}%</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-ink/40 text-[10px] uppercase tracking-wider w-4">M</span>
+              <span className="text-ink/55 text-[10px] uppercase tracking-wider w-4 text-center font-medium">M</span>
               <input
                 type="range"
                 min="0"
@@ -192,11 +203,14 @@ export function MeditationPlayer({
                 step="0.05"
                 value={masterVolume}
                 onChange={e => setMasterVolume(parseFloat(e.target.value))}
-                className="flex-1 h-0.5 appearance-none bg-ink/10 rounded-full accent-sage-600"
+                className="flex-1 h-1 appearance-none bg-ink/10 rounded-full accent-sage-600 cursor-pointer"
                 aria-label="Master volume"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(masterVolume * 100)}
                 title={`Master: ${Math.round(masterVolume * 100)}%`}
               />
-              <span className="text-[10px] text-ink/40 tabular-nums w-8 text-right">Master</span>
+              <span className="text-[10px] text-ink/40 tabular-nums w-9 text-right font-medium">{Math.round(masterVolume * 100)}%</span>
             </div>
           </div>
         )}

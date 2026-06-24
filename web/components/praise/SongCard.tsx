@@ -81,30 +81,28 @@ export function SongCard({ song }: { song: HEALPraise }) {
   return (
     <article
       id={`song-${song.slug}`}
-      className="card-quiet overflow-hidden group relative scroll-mt-24"
+      className={`card-quiet overflow-hidden group relative scroll-mt-24 transition-all duration-500 ${
+        isThisSong ? 'ring-2 ring-sage-400 shadow-lg' : ''
+      }`}
     >
       {/* Hero band with title + emotion badge */}
-      <div className={`relative px-6 md:px-8 pt-6 md:pt-8 pb-4 border-b border-ink/5 ${emotionColors.bg}`}>
-        <div className="flex items-start gap-4">
-          <div
-            className={`w-14 h-14 rounded-full flex items-center justify-center shrink-0 transition-all duration-500 ${
-              isThisSong ? 'bg-ink text-bone scale-110' : 'bg-bone text-ink/70 group-hover:scale-105'
-            }`}
-          >
-            {isThisSong ? (
-              <span className="flex items-center gap-0.5">
-                <span className="w-0.5 h-4 bg-bone rounded-full animate-pulse" style={{ animationDelay: '0ms' }} />
-                <span className="w-0.5 h-4 bg-bone rounded-full animate-pulse" style={{ animationDelay: '150ms' }} />
-                <span className="w-0.5 h-4 bg-bone rounded-full animate-pulse" style={{ animationDelay: '300ms' }} />
-              </span>
-            ) : (
-              <Music size={22} className="text-sage-700" />
-            )}
+      <div className={`relative px-6 md:px-8 pt-6 md:pt-8 pb-5 border-b border-ink/5 ${emotionColors.bg}`}>
+        {/* Now-playing ribbon */}
+        {isThisSong && (
+          <div className="absolute top-3 right-3 inline-flex items-center gap-1.5 text-[10px] tracking-widest uppercase text-sage-700 bg-paper px-2 py-1 rounded-full shadow-sm">
+            <span className="flex items-center gap-0.5">
+              <span className="w-0.5 h-2.5 bg-sage-600 rounded-full animate-pulse" style={{ animationDelay: '0ms' }} />
+              <span className="w-0.5 h-2.5 bg-sage-600 rounded-full animate-pulse" style={{ animationDelay: '150ms' }} />
+              <span className="w-0.5 h-2.5 bg-sage-600 rounded-full animate-pulse" style={{ animationDelay: '300ms' }} />
+            </span>
+            Playing
           </div>
+        )}
 
+        <div className="flex items-start gap-4">
           <div className="flex-1 min-w-0">
             {/* Top row: badges */}
-            <div className="flex flex-wrap items-center gap-1.5 mb-2">
+            <div className="flex flex-wrap items-center gap-1.5 mb-2.5">
               {song.category && (
                 <span className={`text-[10px] tracking-widest uppercase px-2 py-0.5 rounded-full ${categoryColors}`}>
                   {song.category}
@@ -112,26 +110,21 @@ export function SongCard({ song }: { song: HEALPraise }) {
               )}
               {song.emotion && (
                 <span className={`text-[10px] tracking-widest uppercase px-2 py-0.5 rounded-full ${emotionColors.bg} ${emotionColors.text} ring-1 ring-inset ${emotionColors.ring}`}>
-                  feels: {song.emotion}
+                  {song.emotion}
                 </span>
               )}
-              {song.key_signature && (
-                <span className="text-[10px] tracking-widest uppercase text-ink/40">
-                  · {song.key_signature}
+              {song.mood && !song.emotion && (
+                <span className="text-[10px] tracking-widest uppercase text-ink/45 bg-paper/70 px-2 py-0.5 rounded-full">
+                  {song.mood}
                 </span>
               )}
-              {song.tempo_bpm && (
-                <span className="text-[10px] tracking-widest uppercase text-ink/40">
-                  · {song.tempo_bpm} bpm
-                </span>
-              )}
-              {song.meter && (
-                <span className="text-[10px] tracking-widest uppercase text-ink/40">
-                  · {song.meter}
+              {(song.key_signature || song.tempo_bpm || song.meter) && (
+                <span className="text-[10px] tracking-widest uppercase text-ink/40 hidden sm:inline">
+                  · {[song.key_signature, song.tempo_bpm && `${song.tempo_bpm}bpm`, song.meter].filter(Boolean).join(' · ')}
                 </span>
               )}
             </div>
-            <h3 className="serif text-2xl md:text-3xl mb-1 leading-tight">{song.title}</h3>
+            <h3 className="serif text-2xl md:text-3xl mb-1.5 leading-tight">{song.title}</h3>
             {song.subtitle && (
               <p className="serif italic text-ink/55 text-sm">{song.subtitle}</p>
             )}
@@ -140,15 +133,15 @@ export function SongCard({ song }: { song: HEALPraise }) {
           {canPlay && (
             <button
               onClick={handlePlay}
-              className={`shrink-0 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 ${
+              className={`shrink-0 w-14 h-14 md:w-16 md:h-16 rounded-full flex items-center justify-center transition-all duration-500 ${
                 isThisSong
-                  ? 'bg-ink text-bone scale-105'
-                  : 'border border-ink/15 text-ink/70 hover:border-ink/40 hover:text-ink hover:scale-105 bg-bone/60'
+                  ? 'bg-ink text-bone scale-105 shadow-lg'
+                  : 'border border-ink/20 text-ink/75 hover:border-ink/50 hover:text-ink hover:scale-105 bg-bone/70'
               }`}
               aria-label={isThisSong ? `Pause ${song.title}` : `Play ${song.title}`}
               title={isThisSong ? 'Pause' : 'Play song'}
             >
-              {isThisSong ? <Pause size={18} /> : <Play size={18} className="ml-0.5" />}
+              {isThisSong ? <Pause size={20} /> : <Play size={20} className="ml-0.5" />}
             </button>
           )}
         </div>
@@ -156,31 +149,49 @@ export function SongCard({ song }: { song: HEALPraise }) {
 
       {/* Description block */}
       {song.description && (
-        <div className="px-6 md:px-8 pt-4 pb-2">
+        <div className="px-6 md:px-8 pt-5 pb-2">
           <p className="serif text-base md:text-lg leading-relaxed text-ink/75">
             {song.description}
           </p>
         </div>
       )}
 
-      {/* Tags row */}
-      {song.tags && song.tags.length > 0 && (
-        <div className="px-6 md:px-8 py-3 flex flex-wrap items-center gap-1.5">
-          {song.tags.map(tag => (
+      {/* Best-for chips (right after description — more prominent than tags) */}
+      {song.best_for && song.best_for.length > 0 && (
+        <div className="px-6 md:px-8 pt-3 flex flex-wrap items-center gap-1.5">
+          <span className="text-[10px] tracking-widest uppercase text-ink/40 mr-1">Best for</span>
+          {song.best_for.slice(0, 4).map(ctx => (
             <span
-              key={tag}
-              className="text-[10px] tracking-wide text-ink/55 bg-ink/5 px-2 py-0.5 rounded-full border border-ink/5"
+              key={ctx}
+              className="text-[10px] text-sage-700 bg-sage-50/80 px-2 py-0.5 rounded-full border border-sage-200/40"
             >
-              #{tag.replace(/_/g, ' ')}
+              {ctx.replace(/_/g, ' ')}
             </span>
           ))}
         </div>
       )}
 
-      {/* Progress + audio state */}
+      {/* Tags row (secondary, smaller) */}
+      {song.tags && song.tags.length > 0 && (
+        <div className="px-6 md:px-8 pt-2 pb-3 flex flex-wrap items-center gap-1.5">
+          {song.tags.slice(0, 6).map(tag => (
+            <span
+              key={tag}
+              className="text-[10px] tracking-wide text-ink/50 bg-ink/5 px-1.5 py-0.5 rounded-full"
+            >
+              #{tag.replace(/_/g, ' ')}
+            </span>
+          ))}
+          {song.tags.length > 6 && (
+            <span className="text-[10px] text-ink/35">+{song.tags.length - 6}</span>
+          )}
+        </div>
+      )}
+
+      {/* Progress + audio state — visible bar */}
       {isThisLoaded && canPlay && (
-        <div className="px-6 md:px-8 pb-3">
-          <div className="h-1 bg-ink/8 rounded-full overflow-hidden">
+        <div className="px-6 md:px-8 pb-4">
+          <div className="h-1.5 bg-ink/8 rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-sage-400 to-sage-600 transition-all duration-300"
               style={{ width: `${progressPct}%` }}
@@ -222,21 +233,6 @@ export function SongCard({ song }: { song: HEALPraise }) {
           <pre className="serif text-[15px] leading-relaxed whitespace-pre-wrap font-sans text-ink/75 bg-ink/[0.02] -mx-2 px-4 py-4 rounded-xl my-2">
 {song.lyrics}
           </pre>
-        </div>
-      )}
-
-      {/* Best for chips */}
-      {song.best_for && song.best_for.length > 0 && (
-        <div className="px-6 md:px-8 pb-4 flex flex-wrap items-center gap-1.5">
-          <span className="text-[10px] tracking-widest uppercase text-ink/40 mr-1">Best for</span>
-          {song.best_for.map(ctx => (
-            <span
-              key={ctx}
-              className="text-[10px] text-sage-700 bg-sage-50/80 px-2 py-0.5 rounded-full border border-sage-200/40"
-            >
-              {ctx.replace(/_/g, ' ')}
-            </span>
-          ))}
         </div>
       )}
 

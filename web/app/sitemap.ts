@@ -1,49 +1,64 @@
-import { MetadataRoute } from 'next';
+import type { MetadataRoute } from 'next';
 import { getPublished } from '@/lib/pb';
-import { pb } from '@/lib/pb';
 
-const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://heal.app';
+const SITE = (process.env.NEXT_PUBLIC_SITE_URL || 'https://heal.positiveness.club').replace(/\/$/, '');
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const now = new Date();
-
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: `${SITE}/`, lastModified: now, changeFrequency: 'daily', priority: 1 },
-    { url: `${SITE}/meditate`, lastModified: now, changeFrequency: 'daily', priority: 0.9 },
-    { url: `${SITE}/breathe`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
-    { url: `${SITE}/scripture`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${SITE}/prayers`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${SITE}/praise`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
-    { url: `${SITE}/essays`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 },
-    { url: `${SITE}/about`, lastModified: now, changeFrequency: 'monthly', priority: 0.5 },
+    { url: `${SITE}/`,          changeFrequency: 'daily',  priority: 1.0 },
+    { url: `${SITE}/meditate`,  changeFrequency: 'daily',  priority: 0.9 },
+    { url: `${SITE}/breathe`,   changeFrequency: 'monthly', priority: 0.8 },
+    { url: `${SITE}/scripture`, changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${SITE}/prayers`,   changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${SITE}/praise`,    changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${SITE}/essays`,    changeFrequency: 'weekly', priority: 0.6 },
+    { url: `${SITE}/programs`,  changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${SITE}/now`,       changeFrequency: 'yearly',  priority: 0.5 },
+    { url: `${SITE}/about`,     changeFrequency: 'yearly',  priority: 0.4 },
+    { url: `${SITE}/contact`,   changeFrequency: 'yearly',  priority: 0.3 },
+    { url: `${SITE}/privacy`,   changeFrequency: 'yearly',  priority: 0.2 },
+    { url: `${SITE}/terms`,     changeFrequency: 'yearly',  priority: 0.2 },
+    { url: `${SITE}/guidelines`,changeFrequency: 'yearly',  priority: 0.2 },
   ];
 
-  let dynamicRoutes: MetadataRoute.Sitemap = [];
+  // Dynamic: every published meditation
+  let meditationRoutes: MetadataRoute.Sitemap = [];
   try {
-    const [meditations, essays, prayers, praise] = await Promise.all([
-      getPublished('HEAL_meditations', '-id', 'is_published = true'),
-      getPublished('HEAL_essays', '-id', 'is_published = true'),
-      getPublished('HEAL_prayers', '-id', 'is_published = true'),
-      getPublished('HEAL_praise', '-id', 'is_published = true'),
-    ]);
-
-    dynamicRoutes = [
-      ...meditations.map((m: any) => ({
-        url: `${SITE}/meditate/${m.slug}`,
-        lastModified: new Date(m.updated || m.created || now),
-        changeFrequency: 'weekly' as const,
-        priority: 0.7,
-      })),
-      ...essays.map((e: any) => ({
-        url: `${SITE}/essays/${e.slug}`,
-        lastModified: new Date(e.updated || e.published_at || e.created || now),
-        changeFrequency: 'monthly' as const,
-        priority: 0.6,
-      })),
-    ];
-  } catch (e) {
-    // PB unreachable — return static routes only
+    const meditations = await getPublished('HEAL_meditations', '-published_at', 'is_published = true');
+    meditationRoutes = (meditations || []).map((m: any) => ({
+      url: `${SITE}/meditate/${m.slug}`,
+      lastModified: m.updated || m.published_at || undefined,
+      changeFrequency: 'monthly',
+      priority: 0.6,
+    }));
+  } catch (err) {
+    // PB unreachable — sitemap still works without dynamic routes
+    console.warn('sitemap: PB fetch failed, returning static only', err);
   }
 
-  return [...staticRoutes, ...dynamicRoutes];
+  // Dynamic: every published essay
+  let essayRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const essays = await getPublished('HEAL_essays', '-published_at', 'is_published = true');
+    essayRoutes = (essays || []).map((e: any) => ({
+      url: `${SITE}/essays/${e.slug}`,
+      lastModified: e.updated || e.published_at || undefined,
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    }));
+  } catch {}
+
+  // Dynamic: every program
+  let programRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const programs = await getPublished('HEAL_programs', '-published_at', 'is_published = true');
+    programRoutes = (programs || []).map((p: any) => ({
+      url: `${SITE}/programs/${p.slug}`,
+      lastModified: p.updated || p.published_at || undefined,
+      changeFrequency: 'weekly',
+      priority: 0.6,
+    }));
+  } catch {}
+
+  return [...staticRoutes, ...meditationRoutes, ...essayRoutes, ...programRoutes];
 }

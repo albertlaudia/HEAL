@@ -213,19 +213,58 @@ export function PraiseLibrary({
         </div>
       )}
 
-      {/* Results meta */}
-      <div className="flex items-center justify-between mb-4 text-xs text-ink/50">
-        <p>
-          <span className="tabular-nums text-ink/80">{filtered.length}</span> of{' '}
-          <span className="tabular-nums">{songs.length}</span> {songs.length === 1 ? 'song' : 'songs'}
-        </p>
+      {/* Results meta + active-filter chips */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between text-xs text-ink/55 mb-3">
+          <p>
+            <span className="tabular-nums text-ink/85 font-medium">{filtered.length}</span> of{' '}
+            <span className="tabular-nums">{songs.length}</span> {songs.length === 1 ? 'song' : 'songs'}
+            {hasFilter && <span className="ml-2 text-ink/40">(filtered)</span>}
+          </p>
+        </div>
+        {/* Active filter summary chips — show what's applied, easy to remove */}
         {hasFilter && (
-          <button
-            onClick={clearFilters}
-            className="text-sage-700 hover:text-sage-900 underline underline-offset-4"
-          >
-            clear filters
-          </button>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[10px] tracking-widest uppercase text-ink/45">Active:</span>
+            {activeEmotion && (
+              <button
+                onClick={() => setActiveEmotion(null)}
+                className="inline-flex items-center gap-1 text-[10px] tracking-wide px-2 py-1 rounded-full bg-amber-100 text-amber-800 hover:bg-amber-200 transition-colors"
+              >
+                feels: {EMOTION_DESCRIPTIONS[activeEmotion] || activeEmotion} ✕
+              </button>
+            )}
+            {activeContext && (
+              <button
+                onClick={() => setActiveContext(null)}
+                className="inline-flex items-center gap-1 text-[10px] tracking-wide px-2 py-1 rounded-full bg-sage-100 text-sage-800 hover:bg-sage-200 transition-colors"
+              >
+                when: {activeContext.replace(/_/g, ' ')} ✕
+              </button>
+            )}
+            {activeTag && (
+              <button
+                onClick={() => setActiveTag(null)}
+                className="inline-flex items-center gap-1 text-[10px] tracking-wide px-2 py-1 rounded-full bg-ink/10 text-ink/80 hover:bg-ink/20 transition-colors"
+              >
+                #{activeTag.replace(/_/g, ' ')} ✕
+              </button>
+            )}
+            {query.trim() && (
+              <button
+                onClick={() => setQuery('')}
+                className="inline-flex items-center gap-1 text-[10px] tracking-wide px-2 py-1 rounded-full bg-ink/10 text-ink/80 hover:bg-ink/20 transition-colors"
+              >
+                “{query.trim()}” ✕
+              </button>
+            )}
+            <button
+              onClick={clearFilters}
+              className="ml-1 text-[10px] tracking-wide text-sage-700 hover:text-sage-900 underline underline-offset-4"
+            >
+              clear all
+            </button>
+          </div>
         )}
       </div>
 
