@@ -1,48 +1,67 @@
-// HEAL — a quiet Christian mindfulness practice
-// Entry point. Wires ProviderScope (Riverpod) around the HEAL app.
+// HEAL — App entry point.
+// Initializes PB + Firebase + notifications, then runs the app.
 
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app.dart';
 import 'core/env.dart';
 import 'core/observability.dart';
-import 'data/bootstrap.dart';
+import 'core/theme.dart';
+import 'core/router.dart';
+import 'data/pb_repositories.dart';
+import 'services/notification_service.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations(<DeviceOrientation>[
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  // Crash-safe zone
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  // Configure system chrome for a quiet, low-distraction feel.
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.light,
-  ));
+    // Lock to portrait
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
 
-  // Load environment + boot the app.
-  final env = await Env.load();
-  await runZonedGuarded<Future<void>>(
-    () async {
-      final container = ProviderContainer(
-        observers: <ProviderObserver>[Observability()],
-      );
-      await bootstrap(container: container, env: env);
-      runApp(
-        UncontrolledProviderScope(
-          container: container,
-          child: const HealApp(),
+    // Style the system bars
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+
+    final logger = HealLogger();
+    logger.i('App', 'Booting HEAL…');
+
+    final pb = PocketBase(HealEnv.pocketbaseUrl);
+
+    // Create a root container so we can override PB before runApp
+    final container = ProviderContainer(
+      overrides: [
+        pocketbaseProvider.overrideWithValue(pb),
+      ],
+    );
+
+    // Init notifications
+    await container.read(notificationServiceProvider).init();
+
+    // Check if first launch — show onboarding if so
+    final prefs = await SharedPreferences.getInstance();
+    final onboarded = prefs.getBool('onboarding_complete') ?? false;
+
+    // If not onboarded, the splash page will redirect to onboarding after delay
+    logger.i('App', 'Onboarded: $onboarded');
+
+    runApp(
+      ProviderScope(
+        parent: container,
+        child: HealApp(
+          firstLaunch: !onboarded,
         ),
-      );
-    },
-    (Object error, StackTrace stack) {
-      Observability.recordError(error, stack);
-    },
-  );
+      ),
+    );
+  }, (error, stack) {
+    // ignore: avoid_print
+    print('Uncaught: $error\n$stack');
+  });
 }

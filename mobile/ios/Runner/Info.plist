@@ -46,8 +46,19 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	<!-- Microphone permission for any future guided-breath recording features -->
+
+	<!-- Microphone: reserved for future guided-breath recording features -->
 	<key>NSMicrophoneUsageDescription</key>
 	<string>HEAL does not record audio. This permission is reserved for future guided practice features.</string>
+
+	<!-- Notifications: daily morning + evening reminders -->
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>HEAL sends gentle daily reminders for your morning and evening practice. You can disable these anytime in Settings.</string>
+
+	<!-- Audio background mode: continues playback when device is locked -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>audio</string>
+	</array>
 </dict>
 </plist>

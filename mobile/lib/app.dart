@@ -1,26 +1,73 @@
-// HEAL app shell — root widget, Material 3 dark theme,
-// go_router-based navigation.
+// HEAL — Root app widget.
+// Material 3 with custom theme + GoRouter.
+// On first launch, shows onboarding after splash.
 
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'core/theme.dart';
 import 'core/router.dart';
+import 'core/theme.dart';
+import 'features/onboarding/onboarding_page.dart';
+import 'features/home/splash_page.dart';
 
-class HealApp extends HookConsumerWidget {
-  const HealApp({super.key});
+class HealApp extends ConsumerStatefulWidget {
+  final bool firstLaunch;
+  const HealApp({super.key, this.firstLaunch = false});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final router = ref.watch(healRouterProvider);
-    return MaterialApp.router(
+  ConsumerState<HealApp> createState() => _HealAppState();
+}
+
+class _HealAppState extends ConsumerState<HealApp> {
+  bool _showSplash = true;
+  bool _showOnboarding = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _showOnboarding = widget.firstLaunch;
+    Timer(const Duration(milliseconds: 2200), () {
+      if (mounted) {
+        setState(() => _showSplash = false);
+        // After splash, decide where to go
+        if (_showOnboarding) {
+          // Navigate to onboarding after splash
+          Future.microtask(() {
+            HealRouter.router.push('/onboarding');
+          });
+        } else {
+          Future.microtask(() {
+            HealRouter.router.go('/home');
+          });
+        }
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
       title: 'HEAL',
       debugShowCheckedModeBanner: false,
-      theme: HealTheme.dark(),
-      darkTheme: HealTheme.dark(),
+      theme: HealTheme.dark,
+      darkTheme: HealTheme.dark,
       themeMode: ThemeMode.dark,
-      routerConfig: router,
+      routerConfig: HealRouter.router,
+      builder: (context, child) {
+        // Wrap with overlay for splash + onboarding
+        return Stack(
+          children: [
+            child ?? const SizedBox(),
+            if (_showSplash)
+              const Material(
+                color: Colors.transparent,
+                child: SplashPage(),
+              ),
+          ],
+        );
+      },
     );
   }
 }

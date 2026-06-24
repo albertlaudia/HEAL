@@ -1,43 +1,59 @@
-// Lightweight observability — pluggable for Firebase Crashlytics / Sentry / Console.
-// Default: console + in-memory ring buffer; production swaps in Crashlytics.
-
-import 'dart:async';
+// HEAL — Lightweight observability / logger.
+// Avoids pulling in `package:logging`. Designed for prod where we want
+// crashlytics-style breadcrumbs but minimal cost.
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
-class Observability extends ProviderObserver {
-  static final List<_Record> _buffer = <_Record>[];
+enum LogLevel { debug, info, warn, error }
 
-  static void log(String message) {
-    if (kDebugMode) debugPrint('[heal] $message');
-    _buffer.add(_Record(DateTime.now(), 'log', message));
-  }
+class LogEntry {
+  final DateTime timestamp;
+  final LogLevel level;
+  final String tag;
+  final String message;
+  final Object? error;
+  final StackTrace? stackTrace;
 
-  static void recordError(Object error, StackTrace stack) {
-    if (kDebugMode) {
-      debugPrint('[heal] ERROR: $error');
-      debugPrint(stack.toString());
-    }
-    _buffer.add(_Record(DateTime.now(), 'error', '$error\n$stack'));
-  }
-
-  static List<_Record> snapshot() => List<_Record>.unmodifiable(_buffer);
+  LogEntry(this.timestamp, this.level, this.tag, this.message,
+      {this.error, this.stackTrace});
 
   @override
-  void providerDidFail(
-    ProviderBase<Object?> provider,
-    Object error,
-    StackTrace stackTrace,
-    ProviderContainer container,
-  ) {
-    recordError(error, stackTrace);
+  String toString() {
+    final ts = DateFormat('HH:mm:ss.SSS').format(timestamp);
+    final lvl = level.name.toUpperCase().padRight(5);
+    return '[$ts] $lvl $tag: $message'
+        '${error != null ? '\n  ${error.toString()}' : ''}'
+        '${stackTrace != null ? '\n  ${stackTrace.toString().split("\n").take(3).join("\n  ")}' : ''}';
   }
 }
 
-class _Record {
-  _Record(this.timestamp, this.level, this.message);
-  final DateTime timestamp;
-  final String level;
-  final String message;
+class HealLogger {
+  final List<LogEntry> _buffer = [];
+  final int maxBufferSize = 500;
+
+  void _log(LogLevel level, String tag, String message,
+      {Object? error, StackTrace? stackTrace}) {
+    final entry = LogEntry(DateTime.now(), level, tag, message,
+        error: error, stackTrace: stackTrace);
+    _buffer.add(entry);
+    if (_buffer.length > maxBufferSize) _buffer.removeAt(0);
+    if (kDebugMode) {
+      // ignore: avoid_print
+      print(entry);
+    }
+  }
+
+  void d(String tag, String message) => _log(LogLevel.debug, tag, message);
+  void i(String tag, String message) => _log(LogLevel.info, tag, message);
+  void w(String tag, String message, {Object? error}) =>
+      _log(LogLevel.warn, tag, message, error: error);
+  void e(String tag, String message, {Object? error, StackTrace? stackTrace}) =>
+      _log(LogLevel.error, tag, message, error: error, stackTrace: stackTrace);
+
+  List<LogEntry> tail(int n) =>
+      _buffer.length <= n ? List.of(_buffer) : _buffer.sublist(_buffer.length - n);
 }
+
+final loggerProvider = Provider<HealLogger>((ref) => HealLogger());
