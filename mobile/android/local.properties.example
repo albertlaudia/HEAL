@@ -1,0 +1,8 @@
+# Sample local.properties for HEAL Flutter Android.
+# Copy to local.properties on your dev machine — never commit local.properties
+# (it contains absolute paths that differ per machine).
+
+sdk.dir=/Users/YOU/Library/Android/sdk
+flutter.sdk=/Users/YOU/development/flutter
+flutter.versionCode=1
+flutter.versionName=0.1.0
