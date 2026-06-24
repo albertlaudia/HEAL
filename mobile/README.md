@@ -117,7 +117,7 @@ mobile/
 │   │   ├── proguard-rules.pro
 │   │   └── src/main/
 │   │       ├── AndroidManifest.xml
-│   │       ├── kotlin/com/solverwatch/heal/MainActivity.kt
+│   │       ├── kotlin/com/pclub/heal/MainActivity.kt
 │   │       └── res/{drawable,values}/...
 │   ├── build.gradle
 │   ├── settings.gradle
@@ -156,8 +156,16 @@ runner with macOS + a provisioning profile (we don't have one yet).
 
 ## Bundle identifiers
 
-- **iOS**: `com.solverwatch.heal`
-- **Android**: `com.solverwatch.heal`
+- **iOS**: `com.pclub.heal`
+- **Android**: `com.pclub.heal`
+
+## App icon
+
+Brass "H" logomark on deep rosewood, with a soft radial brass halo.
+- iOS: `ios/Runner/Assets.xcassets/AppIcon.appiconset/` — 9 sizes (20×20@2x/3x through 1024×1024@1x)
+- Android: adaptive icon at `mipmap-anydpi-v26/ic_launcher.xml` (foreground + background + monochrome for Android 12+ themed icons)
+- All density buckets populated: `mipmap-{mdpi,hdpi,xhdpi,xxhdpi,xxxhdpi}`
+- Source generator: `.icon-work/generate_icon.py` (Pillow + numpy)
 
 ## Status as of 2026-06-24
 

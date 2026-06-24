@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.solverwatch.heal"
+    namespace "com.pclub.heal"
     compileSdk 34
     ndkVersion flutter.ndkVersion
 
@@ -41,7 +41,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.solverwatch.heal"
+        applicationId "com.pclub.heal"
         minSdk 21
         targetSdk 34
         versionCode flutterVersionCode.toInteger()
