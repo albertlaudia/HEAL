@@ -1,0 +1,46 @@
+{
+  "_meta": {
+    "batch": 1,
+    "generated_at": "2026-06-24T14:17:00Z",
+    "generator": "MiniMax-M3",
+    "type": "meditations",
+    "target": "2 meditations per hour × 5 hours/day = 10/day",
+    "schedule": "09:05, 10:05, 11:05, 12:05, 13:05 Asia/Shanghai daily"
+  },
+  "content": [
+    {
+      "type": "meditation",
+      "title": "When the Mind Will Not Settle",
+      "slug": "when-the-mind-will-not-settle",
+      "theme": "stillness",
+      "season": "ordinary",
+      "scripture_ref": "Psalm 46:10",
+      "translation": "NRSV",
+      "scripture_text": "Be still, and know that I am God. I am exalted among the nations, I am exalted in the earth.",
+      "reflection": "Stillness is not the absence of thought. It is the gentle return to the present, again and again, without judgment. Each return is the practice itself.",
+      "body": "Find a comfortable seat. Let the shoulders drop. Notice the chair beneath you. Notice the floor beneath the chair. Notice the building holding the floor.\n\nTake one slow breath. Let the inhale be four counts. Let the exhale be six. The longer exhale tells the body it is safe.\n\nNow notice the mind. It is busy. It will be busy. That is what minds do. You are not failing the practice because the mind will not settle. The settling is not the goal. The returning is the goal.\n\nImagine your thoughts as leaves on a stream. They float past. You do not have to chase each one. You do not have to argue with any of them. You let them pass.\n\nRead the words slowly. Be still, and know. Know is not a thing you do with your mind. Know is a thing you do with your whole body. Know that you are held. Know that the room you sit in is held. Know that the hour is held.\n\nWhen the mind wanders — and it will — say gently to yourself, returning. That is the whole mantra. Returning. Each returning is a small act of worship. Each returning is a vote for the present moment.\n\nStay a little longer than feels comfortable. Let the body learn what stillness feels like from the inside, not from a description of stillness.\n\nWhen you are ready, open the eyes. Carry one word with you into the day. For me, the word is returning. For you, it might be something else. Let it find you.",
+      "prayer": "Lord, when my mind will not settle, teach me to return. Teach me that each returning is enough. Amen.",
+      "duration_seconds": 320,
+      "sort_order": 700,
+      "is_published": true,
+      "tags": ["meditation", "stillness", "practice", "beginner-friendly"]
+    },
+    {
+      "type": "meditation",
+      "title": "For the Sleepless Hour",
+      "slug": "for-the-sleepless-hour",
+      "theme": "rest",
+      "season": "ordinary",
+      "scripture_ref": "Matthew 11:28",
+      "translation": "NRSV",
+      "scripture_text": "Come to me, all you that are weary and are carrying heavy burdens, and I will give you rest.",
+      "reflection": "Sleeplessness is its own kind of suffering. The Lord meets you in the dark hour, not the bright one. The invitation to rest is not a command to perform. It is an offer to be held.",
+      "body": "If you are lying awake, you are already doing the practice. You have shown up. The body is tired. The mind will not let go. This meditation is for that hour.\n\nPlace both hands on your belly. Do not try to breathe deeply. Just notice the breath that is already there. The rise and fall. The rise and fall.\n\nImagine a window in the room. Through that window, you can see the night. The night is not your enemy. The night is the Lord's other country. He has work there that He does not do by day. You are not required to understand it. You are only required to lie inside it.\n\nRead the words slowly. Come to me, all you who are weary. The word weary is doing a lot of work in this sentence. It means the tired beyond tired. The tired that has forgotten what rested felt like. The tired that has stopped asking for rest because asking has not worked.\n\nThe invitation still stands. The Lord does not rescind the invitation because you are tired. He does not rescind it because you have worried yourself awake. He does not rescind it because you cannot stop thinking about tomorrow.\n\nLet the body weigh what it weighs. Let the bed hold what it holds. Let the ceiling be the ceiling, and the dark be the dark. You are not in charge of falling asleep. You are only in charge of resting in the body that you have.\n\nIf sleep comes, let it come. If it does not, you have still kept watch with the One who does not sleep. That is enough. That is the whole work for this hour.\n\nStay in this posture as long as it is bearable. Let the body know that you are not at war with it. Let the breath be the only job.",
+      "prayer": "Lord of the sleepless, meet me in this hour. Teach me to rest in the body I have, and to trust You with the rest. Amen.",
+      "duration_seconds": 380,
+      "sort_order": 701,
+      "is_published": true,
+      "tags": ["meditation", "rest", "sleeplessness", "anxiety", "night"]
+    }
+  ]
+}
