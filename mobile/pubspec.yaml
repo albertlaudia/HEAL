@@ -1,0 +1,57 @@
+name: heal
+description: HEAL — a quiet Christian mindfulness practice for iOS and Android.
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+  flutter: '>=3.24.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # State management
+  flutter_riverpod: ^2.5.1
+  # Routing
+  go_router: ^14.6.1
+  # Audio playback (matches /web's record/audioplayers stack)
+  audioplayers: ^6.1.0
+  record: ^5.2.0
+  # Backend
+  pocketbase: ^0.21.5
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
+  # Local storage
+  drift: ^2.20.3
+  drift_flutter: ^0.2.2
+  path_provider: ^2.1.4
+  shared_preferences: ^2.3.2
+  # UX
+  flutter_animate: ^4.5.0
+  flutter_hooks: ^0.20.5
+  google_fonts: ^6.2.1
+  # Networking
+  dio: ^5.7.0
+  # Utilities
+  intl: ^0.19.0
+  collection: ^1.18.0
+  # Permissions
+  permission_handler: ^11.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+  drift_dev: ^2.20.3
+  build_runner: ^2.4.13
+  go_router_builder: ^2.7.1
+  riverpod_generator: ^2.4.3
+  custom_lint: ^0.6.7
+  riverpod_lint: ^2.3.13
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/audio/

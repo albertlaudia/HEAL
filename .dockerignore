@@ -1,3 +1,5 @@
+# Root .dockerignore — applied when building the entire monorepo
+# (When building /web specifically, the build context is just that folder.)
 node_modules
 .next
 out
@@ -6,7 +8,9 @@ dist
 .git
 .gitignore
 .github
+mobile
 content
+docs
 scripts/.cache
 b2-cache
 *.log
@@ -16,15 +20,17 @@ b2-cache
 .env.*.local
 .DS_Store
 .eslintrc.json
-docs
-content/.url-map.json
-public/.gitkeep
-# All media lives on the CDN now (https://resources.positiveness.club/heal/).
-# Don't ship any of it to Dokploy — the build context should be tiny.
-public/images/**
-public/audio/meditations/**
-public/audio/praise/**
-tests
 coverage
 playwright-report
 test-results
+.mavis-cache/
+
+# Exclude heavy subfolders from the /web build context too
+# (this file is also used when build context is /web via Dokploy)
+**/node_modules/
+**/.next/
+**/build/
+**/.dart_tool/
+**/public/images/**
+**/public/audio/meditations/**
+**/public/audio/praise/**

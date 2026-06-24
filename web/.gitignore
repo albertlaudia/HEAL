@@ -1,0 +1,18 @@
+# Web (Next.js 15 + React 19 RC)
+node_modules/
+.next/
+out/
+build/
+dist/
+.env*.local
+.turbo/
+next-env.d.ts
+*.tsbuildinfo
+.swc/
+
+# Media cache (working dir, never commit)
+.mavis-cache/
+public/.next-tmp/
+
+# Flutter output if cross-mounted
+*.dart_tool/

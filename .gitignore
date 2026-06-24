@@ -1,3 +1,44 @@
+# ─── Web (Next.js at /web) ─────────────────────────────────────
+web/node_modules/
+web/.next/
+web/out/
+web/build/
+web/dist/
+web/.env*.local
+web/.turbo/
+web/next-env.d.ts
+web/*.tsbuildinfo
+web/.swc/
+
+# ─── Mobile (Flutter at /mobile) ───────────────────────────────
+mobile/.dart_tool/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/.packages
+mobile/.pub-cache/
+mobile/.pub/
+mobile/build/
+mobile/.idea/
+mobile/.vscode/
+mobile/ios/Pods/
+mobile/ios/.symlinks/
+mobile/ios/Flutter/Flutter.framework
+mobile/ios/Flutter/Flutter.podspec
+mobile/ios/Flutter/flutter_export_environment.sh
+mobile/android/.gradle/
+mobile/android/local.properties
+mobile/android/app/debug/
+mobile/android/app/profile/
+mobile/android/app/release/
+mobile/android/key.properties
+mobile/android/**/GeneratedPluginRegistrant.java
+mobile/android/**/GeneratedPluginRegistrant.swift
+mobile/macos/Pods/
+mobile/macos/Flutter/ephemeral/
+mobile/windows/flutter/ephemeral/
+mobile/linux/flutter/ephemeral/
+
+# ─── Repo root ─────────────────────────────────────────────────
 node_modules/
 .next/
 out/
@@ -8,10 +49,18 @@ dist/
 .env*.local
 .DS_Store
 *.tsbuildinfo
-next-env.d.ts
+
+# ─── Media caches ──────────────────────────────────────────────
 content/meditations/*.mp3
 content/meditations/*.png
 content/meditations/*.json.tmp
 scripts/.cache/
 b2-cache/
 .mavis-cache/
+
+# ─── OS / editor ───────────────────────────────────────────────
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+.DS_Store
