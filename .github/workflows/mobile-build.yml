@@ -37,7 +37,7 @@ jobs:
 
       - name: Write SA key
         run: |
-          echo "$GCLOUD_SERVICE_ACCOUNT_CREDENTIALS" > /tmp/sa-key.json
+          printf "%s" "$GCLOUD_SERVICE_ACCOUNT_CREDENTIALS" > /tmp/sa-key.json
           chmod 644 /tmp/sa-key.json
         env:
           GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
