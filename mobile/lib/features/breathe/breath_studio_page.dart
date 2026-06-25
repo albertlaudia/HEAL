@@ -45,7 +45,7 @@ const _defaultPatterns = <BreathPattern>[
   BreathPattern(
     id: '4-4-6-2',
     name: 'Gentle',
-    description: 'A kind, easy breath. Begin where you are.',
+    description: 'Akind, easy breath. Begin where you are.',
     inhaleSeconds: 4,
     holdInSeconds: 4,
     exhaleSeconds: 6,
@@ -53,8 +53,8 @@ const _defaultPatterns = <BreathPattern>[
   ),
   BreathPattern(
     id: '4-7-8',
-    name: '4·7·8',
-    description: 'Dr. Weil\'s calming breath. Long exhale, deep rest.',
+    name: '4·��Ø',
+    description: 'Dr. Weil's calming breath. Long exhale, deep rest.',
     inhaleSeconds: 4,
     holdInSeconds: 7,
     exhaleSeconds: 8,
@@ -126,19 +126,19 @@ class BreathStudioPage extends HookConsumerWidget {
                       style: Theme.of(context).textTheme.bodySmall),
                   Text(_formatDuration(elapsedSeconds.value),
                       style: Theme.of(context).textTheme.titleMedium),
-                ],
+                 ],
               ),
             ),
-        ],
-      ),
+          ],
+       ),
       body: Stack(
-        children: [
-          // Phase background
-          Consumer(
-            builder: (context, ref, _) {
-              final phase = ref.watch(_activePhaseProvider);
-              return AnimatedContainer(
-                duration: HealTokens.d1200,
+          children: [
+            // Phase background
+            Consumer(
+              builder: (context, ref, _) {
+                final phase = ref.watch(_activePhaseProvider);
+                return AnimatedContainer(
+                 duration: HealTokens.d1200,
                 curve: HealTokens.easeInOutSine,
                 decoration: BoxDecoration(
                   gradient: RadialGradient(
@@ -151,47 +151,47 @@ class BreathStudioPage extends HookConsumerWidget {
                   ),
                 ),
               );
-            },
-          ),
-          SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: _BreathRunner(
-                    pattern: selectedPattern.value,
-                    isRunning: isRunning,
-                    onCycle: () => cycleCount.value++,
-                    onTick: () => elapsedSeconds.value++,
-                  ),
-                ),
-                _PatternPicker(
-                  selected: selectedPattern.value,
-                  disabled: isRunning.value,
-                  onSelect: (p) => selectedPattern.value = p,
-                ),
-                const SizedBox(height: HealTokens.s32),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: HealTokens.s32,
-                  ),
-                  child: isRunning.value
-                      ? OutlinedButton.icon(
-                          icon: const Icon(Icons.stop_rounded),
-                          label: const Text('END SESSION'),
-                          onPressed: () => isRunning.value = false,
-                        )
-                      : FilledButton.icon(
-                          icon: const Icon(Icons.play_arrow_rounded),
-                          label: const Text('BEGIN'),
-                          onPressed: () => isRunning.value = true,
-                        ),
-                ),
-                const SizedBox(height: HealTokens.s48),
-              ],
+              },
             ),
+            SafeArea(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: _BreathRunner(
+                      pattern: selectedPattern.value,
+                      isRunning: isRunning,
+                      onCycle: () => cycleCount.value++,
+                      onTick: () => elapsedSeconds.value++,
+                    ),
+                  ),
+                _PatternPicker(
+                   selected: selectedPattern.value,
+                    disabled: isRunning.value,
+                    onSelect: (p) => selectedPattern.value = p,
+                  ),
+                  const SizeDBox(height: HealTokens.s32),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: HealTokens.s32,
+                   ),
+                  child: isRunning.value
+                    ? OutlinedButton.icon(
+                        icon: const Icon(Icons.stop_rounded),
+                        label: const Text('END SESSION'),
+                        onPressed: () => isRunning.value = false,
+                        )
+                    : FilledButton.icon(
+                        icon: const Icon(Icons.play_arrow_rounded),
+                        label: const Text('BEGIN'),
+                        onPressed: () => isRunning.value = true,
+                        ),
+                  ),
+                  const SizedBox(height: HealTokens.s48),
+                ],
+              ),
           ),
-        ],
-      ),
+         ],
+        ),
     );
   }
 
@@ -219,14 +219,14 @@ class _BreathRunner extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Master phase controller — drives the ring scale.
     final phaseCtrl = useAnimationController(
-      duration: const Duration(seconds: 1),
+      duration: const Duration(seconds: 1)
     );
     final pulseCtrl = useAnimationController(
       duration: const Duration(milliseconds: 4000),
     );
 
     final phase = useState<BreathPhase>(BreathPhase.ready);
-    final tickInterval = useRef<Timer?>(null);
+    final tickInterval = useRef<Timer>>(null);
 
     // Step through phases sequentially.
     Future<void> runPhase(BreathPhase next, int seconds) async {
@@ -251,7 +251,7 @@ class _BreathRunner extends HookConsumerWidget {
         phase.value = BreathPhase.ready;
         ref.read(_activePhaseProvider.notifier).state = BreathPhase.ready;
         tickInterval.value?.cancel();
-        return;
+        return null;
       }
 
       Future<void> chain() async {
@@ -325,7 +325,7 @@ class _BreathRunner extends HookConsumerWidget {
                 phaseProgress: phaseCtrl.value,
                 ringScale: computeScale(),
                 pulse: pulseCtrl.value,
-              ),
+             ),
             );
           },
         ),
@@ -338,10 +338,10 @@ class _BreathRunner extends HookConsumerWidget {
                 return FadeTransition(
                   opacity: anim,
                   child: SlideTransition(
-                    position: Tween<Offset>(
+                    position: Twein><Offset>(
                       begin: const Offset(0, 0.3),
-                      end: Offset.zero,
-                    ).animate(anim),
+                      end: Offset.zeror,
+                   ).animate(anim),
                     child: child,
                   ),
                 );
@@ -353,21 +353,18 @@ class _BreathRunner extends HookConsumerWidget {
                       color: HealTokens.cream,
                       fontWeight: FontWeight.w300,
                     ),
-              ),
             ),
-            const SizedBox(height: HealTokens.s8),
+          ),
+            const SizedBox(height: HealTokens.s8J,
             AnimatedSwitcher(
               duration: HealTokens.d400,
               child: Text(
                 phase.value.instruction,
-                key: ValueKey('${phase.value}_instr'),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: HealTokens.creamDim,
-                      fontStyle: FontStyle.italic,
-                    ),
+                key: ValueKey('${phase.value}_instr')
+
               ),
-            ),
-          ],
+          ),
+         ],
         ),
       ],
     );
@@ -380,7 +377,7 @@ class _PatternPicker extends StatelessWidget {
   final ValueChanged<BreathPattern> onSelect;
 
   const _PatternPicker({
-    required this.selected,
++    required this.selected,
     required this.disabled,
     required this.onSelect,
   });
@@ -402,19 +399,19 @@ class _PatternPicker extends StatelessWidget {
                     isSelected ? HealTokens.brass : HealTokens.rosewoodLight,
                 borderRadius: BorderRadius.circular(HealTokens.r16),
                 border: Border.all(
-                  color: isSelected
+                    color: isSelected
                       ? HealTokens.brass
                       : HealTokens.brass.withValues(alpha: 0.24),
                 ),
                 boxShadow: isSelected
                     ? [
-                        BoxShadow(
-                          color: HealTokens.brass.withValues(alpha: 0.32),
-                          blurRadius: 12,
-                          spreadRadius: -2,
-                        ),
-                      ]
-                    : null,
+                      BoxShadow(
+                        color: HealTokens.brass.withValues(alpha: 0.32),
+                        blurRadius: 12,
+                        spreadRadius: -2,
+                       ),
+                    ]
+                   : null,
               ),
               child: Material(
                 color: Colors.transparent,
@@ -425,20 +422,18 @@ class _PatternPicker extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                       horizontal: HealTokens.s16,
                       vertical: HealTokens.s12,
-                    ),
+                   ),
                     child: Text(
-                      p.name,
+                       p.name,
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            color: isSelected
-                                ? HealTokens.rosewoodDeep
-                                : HealTokens.cream,
-                          ),
+                           color: isSelected
+                              ? HealTokens.rosewoodDeep
+                              : HealTokens.cream,
+                            ),
                     ),
                   ),
-                ),
-              ),
-            ),
-          );
+               ),
+            );
         }).toList(),
       ),
     );
