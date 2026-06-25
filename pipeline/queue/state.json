@@ -1,5 +1,28 @@
 {
   "next_batch": 2,
-  "last_run": "2026-06-25T02:13:00Z",
-  "last_batch_results": null
+  "last_run": "2026-06-25T02:21:00Z",
+  "last_batch_results": {
+    "batch": 1,
+    "meditations": [
+      {
+        "slug": "batch-001-1-stillness",
+        "theme": "stillness",
+        "title": "Finding God in the Silence: A Meditation on Stillness",
+        "scripture_ref": "1 Kings 19:11-12",
+        "audio_url": "https://resources.positiveness.club/heal/audio/meditations/batch-001-1-stillness.mp3",
+        "pb_id": "75hxx5pzo0662q8",
+        "cdn_ok": true
+      },
+      {
+        "slug": "batch-001-2-gratitude",
+        "theme": "gratitude",
+        "title": "The Practice of Thankfulness: How Gratitude Shapes the Soul",
+        "scripture_ref": "1 Thessalonians 5:16-18",
+        "audio_url": "https://resources.positiveness.club/heal/audio/meditations/batch-001-2-gratitude.mp3",
+        "pb_id": "1hoxag034dktvd6",
+        "cdn_ok": true
+      }
+    ],
+    "git_commit": "a6ccd3d"
+  }
 }
