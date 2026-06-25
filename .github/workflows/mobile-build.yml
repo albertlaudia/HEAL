@@ -35,16 +35,8 @@ jobs:
       - name: Install Python + googleapiclient
         run: pip install --break-system-packages google-api-python-client google-auth
 
-      # - name: Write SA key  # SKIPPED — SA key unavailable, upload AAB manually
-        # uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const creds = process.env.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS || '';
-            fs.writeFileSync('/tmp/sa-key.json', creds);
-            fs.chmodSync('/tmp/sa-key.json', 0o600);
-        env:
-          GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
+      - name: Write SA key  # SKIPPED — SA key unavailable
+        run: echo "SA key step skipped — upload AAB artifact manually"
 
       - name: Install dependencies
         run: flutter pub get
