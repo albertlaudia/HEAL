@@ -22,6 +22,14 @@ if (flutterVersionName == null) {
     flutterVersionName = '0.1.0'
 }
 
+def keyProperties = new Properties()
+def keyFile = rootProject.file('key.properties')
+if (keyFile.exists()) {
+    keyFile.withReader('UTF-8') { reader ->
+        keyProperties.load(reader)
+    }
+}
+
 android {
     namespace "com.pclub.heal"
     compileSdk 34
@@ -51,15 +59,22 @@ android {
 
     signingConfigs {
         debug {
-            // Default debug keystore used by `flutter run`
+        }
+        release {
+            if (keyProperties['keyAlias']) {
+                keyAlias keyProperties['keyAlias']
+                keyPassword keyProperties['keyPassword']
+                storeFile rootProject.file(keyProperties['storeFile'])
+                storePassword keyProperties['storePassword']
+            }
         }
     }
 
     buildTypes {
         release {
-            // Use the debug signing config for now so `flutter build apk` works
-            // out of the box. For Play Store, configure proper signing.
-            signingConfig signingConfigs.debug
+            if (keyProperties['keyAlias']) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

@@ -8,52 +8,147 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-android:
-    runs-on: ubuntu-latest
+  analyze-test:
+    runs-on: [self-hosted, android]
     defaults:
       run:
         working-directory: mobile
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
+        id: flutter
         with:
-          channel: 'stable'
-          flutter-version: '3.24.5'
+          flutter-version: '3.27.1'
 
-      - name: Cache pub
-        uses: actions/cache@v4
-        with:
-          path: |
-            mobile/.dart_tool
-            mobile/.flutter-plugins
-            mobile/.flutter-plugins-dependencies
-            mobile/.packages
-            mobile/.pub
-          key: ${{ runner.os }}-flutter-pub-${{ hashFiles('mobile/pubspec.lock') }}
+      - name: Set Android SDK path
+        run: echo "sdk.dir=/opt/android-sdk" > android/local.properties
 
-      - name: Install
+      - name: Install dependencies
         run: flutter pub get
 
       - name: Generate code
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Build APK (release)
+      - name: Analyze
+        run: flutter analyze --fatal-warnings
+
+  build-android:
+    needs: analyze-test
+    runs-on: [self-hosted, android, large]
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        id: flutter
+        with:
+          flutter-version: '3.27.1'
+
+      - name: Set Android SDK path
+        run: echo "sdk.dir=/opt/android-sdk" > android/local.properties
+
+      - name: Install Python + googleapiclient
+        run: pip install --break-system-packages google-api-python-client google-auth
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Set up release signing
         run: |
-          flutter build apk --release \
+          echo "$RELEASE_KEYSTORE_BASE64" | base64 -d > android/app/release-keystore.jks
+          cat > android/key.properties << EOF
+          storeFile=app/release-keystore.jks
+          storePassword=$RELEASE_KEYSTORE_PASSWORD
+          keyPassword=$RELEASE_KEYSTORE_PASSWORD
+          keyAlias=$RELEASE_KEYSTORE_ALIAS
+          EOF
+          ls -lh android/app/release-keystore.jks && echo "KEYSTORE OK"
+          cat android/key.properties
+        env:
+          RELEASE_KEYSTORE_BASE64: ${{ vars.RELEASE_KEYSTORE_BASE64 }}
+          RELEASE_KEYSTORE_PASSWORD: ${{ vars.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_KEYSTORE_ALIAS: ${{ vars.RELEASE_KEYSTORE_ALIAS }}
+
+      - name: Cleanup flutter lockfile before build
+        run: rm -f flutter.lock
+
+      - name: Build AAB
+        run: |
+          flutter build appbundle --release \
             --dart-define=CDN_BASE=https://resources.positiveness.club/heal \
             --dart-define=POCKETBASE_URL=https://pocketbase.scaleupcrm.com
+        env:
+          ANDROID_HOME: /opt/android-sdk
 
-      - name: Upload artifact
+      - name: Extract version
+        id: version
+        run: |
+          VERSION_NAME=$(grep version: pubspec.yaml | head -1 | awk '{print $2}')
+          VERSION_CODE=$(grep version: pubspec.yaml | head -1 | sed 's/.*+/\n+/' | tail -1)
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "version_code=${VERSION_CODE}" >> $GITHUB_OUTPUT
+          echo "Full: $VERSION_NAME ($VERSION_CODE)"
+
+      - name: Upload AAB as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: heal-mobile-apk
-          path: mobile/build/app/outputs/flutter-apk/app-release.apk
-          retention-days: 14
+          name: heal-aab-${{ steps.version.outputs.version_code }}
+          path: build/app/outputs/bundle/release/app-release.aab
+
+      - name: Upload to Play Store (Internal Track)
+        run: |
+          python3 << 'PYEOF'
+          import os
+          from google.oauth2 import service_account
+          from google.auth.transport.requests import Request
+          from googleapiclient.discovery import build
+          from googleapiclient.http import MediaFileUpload
+
+          SCOPES = ['https://www.googleapis.com/auth/androidpublisher']
+          creds = service_account.Credentials.from_service_account_file(
+              '/tmp/sa-key.json', scopes=SCOPES)
+          creds.refresh(Request())
+          service = build('androidpublisher', 'v3', credentials=creds)
+
+          version_code = int(os.environ.get('VERSION_CODE', '1'))
+          package_name = 'com.pclub.heal'
+
+          print(f"Uploading v{version_code} to Play Store...")
+          edit = service.edits().insert(body={}, packageName=package_name).execute()
+          edit_id = edit['id']
+
+          aab_path = 'build/app/outputs/bundle/release/app-release.aab'
+          media = MediaFileUpload(aab_path, mimetype='application/octet-stream')
+          bundle = service.edits().bundles().upload(
+              editId=edit_id, packageName=package_name, media_body=media).execute()
+
+          service.edits().tracks().update(
+              editId=edit_id, packageName=package_name, track='internal',
+              body={'releases': [{'versionCodes': [str(version_code)], 'status': 'draft'}]}
+          ).execute()
+
+          try:
+              service.edits().commit(editId=edit_id, packageName=package_name).execute()
+          except Exception:
+              pass
+
+          print(f"✅ Bundle v{bundle['versionCode']} uploaded!")
+          PYEOF
+        env:
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
+          GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
+        continue-on-error: false
+
+      - name: Upload final AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: heal-aab-${{ steps.version.outputs.version_code }}
+          path: build/app/outputs/bundle/release/app-release.aab
