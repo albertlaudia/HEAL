@@ -67,9 +67,12 @@ jobs:
           flutter build appbundle --release \
             --dart-define=CDN_BASE=https://resources.positiveness.club/heal \
             --dart-define=POCKETBASE_URL=https://pocketbase.scaleupcrm.com 2>&1 | tee /tmp/flutter_build.log
-          if [ $? -ne 0 ]; then
-            echo "=== BUILD FAILED ==="
-            grep -i "error\|Error\|FAILURE\|failed" /tmp/flutter_build.log || true
+          RC=${PIPESTATUS[0]}
+          if [ $RC -ne 0 ]; then
+            echo "=== BUILD FAILED (RC=$RC) ==="
+            cat /tmp/flutter_build.log | grep -i "error\|Error\|FAILURE\|failed" | head -20
+            find build -name "*.aab" 2>/dev/null | head -5
+            ls -la build/app/outputs/bundle/release/ 2>/dev/null || echo "AAB dir not found"
             exit 1
           fi
         env:
