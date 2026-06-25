@@ -18,10 +18,15 @@ import '../features/praise/praise_library_page.dart';
 import '../features/meditate/meditate_detail_page.dart';
 import '../features/essays/essay_page.dart';
 import '../features/breathe/breath_studio_page.dart';
+import '../features/breathe/voice_calibration_page.dart';
+import '../features/scripture/sit_with_verse_page.dart';
 import '../features/settings/settings_page.dart';
 import '../features/onboarding/onboarding_page.dart';
 import '../features/home/splash_page.dart';
+import '../data/pb_repositories.dart';
+import '../data/pb_models.dart';
 import '../services/audio_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MainScaffold extends HookConsumerWidget {
   final int currentIndex;
@@ -310,6 +315,52 @@ class HealRouter {
         pageBuilder: (context, state) =>
             _sharedAxis(state, const BreathStudioPage()),
       ),
+      GoRoute(
+        path: '/breathe/calibrate',
+        pageBuilder: (context, state) =>
+            _sharedAxis(state, const VoiceCalibrationPage()),
+      ),
+      GoRoute(
+        path: '/sit-with-verse',
+        pageBuilder: (context, state) {
+          // Optionally pass a specific scripture via extra
+          final passed = state.extra is Scripture ? state.extra as Scripture : null;
+          if (passed != null) {
+            return _verticalSlide(state, SitWithVersePage(scripture: passed));
+          }
+          // Otherwise use the daily scripture via Consumer
+          return Consumer(
+            builder: (context, ref, _) {
+              final daily = ref.watch(_dailyScriptureProvider);
+              return daily.when(
+                data: (s) {
+                  if (s == null) {
+                    return _sharedAxis(
+                      state,
+                      const _NoVersePlaceholder(),
+                    );
+                  }
+                  return _verticalSlide(state, SitWithVersePage(scripture: s));
+                },
+                loading: () => _sharedAxis(
+                  state,
+                  const Scaffold(
+                    backgroundColor: HealTokens.rosewoodDeep,
+                    body: Center(child: CircularProgressIndicator()),
+                  ),
+                ),
+                error: (e, _) => _sharedAxis(
+                  state,
+                  Scaffold(
+                    appBar: AppBar(),
+                    body: Center(child: Text('Could not load verse: $e')),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
     ],
   );
 
@@ -390,3 +441,32 @@ class HealRouter {
     );
   }
 }
+
+class _NoVersePlaceholder extends StatelessWidget {
+  const _NoVersePlaceholder();
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: const Center(
+        child: Text(
+          'No scripture available right now.',
+          style: TextStyle(color: HealTokens.creamDim),
+        ),
+      ),
+    );
+  }
+}
+
+/// Daily scripture provider — picks the verse for today (deterministic
+/// by day-of-year) so the "Sit with one verse" mode has something to load
+/// even when launched without a specific verse passed in.
+final _dailyScriptureProvider = FutureProvider<Scripture?>((ref) async {
+  final repo = ref.watch(scriptureRepoProvider);
+  final day = DateTime.now().difference(DateTime(DateTime.now().year, 1, 1)).inDays + 1;
+  final list = await repo.list(dayOfYear: day, limit: 1);
+  if (list.isNotEmpty) return list.first;
+  // Fallback: most recent published
+  final any = await repo.list(limit: 1);
+  return any.isEmpty ? null : any.first;
+});

@@ -2,11 +2,13 @@
 //
 // Production-quality breath pacer with:
 //   - AnimationController driving the ring scale + glow + text fade
-//   - Phase transitions: easeInOutSine on inhale/exhale, hold uses no curve
+//   - easeInOutSine on inhale/exhale, hold phases static
 //   - Haptic on each phase change (light impact on inhale/exhale)
-//   - Customizable pattern (4-7-8, box, resonant, coherent)
-//   - Cycle counter + total elapsed time
-//   - Background gradient that shifts with phase
+//   - In-pocket mode: gentler haptic + dimmer screen for use without looking
+//   - Voice-calibrated profile (if user has run voice calibration)
+//   - 5 patterns: Gentle 4-4-6-2, 4·7·8, Box, Resonant, Coherent
+//   - Cycle counter + total elapsed time + total breaths
+//   - Background gradient that shifts with phase color
 //   - Subtle pulse for "alive" feel
 
 import 'dart:async';
@@ -15,8 +17,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+
 import '../../core/theme.dart';
+import '../../core/time_palette.dart';
 import '../../core/widgets/breath_ring.dart';
+import '../../services/streak_service.dart';
+import '../../services/voice_calibration_service.dart';
 
 class BreathPattern {
   final String id;
@@ -45,7 +51,7 @@ const _defaultPatterns = <BreathPattern>[
   BreathPattern(
     id: '4-4-6-2',
     name: 'Gentle',
-    description: 'Akind, easy breath. Begin where you are.',
+    description: 'A kind, easy breath. Begin where you are.',
     inhaleSeconds: 4,
     holdInSeconds: 4,
     exhaleSeconds: 6,
@@ -53,8 +59,8 @@ const _defaultPatterns = <BreathPattern>[
   ),
   BreathPattern(
     id: '4-7-8',
-    name: '4·��Ø',
-    description: 'Dr. Weil's calming breath. Long exhale, deep rest.',
+    name: '4·7·8',
+    description: 'Dr. Weil\'s calming breath. Long exhale, deep rest.',
     inhaleSeconds: 4,
     holdInSeconds: 7,
     exhaleSeconds: 8,
@@ -87,6 +93,15 @@ const _defaultPatterns = <BreathPattern>[
     exhaleSeconds: 5,
     holdOutSeconds: 0,
   ),
+  BreathPattern(
+    id: 'personal',
+    name: 'Personal',
+    description: 'Your breath, your rhythm. Run voice calibration to enable.',
+    inhaleSeconds: 5,
+    holdInSeconds: 0,
+    exhaleSeconds: 6,
+    holdOutSeconds: 0,
+  ),
 ];
 
 final breathPatternListProvider = Provider<List<BreathPattern>>(
@@ -104,17 +119,77 @@ class BreathStudioPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedPattern = useState<BreathPattern>(_defaultPatterns.first);
     final isRunning = useState<bool>(false);
+    final isPocketMode = useState<bool>(false);
     final cycleCount = useState<int>(0);
     final elapsedSeconds = useState<int>(0);
+    final sessionStart = useState<DateTime?>(null);
+    final palette = ref.watch(timePaletteProvider);
+
+    // Personal pattern uses voice calibration
+    useEffect(() {
+      if (selectedPattern.value.id == 'personal') {
+        final cal = ref.read(voiceCalibrationServiceProvider);
+        if (cal.hasProfile) {
+          selectedPattern.value = BreathPattern(
+            id: 'personal',
+            name: 'Personal',
+            description: 'Your breath, your rhythm.',
+            inhaleSeconds: cal.savedInhaleSeconds!,
+            holdInSeconds: 0,
+            exhaleSeconds: cal.savedExhaleSeconds!,
+            holdOutSeconds: 0,
+          );
+        }
+      }
+      return null;
+    }, [selectedPattern.value.id]);
+
+    Future<void> startSession() async {
+      isRunning.value = true;
+      sessionStart.value = DateTime.now();
+      HapticFeedback.mediumImpact();
+    }
+
+    Future<void> stopSession() async {
+      isRunning.value = false;
+      // Record the session
+      if (sessionStart.value != null) {
+        final secs = DateTime.now().difference(sessionStart.value!).inSeconds;
+        if (secs >= 30) {
+          // ignore: discarded_futures
+          ref.read(streakServiceProvider.notifier).recordSession(SessionRecord(
+                timestamp: DateTime.now(),
+                type: SessionType.breath,
+                durationSeconds: secs,
+              ));
+        }
+        sessionStart.value = null;
+      }
+      HapticFeedback.heavyImpact();
+    }
 
     return Scaffold(
       extendBodyBehindAppBar: true,
+      backgroundColor: palette.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(selectedPattern.value.name,
             style: Theme.of(context).textTheme.titleLarge),
         actions: [
+          // Pocket mode toggle
+          IconButton(
+            icon: Icon(
+              isPocketMode.value
+                  ? Icons.brightness_2_rounded
+                  : Icons.brightness_5_rounded,
+            ),
+            tooltip: isPocketMode.value ? 'Exit pocket mode' : 'Pocket mode',
+            onPressed: () {
+              isPocketMode.value = !isPocketMode.value;
+              HapticFeedback.selectionClick();
+            },
+          ),
           if (isRunning.value)
             Padding(
               padding: const EdgeInsets.only(right: HealTokens.s16),
@@ -126,72 +201,75 @@ class BreathStudioPage extends HookConsumerWidget {
                       style: Theme.of(context).textTheme.bodySmall),
                   Text(_formatDuration(elapsedSeconds.value),
                       style: Theme.of(context).textTheme.titleMedium),
-                 ],
+                ],
               ),
             ),
-          ],
-       ),
+        ],
+      ),
       body: Stack(
-          children: [
-            // Phase background
-            Consumer(
-              builder: (context, ref, _) {
-                final phase = ref.watch(_activePhaseProvider);
-                return AnimatedContainer(
-                 duration: HealTokens.d1200,
+        children: [
+          // Adaptive phase background
+          Consumer(
+            builder: (context, ref, _) {
+              final phase = ref.watch(_activePhaseProvider);
+              return AnimatedContainer(
+                duration: HealTokens.d1200,
                 curve: HealTokens.easeInOutSine,
                 decoration: BoxDecoration(
                   gradient: RadialGradient(
                     center: Alignment.center,
                     radius: 1.2,
                     colors: [
-                      phase.glowColor.withValues(alpha: 0.16),
-                      HealTokens.rosewoodDeep,
+                      isPocketMode.value
+                          ? palette.glow.withValues(alpha: 0.04)
+                          : phase.glowColor.withValues(alpha: 0.16),
+                      palette.background,
                     ],
                   ),
                 ),
               );
-              },
-            ),
-            SafeArea(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: _BreathRunner(
-                      pattern: selectedPattern.value,
-                      isRunning: isRunning,
-                      onCycle: () => cycleCount.value++,
-                      onTick: () => elapsedSeconds.value++,
-                    ),
-                  ),
-                _PatternPicker(
-                   selected: selectedPattern.value,
-                    disabled: isRunning.value,
-                    onSelect: (p) => selectedPattern.value = p,
-                  ),
-                  const SizeDBox(height: HealTokens.s32),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: HealTokens.s32,
-                   ),
-                  child: isRunning.value
-                    ? OutlinedButton.icon(
-                        icon: const Icon(Icons.stop_rounded),
-                        label: const Text('END SESSION'),
-                        onPressed: () => isRunning.value = false,
-                        )
-                    : FilledButton.icon(
-                        icon: const Icon(Icons.play_arrow_rounded),
-                        label: const Text('BEGIN'),
-                        onPressed: () => isRunning.value = true,
-                        ),
-                  ),
-                  const SizedBox(height: HealTokens.s48),
-                ],
-              ),
+            },
           ),
-         ],
-        ),
+          SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: _BreathRunner(
+                    pattern: selectedPattern.value,
+                    isRunning: isRunning,
+                    isPocketMode: isPocketMode,
+                    onCycle: () => cycleCount.value++,
+                    onTick: () => elapsedSeconds.value++,
+                  ),
+                ),
+                _PatternPicker(
+                  selected: selectedPattern.value,
+                  disabled: isRunning.value,
+                  onSelect: (p) => selectedPattern.value = p,
+                ),
+                const SizedBox(height: HealTokens.s32),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: HealTokens.s32,
+                  ),
+                  child: isRunning.value
+                      ? OutlinedButton.icon(
+                          icon: const Icon(Icons.stop_rounded),
+                          label: const Text('END SESSION'),
+                          onPressed: stopSession,
+                        )
+                      : FilledButton.icon(
+                          icon: const Icon(Icons.play_arrow_rounded),
+                          label: const Text('BEGIN'),
+                          onPressed: startSession,
+                        ),
+                ),
+                const SizedBox(height: HealTokens.s48),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -205,38 +283,44 @@ class BreathStudioPage extends HookConsumerWidget {
 class _BreathRunner extends HookConsumerWidget {
   final BreathPattern pattern;
   final ValueNotifier<bool> isRunning;
+  final ValueNotifier<bool> isPocketMode;
   final VoidCallback onCycle;
   final VoidCallback onTick;
 
   const _BreathRunner({
     required this.pattern,
     required this.isRunning,
+    required this.isPocketMode,
     required this.onCycle,
     required this.onTick,
   });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Master phase controller — drives the ring scale.
     final phaseCtrl = useAnimationController(
-      duration: const Duration(seconds: 1)
+      duration: const Duration(seconds: 1),
     );
     final pulseCtrl = useAnimationController(
       duration: const Duration(milliseconds: 4000),
     );
 
     final phase = useState<BreathPhase>(BreathPhase.ready);
-    final tickInterval = useRef<Timer>>(null);
+    final tickInterval = useRef<Timer?>(null);
+    final breathCount = useState<int>(0);
 
-    // Step through phases sequentially.
     Future<void> runPhase(BreathPhase next, int seconds) async {
       if (!isRunning.value) return;
       phase.value = next;
       ref.read(_activePhaseProvider.notifier).state = next;
 
-      // Haptic on phase change (skip ready and silent holds for less noise).
+      // In-pocket mode uses selectionClick (more subtle)
+      // Standard mode uses lightImpact (more present)
       if (next == BreathPhase.inhale || next == BreathPhase.exhale) {
-        await HapticFeedback.lightImpact();
+        if (isPocketMode.value) {
+          await HapticFeedback.selectionClick();
+        } else {
+          await HapticFeedback.lightImpact();
+        }
       }
 
       if (seconds == 0) return;
@@ -251,7 +335,7 @@ class _BreathRunner extends HookConsumerWidget {
         phase.value = BreathPhase.ready;
         ref.read(_activePhaseProvider.notifier).state = BreathPhase.ready;
         tickInterval.value?.cancel();
-        return null;
+        return;
       }
 
       Future<void> chain() async {
@@ -273,6 +357,7 @@ class _BreathRunner extends HookConsumerWidget {
             if (!isRunning.value) break;
           }
           onCycle();
+          breathCount.value++;
           await runPhase(BreathPhase.inhale, pattern.inhaleSeconds);
         }
       }
@@ -293,8 +378,6 @@ class _BreathRunner extends HookConsumerWidget {
       return null;
     }, []);
 
-    // Compute ring scale as a function of phase + phaseCtrl value.
-    // IMPORTANT: do not call setState inside builder — only compute values.
     double computeScale() {
       final v = phaseCtrl.value;
       switch (phase.value) {
@@ -311,6 +394,8 @@ class _BreathRunner extends HookConsumerWidget {
       }
     }
 
+    final ringSize = isPocketMode.value ? 240.0 : 320.0;
+
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -318,14 +403,14 @@ class _BreathRunner extends HookConsumerWidget {
           animation: Listenable.merge([phaseCtrl, pulseCtrl]),
           builder: (context, _) {
             return CustomPaint(
-              size: const Size.square(320),
+              size: Size.square(ringSize),
               painter: BreathRingPainter(
                 progress: phaseCtrl.value,
                 phase: phase.value,
                 phaseProgress: phaseCtrl.value,
                 ringScale: computeScale(),
                 pulse: pulseCtrl.value,
-             ),
+              ),
             );
           },
         ),
@@ -338,10 +423,10 @@ class _BreathRunner extends HookConsumerWidget {
                 return FadeTransition(
                   opacity: anim,
                   child: SlideTransition(
-                    position: Twein><Offset>(
+                    position: Tween<Offset>(
                       begin: const Offset(0, 0.3),
-                      end: Offset.zeror,
-                   ).animate(anim),
+                      end: Offset.zero,
+                    ).animate(anim),
                     child: child,
                   ),
                 );
@@ -353,87 +438,127 @@ class _BreathRunner extends HookConsumerWidget {
                       color: HealTokens.cream,
                       fontWeight: FontWeight.w300,
                     ),
+              ),
             ),
-          ),
-            const SizedBox(height: HealTokens.s8J,
+            const SizedBox(height: HealTokens.s8),
             AnimatedSwitcher(
               duration: HealTokens.d400,
               child: Text(
                 phase.value.instruction,
-                key: ValueKey('${phase.value}_instr')
-
+                key: ValueKey('${phase.value}_instr'),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: HealTokens.creamDim,
+                      fontStyle: FontStyle.italic,
+                    ),
               ),
-          ),
-         ],
+            ),
+            if (isPocketMode.value && isRunning.value) ...[
+              const SizedBox(height: HealTokens.s16),
+              // In pocket mode, also show breath count as a haptic-friendly indicator
+              Text(
+                '${breathCount.value} breaths',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: HealTokens.brass,
+                      letterSpacing: 2.0,
+                    ),
+              ),
+            ],
+          ],
         ),
       ],
     );
   }
 }
 
-class _PatternPicker extends StatelessWidget {
+class _PatternPicker extends ConsumerWidget {
   final BreathPattern selected;
   final bool disabled;
   final ValueChanged<BreathPattern> onSelect;
 
   const _PatternPicker({
-+    required this.selected,
+    required this.selected,
     required this.disabled,
     required this.onSelect,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final hasPersonal = ref.watch(voiceCalibrationServiceProvider.select(
+      (s) => s.hasProfile,
+    ));
+    final patterns = hasPersonal
+        ? _defaultPatterns
+        : _defaultPatterns.where((p) => p.id != 'personal').toList();
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: HealTokens.s16),
       child: Row(
-        children: _defaultPatterns.map((p) {
+        children: patterns.map((p) {
           final isSelected = p.id == selected.id;
+          final isDisabled = p.id == 'personal' && !hasPersonal;
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: HealTokens.s4),
             child: AnimatedContainer(
               duration: HealTokens.d200,
               decoration: BoxDecoration(
-                color:
-                    isSelected ? HealTokens.brass : HealTokens.rosewoodLight,
+                color: isSelected
+                    ? HealTokens.brass
+                    : HealTokens.rosewoodLight,
                 borderRadius: BorderRadius.circular(HealTokens.r16),
                 border: Border.all(
-                    color: isSelected
+                  color: isSelected
                       ? HealTokens.brass
                       : HealTokens.brass.withValues(alpha: 0.24),
                 ),
                 boxShadow: isSelected
                     ? [
-                      BoxShadow(
-                        color: HealTokens.brass.withValues(alpha: 0.32),
-                        blurRadius: 12,
-                        spreadRadius: -2,
-                       ),
-                    ]
-                   : null,
+                        BoxShadow(
+                          color: HealTokens.brass.withValues(alpha: 0.32),
+                          blurRadius: 12,
+                          spreadRadius: -2,
+                        ),
+                      ]
+                    : null,
               ),
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(HealTokens.r16),
-                  onTap: disabled ? null : () => onSelect(p),
+                  onTap: (disabled || isDisabled) ? null : () => onSelect(p),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: HealTokens.s16,
                       vertical: HealTokens.s12,
-                   ),
-                    child: Text(
-                       p.name,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                           color: isSelected
-                              ? HealTokens.rosewoodDeep
-                              : HealTokens.cream,
-                            ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (p.id == 'personal') ...[
+                          Icon(
+                            Icons.record_voice_over_rounded,
+                            size: 14,
+                            color: isSelected
+                                ? HealTokens.rosewoodDeep
+                                : HealTokens.brass,
+                          ),
+                          const SizedBox(width: 4),
+                        ],
+                        Text(
+                          p.name,
+                          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                                color: isSelected
+                                    ? HealTokens.rosewoodDeep
+                                    : HealTokens.cream,
+                              ),
+                        ),
+                      ],
                     ),
                   ),
-               ),
-            );
+                ),
+              ),
+            ),
+          );
         }).toList(),
       ),
     );

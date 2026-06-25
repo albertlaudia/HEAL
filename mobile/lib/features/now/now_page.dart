@@ -197,7 +197,8 @@ Future<_DailyContent> _loadDaily(WidgetRef ref, int dayOfYear) async {
       subtitle: scripture.first.reflectionPrompt,
       theme: scripture.first.theme,
       accent: HealTokens.brass,
-      onTap: '/scripture/${scripture.first.id}',
+      onTap: '/sit-with-verse',
+      extra: scripture.first,
     ));
   }
   if (quote.isNotEmpty) {
@@ -244,6 +245,7 @@ class _CardData {
   final String? theme;
   final Color accent;
   final String? onTap;
+  final Object? extra;
 
   _CardData({
     required this.type,
@@ -253,6 +255,7 @@ class _CardData {
     this.theme,
     required this.accent,
     this.onTap,
+    this.extra,
   });
 }
 
@@ -267,7 +270,7 @@ class _DailyCard extends StatelessWidget {
       onTap: card.onTap == null
           ? null
           : () {
-              context.push(card.onTap!);
+              context.push(card.onTap!, extra: card.extra);
             },
       glow: card.accent,
       glowIntensity: 0.4,

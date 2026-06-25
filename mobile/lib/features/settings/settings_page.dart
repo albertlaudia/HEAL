@@ -11,6 +11,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme.dart';
 import '../../core/widgets/brass_widgets.dart';
 import '../../services/notification_service.dart';
+import '../../services/voice_calibration_service.dart';
+
+final _voiceProfileProvider = Provider<bool>((ref) {
+  final cal = ref.watch(voiceCalibrationServiceProvider);
+  return cal.hasProfile;
+});
 
 class SettingsPage extends HookConsumerWidget {
   const SettingsPage({super.key});
@@ -118,6 +124,33 @@ class SettingsPage extends HookConsumerWidget {
                 ),
               ],
             ),
+          ),
+
+          const SizedBox(height: HealTokens.s32),
+          const SectionHeader(title: 'Personal'),
+          Consumer(
+            builder: (context, ref, _) {
+              final hasProfile = ref.watch(
+                  _voiceProfileProvider);
+              return GlassCard(
+                padding: EdgeInsets.zero,
+                child: Column(
+                  children: [
+                    _SettingTile(
+                      icon: Icons.record_voice_over_rounded,
+                      title: hasProfile ? 'Breath profile' : 'Calibrate breath',
+                      subtitle: hasProfile
+                          ? 'HEAL paces to your natural rhythm'
+                          : '30 seconds · teach HEAL your pace',
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        context.push('/breathe/calibrate');
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
 
           const SizedBox(height: HealTokens.s32),

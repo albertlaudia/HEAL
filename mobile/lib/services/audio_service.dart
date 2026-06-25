@@ -91,6 +91,10 @@ class AudioService extends StateNotifier<AudioState> {
   StreamSubscription? _stateSub;
   StreamSubscription? _completeSub;
 
+  /// Hook for callers to react to track completion (e.g. record session).
+  /// Receives (track, durationSeconds) when a track completes naturally.
+  void Function(AudioTrack track, int durationSeconds)? onTrackComplete;
+
   AudioPlayer get player => _player;
 
   Future<void> init() async {
@@ -113,10 +117,16 @@ class AudioService extends StateNotifier<AudioState> {
 
     _completeSub = _player.onPlayerComplete.listen((_) {
       if (!mounted) return;
+      final completedTrack = state.track;
+      final durationSec = state.duration.inSeconds;
       state = state.copyWith(
         playing: false,
         position: state.duration,
       );
+      // Fire completion hook (set by caller via onTrackComplete)
+      if (completedTrack != null && durationSec > 0) {
+        onTrackComplete?.call(completedTrack, durationSec);
+      }
     });
   }
 

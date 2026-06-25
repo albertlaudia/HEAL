@@ -14,6 +14,8 @@ import 'core/theme.dart';
 import 'core/router.dart';
 import 'data/pb_repositories.dart';
 import 'services/notification_service.dart';
+import 'services/streak_service.dart';
+import 'services/audio_service.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 Future<void> main() async {
@@ -44,6 +46,39 @@ Future<void> main() async {
 
     // Init notifications
     await container.read(notificationServiceProvider).init();
+
+    // Load streak state from local storage
+    await container.read(streakServiceProvider.notifier).load();
+
+    // Wire audio completion → streak session
+    final audio = container.read(audioServiceProvider.notifier);
+    audio.onTrackComplete = (track, durationSeconds) {
+      // Map AudioSource to SessionType
+      SessionType? sessionType;
+      switch (track.source) {
+        case AudioSource.meditation:
+          sessionType = SessionType.meditate;
+          break;
+        case AudioSource.praise:
+          sessionType = SessionType.praise;
+          break;
+        case AudioSource.reference:
+          sessionType = SessionType.scripture;
+          break;
+        case AudioSource.custom:
+          sessionType = SessionType.meditate;
+          break;
+      }
+      if (sessionType != null && durationSeconds >= 30) {
+        container.read(streakServiceProvider.notifier).recordSession(
+              SessionRecord(
+                timestamp: DateTime.now(),
+                type: sessionType,
+                durationSeconds: durationSeconds,
+              ),
+            );
+      }
+    };
 
     // Check if first launch — show onboarding if so
     final prefs = await SharedPreferences.getInstance();

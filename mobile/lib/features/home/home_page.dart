@@ -1,6 +1,11 @@
-// HEAL — Home page.
-// Hero entry tiles for: Meditate, Praise, Prayer, Breath, Essays.
-// Day-of-year greeting + brass accent.
+// HEAL — Home page (revamped).
+//
+// What's new in this build:
+//   - Streak flame + day counter (top-right)
+//   - Adaptive palette: background shifts color with the time of day
+//   - "Welcome back" card (no shame) when user returns after 4+ days
+//   - "Today's practice" — single-tap to scripture + breath + prayer sequence
+//   - Voice calibration entry surfaced when no profile exists
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +16,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme.dart';
+import '../../core/time_palette.dart';
 import '../../core/widgets/brass_widgets.dart';
+import '../../services/streak_service.dart';
+import '../../services/voice_calibration_service.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -19,9 +27,14 @@ class HomePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final timeOfDay = useState<String>(_timeOfDay());
-    final scale = useState<double>(1.0);
+    final palette = ref.watch(timePaletteProvider);
+    final streak = ref.watch(streakServiceProvider);
+    final hasVoiceProfile = ref.watch(voiceCalibrationServiceProvider.select(
+      (s) => s.hasProfile,
+    ));
 
     return Scaffold(
+      backgroundColor: palette.background,
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
@@ -34,68 +47,148 @@ class HomePage extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Greeting ────────────────────────────────────────
+              // ── Greeting + Streak ─────────────────────────────
               FadeInOnMount(
                 delay: const Duration(milliseconds: 100),
-                child: Column(
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      timeOfDay.value,
-                      style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                            color: HealTokens.cream,
-                            fontWeight: FontWeight.w300,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            timeOfDay.value,
+                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                  color: HealTokens.cream,
+                                  fontWeight: FontWeight.w300,
+                                ),
                           ),
-                    ),
-                    const SizedBox(height: HealTokens.s8),
-                    Text(
-                      'A quiet practice awaits.',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: HealTokens.creamDim,
-                            fontStyle: FontStyle.italic,
+                          const SizedBox(height: HealTokens.s4),
+                          Text(
+                            'A quiet practice awaits.',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                  color: HealTokens.creamDim,
+                                  fontStyle: FontStyle.italic,
+                                ),
                           ),
+                        ],
+                      ),
                     ),
+                    _StreakFlame(streak: streak),
                   ],
                 ),
               ),
-              const SizedBox(height: HealTokens.s40),
+              const SizedBox(height: HealTokens.s24),
 
-              // ── Today's practice — hero tile ──────────────────
+              // ── Streak message ──────────────────────────────
               FadeInOnMount(
                 delay: const Duration(milliseconds: 200),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: HealTokens.s16,
+                    vertical: HealTokens.s12,
+                  ),
+                  decoration: BoxDecoration(
+                    color: palette.surface,
+                    borderRadius: BorderRadius.circular(HealTokens.r12),
+                    border: Border.all(
+                      color: palette.primary.withValues(alpha: 0.16),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: palette.primary,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: palette.primary.withValues(alpha: 0.5),
+                              blurRadius: 6,
+                              spreadRadius: 0,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: HealTokens.s12),
+                      Expanded(
+                        child: Text(
+                          streak.streakMessage,
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: HealTokens.cream,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // ── Welcome Back card (gentle, only after 4+ days) ─
+              if (streak.shouldShowWelcomeBack && !streak.showedWelcomeBack) ...[
+                const SizedBox(height: HealTokens.s16),
+                _WelcomeBackCard(
+                  daysAway: streak.daysSinceLastSession ?? 0,
+                  onDismiss: () {
+                    ref.read(streakServiceProvider.notifier).markWelcomeBackShown();
+                  },
+                ),
+              ],
+
+              const SizedBox(height: HealTokens.s32),
+
+              // ── Today's practice — single-tap entry ─────────
+              FadeInOnMount(
+                delay: const Duration(milliseconds: 300),
                 child: _HeroPracticeCard(
                   onTap: () => context.push('/now'),
+                  palette: palette,
                 ),
+              ),
+              const SizedBox(height: HealTokens.s24),
+
+              // ── Voice calibration banner (if no profile yet) ─
+              if (!hasVoiceProfile) ...[
+                FadeInOnMount(
+                  delay: const Duration(milliseconds: 350),
+                  child: _VoiceCalibrationBanner(
+                    onTap: () => context.push('/breathe/calibrate'),
+                    palette: palette,
+                  ),
+                ),
+                const SizedBox(height: HealTokens.s24),
+              ],
+
+              // ── Quick actions ────────────────────────────────
+              FadeInOnMount(
+                delay: const Duration(milliseconds: 400),
+                child: _QuickActions(palette: palette),
               ),
               const SizedBox(height: HealTokens.s32),
 
-              // ── Quick actions ─────────────────────────────────
+              // ── Practice tiles ───────────────────────────────
               FadeInOnMount(
-                delay: const Duration(milliseconds: 300),
-                child: _QuickActions(),
-              ),
-              const SizedBox(height: HealTokens.s40),
-
-              // ── Practice tiles ────────────────────────────────
-              FadeInOnMount(
-                delay: const Duration(milliseconds: 400),
+                delay: const Duration(milliseconds: 500),
                 child: Text(
                   'PRACTICE',
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
                         letterSpacing: 2.5,
-                        color: HealTokens.brass,
+                        color: palette.primary,
                         fontWeight: FontWeight.w700,
                       ),
                 ),
               ),
               const SizedBox(height: HealTokens.s16),
 
-              _PracticeGrid(),
+              _PracticeGrid(palette: palette),
               const SizedBox(height: HealTokens.s48),
 
-              // ── Footer mark ───────────────────────────────────
+              // ── Footer mark ─────────────────────────────────
               FadeInOnMount(
-                delay: const Duration(milliseconds: 600),
+                delay: const Duration(milliseconds: 700),
                 child: Center(
                   child: Column(
                     children: [
@@ -105,9 +198,9 @@ class HomePage extends HookConsumerWidget {
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             colors: [
-                              HealTokens.brass.withValues(alpha: 0),
-                              HealTokens.brass.withValues(alpha: 0.6),
-                              HealTokens.brass.withValues(alpha: 0),
+                              palette.primary.withValues(alpha: 0),
+                              palette.primary.withValues(alpha: 0.6),
+                              palette.primary.withValues(alpha: 0),
                             ],
                           ),
                         ),
@@ -141,9 +234,322 @@ class HomePage extends HookConsumerWidget {
   }
 }
 
+// ── Streak flame ─────────────────────────────────────────────────
+class _StreakFlame extends StatelessWidget {
+  final StreakState streak;
+  const _StreakFlame({required this.streak});
+
+  @override
+  Widget build(BuildContext context) {
+    if (streak.currentStreak == 0 && streak.totalSessions == 0) {
+      return const SizedBox.shrink();
+    }
+    final isLit = streak.currentStreak > 0;
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        showModalBottomSheet(
+          context: context,
+          backgroundColor: HealTokens.rosewood,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(HealTokens.r24)),
+          ),
+          builder: (_) => _StreakDetailsSheet(streak: streak),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: HealTokens.s12,
+          vertical: HealTokens.s8,
+        ),
+        decoration: BoxDecoration(
+          color: HealTokens.rosewoodLight,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(
+            color: isLit
+                ? HealTokens.brass.withValues(alpha: 0.5)
+                : HealTokens.creamDim.withValues(alpha: 0.16),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              isLit ? Icons.local_fire_department_rounded : Icons.fireplace_outlined,
+              color: isLit ? HealTokens.brass : HealTokens.creamDim,
+              size: 18,
+            ),
+            const SizedBox(width: 4),
+            Text(
+              streak.currentStreak > 0
+                  ? '${streak.currentStreak}'
+                  : 'start',
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: isLit ? HealTokens.cream : HealTokens.creamDim,
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StreakDetailsSheet extends StatelessWidget {
+  final StreakState streak;
+  const _StreakDetailsSheet({required this.streak});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(HealTokens.s24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 40,
+            height: 4,
+            margin: const EdgeInsets.only(bottom: HealTokens.s24),
+            decoration: BoxDecoration(
+              color: HealTokens.creamDim.withValues(alpha: 0.4),
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          Row(
+            children: [
+              Icon(Icons.local_fire_department_rounded,
+                  color: HealTokens.brass, size: 32),
+              const SizedBox(width: HealTokens.s12),
+              Text(
+                '${streak.currentStreak}-day practice',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ],
+          ),
+          const SizedBox(height: HealTokens.s24),
+          _StreakStat(
+            label: 'Longest streak',
+            value: '${streak.longestStreak} days',
+          ),
+          const SizedBox(height: HealTokens.s12),
+          _StreakStat(
+            label: 'Total sessions',
+            value: '${streak.totalSessions}',
+          ),
+          const SizedBox(height: HealTokens.s12),
+          _StreakStat(
+            label: 'Total minutes',
+            value: '${streak.totalMinutes}',
+          ),
+          if (streak.lastSession != null) ...[
+            const SizedBox(height: HealTokens.s12),
+            _StreakStat(
+              label: 'Last session',
+              value: _relativeTime(streak.lastSession!),
+            ),
+          ],
+          const SizedBox(height: HealTokens.s32),
+          Text(
+            'A practice is a kind of prayer. Even three minutes counts.',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: HealTokens.creamDim,
+                  fontStyle: FontStyle.italic,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _relativeTime(DateTime dt) {
+    final diff = DateTime.now().difference(dt);
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    return '${diff.inDays}d ago';
+  }
+}
+
+class _StreakStat extends StatelessWidget {
+  final String label;
+  final String value;
+  const _StreakStat({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: HealTokens.creamDim,
+                ),
+          ),
+        ),
+        Text(
+          value,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: HealTokens.cream,
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── Welcome back card (warm, no guilt) ──────────────────────────
+class _WelcomeBackCard extends StatelessWidget {
+  final int daysAway;
+  final VoidCallback onDismiss;
+
+  const _WelcomeBackCard({required this.daysAway, required this.onDismiss});
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: HealTokens.d800,
+      curve: HealTokens.easeOutQuart,
+      builder: (context, t, child) {
+        return Opacity(
+          opacity: t,
+          child: Transform.translate(
+            offset: Offset(0, 16 * (1 - t)),
+            child: child,
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(HealTokens.s20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              HealTokens.bronze.withValues(alpha: 0.32),
+              HealTokens.rosewood,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(HealTokens.r20),
+          border: Border.all(
+            color: HealTokens.bronzeLight.withValues(alpha: 0.4),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.coffee_outlined,
+                    color: HealTokens.bronzeLight, size: 18),
+                const SizedBox(width: HealTokens.s8),
+                Expanded(
+                  child: Text(
+                    'You were away $daysAway days.',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: HealTokens.cream,
+                        ),
+                  ),
+                ),
+                IconButton(
+                  icon: Icon(Icons.close_rounded,
+                      color: HealTokens.creamDim, size: 18),
+                  onPressed: onDismiss,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
+            ),
+            const SizedBox(height: HealTokens.s8),
+            Text(
+              'The room is still here. There is no catching up to do. Just begin again.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: HealTokens.creamDim,
+                    height: 1.6,
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Voice calibration banner ─────────────────────────────────────
+class _VoiceCalibrationBanner extends StatelessWidget {
+  final VoidCallback onTap;
+  final TimePalette palette;
+  const _VoiceCalibrationBanner({required this.onTap, required this.palette});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(HealTokens.s16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              palette.primary.withValues(alpha: 0.16),
+              palette.accent.withValues(alpha: 0.08),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(HealTokens.r16),
+          border: Border.all(
+            color: palette.primary.withValues(alpha: 0.32),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: palette.primary.withValues(alpha: 0.32),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.record_voice_over_rounded,
+                color: palette.primary,
+                size: 18,
+              ),
+            ),
+            const SizedBox(width: HealTokens.s12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Learn your breath',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: HealTokens.cream,
+                        ),
+                  ),
+                  Text(
+                    '30 seconds · HEAL will pace to you',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: HealTokens.creamDim,
+                        ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.arrow_forward_rounded,
+                color: palette.primary, size: 18),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Hero practice card ──────────────────────────────────────────
 class _HeroPracticeCard extends StatelessWidget {
   final VoidCallback onTap;
-  const _HeroPracticeCard({required this.onTap});
+  final TimePalette palette;
+  const _HeroPracticeCard({required this.onTap, required this.palette});
 
   @override
   Widget build(BuildContext context) {
@@ -156,21 +562,20 @@ class _HeroPracticeCard extends StatelessWidget {
         padding: const EdgeInsets.all(HealTokens.s32),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(HealTokens.r24),
-          gradient: const LinearGradient(
+          gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color(0xFF4A2C26),
-              Color(0xFF2A1815),
+              palette.primary.withValues(alpha: 0.32),
+              palette.surface,
             ],
           ),
           border: Border.all(
-            color: HealTokens.brass.withValues(alpha: 0.32),
-            width: 1,
+            color: palette.primary.withValues(alpha: 0.32),
           ),
           boxShadow: [
             BoxShadow(
-              color: HealTokens.brass.withValues(alpha: 0.16),
+              color: palette.primary.withValues(alpha: 0.16),
               blurRadius: 24,
               spreadRadius: -4,
             ),
@@ -188,16 +593,16 @@ class _HeroPracticeCard extends StatelessWidget {
                       vertical: HealTokens.s4,
                     ),
                     decoration: BoxDecoration(
-                      color: HealTokens.brass.withValues(alpha: 0.16),
+                      color: palette.primary.withValues(alpha: 0.16),
                       borderRadius: BorderRadius.circular(999),
                       border: Border.all(
-                        color: HealTokens.brass.withValues(alpha: 0.4),
+                        color: palette.primary.withValues(alpha: 0.4),
                       ),
                     ),
                     child: Text(
                       'TODAY',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: HealTokens.brassLight,
+                            color: palette.primary,
                             letterSpacing: 2.0,
                             fontWeight: FontWeight.w700,
                           ),
@@ -214,7 +619,7 @@ class _HeroPracticeCard extends StatelessWidget {
                   ),
                   const SizedBox(height: HealTokens.s12),
                   Text(
-                    'Five minutes of scripture, breath, and prayer.',
+                    'Scripture · breath · prayer. Five minutes.',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: HealTokens.creamDim,
                         ),
@@ -227,13 +632,13 @@ class _HeroPracticeCard extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [HealTokens.brassLight, HealTokens.brass],
+                gradient: LinearGradient(
+                  colors: [palette.primary, palette.accent],
                 ),
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: HealTokens.brass.withValues(alpha: 0.4),
+                    color: palette.primary.withValues(alpha: 0.4),
                     blurRadius: 16,
                   ),
                 ],
@@ -252,6 +657,9 @@ class _HeroPracticeCard extends StatelessWidget {
 }
 
 class _QuickActions extends StatelessWidget {
+  final TimePalette palette;
+  const _QuickActions({required this.palette});
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -305,9 +713,7 @@ class _QuickAction extends StatelessWidget {
           onTap();
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(
-            vertical: HealTokens.s20,
-          ),
+          padding: const EdgeInsets.symmetric(vertical: HealTokens.s20),
           decoration: BoxDecoration(
             color: HealTokens.rosewoodLight,
             borderRadius: BorderRadius.circular(HealTokens.r16),
@@ -334,6 +740,9 @@ class _QuickAction extends StatelessWidget {
 }
 
 class _PracticeGrid extends StatelessWidget {
+  final TimePalette palette;
+  const _PracticeGrid({required this.palette});
+
   @override
   Widget build(BuildContext context) {
     final tiles = [
@@ -424,7 +833,6 @@ class _PracticeTile extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            // Icon (large, top-right)
             Positioned(
               top: 0,
               right: 0,
@@ -434,7 +842,6 @@ class _PracticeTile extends StatelessWidget {
                 size: 48,
               ),
             ),
-            // Title block (bottom-left)
             Align(
               alignment: Alignment.bottomLeft,
               child: Column(
