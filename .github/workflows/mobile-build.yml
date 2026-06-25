@@ -37,7 +37,7 @@ jobs:
 
       - name: Write SA key
         run: |
-          printf "%s" "$GCLOUD_SERVICE_ACCOUNT_CREDENTIALS" > /tmp/sa-key.json
+          python3 -c "import os; open('/tmp/sa-key.json','w').write(os.environ['CRED'])"             --env CRED="$GCLOUD_SERVICE_ACCOUNT_CREDENTIALS"
           chmod 644 /tmp/sa-key.json
         env:
           GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
