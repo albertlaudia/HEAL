@@ -36,14 +36,15 @@ jobs:
         run: pip install --break-system-packages google-api-python-client google-auth
 
       - name: Write SA key
-        run: |
-          python3 << 'PYEOF'
-          import os
-          creds = os.environ.get("GCLOUD_SERVICE_ACCOUNT_CREDENTIALS", "")
-          with open("/tmp/sa-key.json", "w", encoding="utf-8") as f:
-              f.write(creds)
-          PYEOF
-          chmod 600 /tmp/sa-key.json
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const creds = process.env.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS || '';
+            fs.writeFileSync('/tmp/sa-key.json', creds);
+            fs.chmodSync('/tmp/sa-key.json', 0o600);
+        env:
+          GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
         env:
           GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
 
