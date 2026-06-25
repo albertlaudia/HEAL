@@ -66,7 +66,12 @@ jobs:
         run: |
           flutter build appbundle --release \
             --dart-define=CDN_BASE=https://resources.positiveness.club/heal \
-            --dart-define=POCKETBASE_URL=https://pocketbase.scaleupcrm.com
+            --dart-define=POCKETBASE_URL=https://pocketbase.scaleupcrm.com 2>&1 | tee /tmp/flutter_build.log
+          if [ $? -ne 0 ]; then
+            echo "=== BUILD FAILED ==="
+            grep -i "error\|Error\|FAILURE\|failed" /tmp/flutter_build.log || true
+            exit 1
+          fi
         env:
           ANDROID_HOME: /opt/android-sdk
 
