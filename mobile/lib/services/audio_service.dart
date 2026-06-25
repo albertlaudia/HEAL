@@ -186,7 +186,7 @@ class AudioService extends StateNotifier<AudioState> {
 
   Future<void> setSpeed(double speed) async {
     try {
-      await _player.setSpeed(speed);
+      await _player.setPlaybackRate(speed);
       state = state.copyWith(speed: speed);
     } catch (e) {
       state = state.copyWith(error: e.toString());
