@@ -39,7 +39,7 @@ class MeditationRepository {
       'sort': sort,
     };
     final records =
-        await _pb.collection('HEAL_meditations').getList(page: page, perPage: perPage, filter: params['filter'], sort: sort);
+        await _pb.collection('HEAL_meditations').getList(page: page, perPage: perPage, filter: params['filter'] as String?, sort: sort);
     final list = records.items.map((r) => Meditation.fromJson(r.toJson())).toList();
     _cache[key] = _CachedList(list);
     return list;

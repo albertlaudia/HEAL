@@ -70,7 +70,7 @@ class OnboardingPage extends HookConsumerWidget {
             ),
             // Page indicator
             Positioned(
-              bottom: HealTokens.s120,
+              bottom: HealTokens.s96,
               left: 0,
               right: 0,
               child: Center(

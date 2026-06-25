@@ -48,7 +48,7 @@ class _HealAppState extends ConsumerState<HealApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'HEAL',
       debugShowCheckedModeBanner: false,
       theme: HealTheme.dark,

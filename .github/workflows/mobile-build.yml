@@ -22,11 +22,11 @@ jobs:
         with:
           flutter-version: '3.27.1'
 
-      - name: Clear Gradle jars cache (prevent concurrent-write corruption)
-        run: rm -rf /home/actionsrunner/.gradle/caches/jars-*
-
-      - name: Set Android SDK path
-        run: echo "sdk.dir=/opt/android-sdk" > android/local.properties
+      - name: Configure isolated Gradle home
+        run: |
+          echo "GRADLE_USER_HOME=/opt/actions-runner-heal/_work/.gradle" >> $GITHUB_ENV
+          mkdir -p /opt/actions-runner-heal/_work/.gradle
+          echo "sdk.dir=/opt/android-sdk" > android/local.properties
 
       - name: Install Python + googleapiclient
         run: pip install --break-system-packages google-api-python-client google-auth

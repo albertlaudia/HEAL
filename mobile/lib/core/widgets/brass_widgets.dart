@@ -204,9 +204,7 @@ class BrassButton extends StatelessWidget {
               vertical: HealTokens.s16,
             ),
             child: Row(
-              mainAxisAlignment: expanded
-                  ? MainAxisAlignment.center
-                  : MainAxisSize.min,
+              mainAxisAlignment: expanded ? MainAxisAlignment.center : MainAxisAlignment.start,
               mainAxisSize: expanded ? MainAxisSize.max : MainAxisSize.min,
               children: [
                 if (loading)
