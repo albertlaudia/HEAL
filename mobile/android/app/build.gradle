@@ -32,7 +32,7 @@ if (keyFile.exists()) {
 
 android {
     namespace "com.pclub.heal"
-    compileSdk 34
+    compileSdk 35
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -51,7 +51,7 @@ android {
     defaultConfig {
         applicationId "com.pclub.heal"
         minSdk 21
-        targetSdk 34
+        targetSdk 35
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true

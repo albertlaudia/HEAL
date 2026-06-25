@@ -332,31 +332,23 @@ class HealRouter {
           return Consumer(
             builder: (context, ref, _) {
               final daily = ref.watch(_dailyScriptureProvider);
-              return daily.when(
+              final child = daily.when(
                 data: (s) {
                   if (s == null) {
-                    return _sharedAxis(
-                      state,
-                      const _NoVersePlaceholder(),
-                    );
+                    return const _NoVersePlaceholder();
                   }
-                  return _verticalSlide(state, SitWithVersePage(scripture: s));
+                  return SitWithVersePage(scripture: s);
                 },
-                loading: () => _sharedAxis(
-                  state,
-                  const Scaffold(
-                    backgroundColor: HealTokens.rosewoodDeep,
-                    body: Center(child: CircularProgressIndicator()),
-                  ),
+                loading: () => const Scaffold(
+                  backgroundColor: HealTokens.rosewoodDeep,
+                  body: Center(child: CircularProgressIndicator()),
                 ),
-                error: (e, _) => _sharedAxis(
-                  state,
-                  Scaffold(
-                    appBar: AppBar(),
-                    body: Center(child: Text('Could not load verse: $e')),
-                  ),
+                error: (e, _) => Scaffold(
+                  appBar: AppBar(),
+                  body: Center(child: Text('Could not load verse: $e')),
                 ),
               );
+              return _verticalSlide(state, child);
             },
           );
         },

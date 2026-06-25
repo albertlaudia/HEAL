@@ -23,6 +23,7 @@ dependencies:
   # ── Audio ──────────────────────────────────────────────────────
   audioplayers: ^6.1.0
   audio_session: ^0.1.21
+  record: ^5.1.2  # voice calibration — mic recording for breath detection
 
   # ── Backend ────────────────────────────────────────────────────
   pocketbase: ^0.21.0
