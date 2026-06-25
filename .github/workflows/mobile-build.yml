@@ -37,7 +37,8 @@ jobs:
 
       - name: Write SA key
         run: |
-          echo "$GCLOUD_SERVICE_ACCOUNT_CREDENTIALS" | base64 -d > /tmp/sa-key.json
+          python3 -c "import sys,base64; open('/tmp/sa-key.json','wb').write(base64.b64decode(sys.stdin.read()))" \
+            <<< "$GCLOUD_SERVICE_ACCOUNT_CREDENTIALS"
           chmod 600 /tmp/sa-key.json
         env:
           GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
