@@ -36,10 +36,9 @@ jobs:
         run: pip install --break-system-packages google-api-python-client google-auth
 
       - name: Write SA key
-        run: python3 -c "import os; open('/tmp/sa-key.json','w').write(os.environ['CRED'])"
-        env:
-          GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
-          CRED: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
+        run: |
+          echo "$GCLOUD_SERVICE_ACCOUNT_CREDENTIALS" | base64 -d > /tmp/sa-key.json
+          chmod 600 /tmp/sa-key.json
         env:
           GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
 
