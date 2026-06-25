@@ -18,7 +18,7 @@ if [ "$1" = "--force" ]; then
 fi
 
 FTP_USER="${SMARTERASP_FTP_USER:-respc}"
-FTP_PASS="${SMARTERASP_FTP_PASSWORD:-R3sourceSc4leupCRM!}"
+FTP_PASS="${SMARTERASP_FTP_PASSWORD:?SMARTERASP_FTP_PASSWORD must be set}"
 FTP_HOST="win8108.site4now.net"
 LOCAL_ROOT="/workspace/HEAL/public"
 REMOTE_BASE="heal"

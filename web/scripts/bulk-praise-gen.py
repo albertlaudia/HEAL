@@ -165,7 +165,7 @@ def stage4_upload(slug):
     if not final.exists():
         return None
     user = os.environ.get('SMARTERASP_FTP_USER', 'respc')
-    pw = os.environ.get('SMARTERASP_FTP_PASSWORD', 'R3sourceSc4leupCRM!')
+    pw = os.environ['SMARTERASP_FTP_PASSWORD']
     # Use lftp single-file put
     cmd = [
         'lftp', '-u', f'{user},{pw}', f'ftp://win8108.site4now.net',

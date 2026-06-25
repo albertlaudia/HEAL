@@ -49,7 +49,7 @@ uploaded = []
 failed = []
 
 FTP_USER = os.environ.get('SMARTERASP_FTP_USER', 'respc')
-FTP_PASS = os.environ.get('SMARTERASP_FTP_PASSWORD', 'R3sourceSc4leupCRM!')
+FTP_PASS = os.environ['SMARTERASP_FTP_PASSWORD']
 
 def ship(args):
     slug, template_idx = args

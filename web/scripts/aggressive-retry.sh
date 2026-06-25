@@ -9,7 +9,7 @@ set +e
 
 FTP_HOST="win8108.site4now.net"
 FTP_USER="${SMARTERASP_FTP_USER:-respc}"
-FTP_PASS="${SMARTERASP_FTP_PASSWORD:-R3sourceSc4leupCRM!}"
+FTP_PASS="${SMARTERASP_FTP_PASSWORD:?SMARTERASP_FTP_PASSWORD must be set}"
 LOCAL_ROOT="/workspace/HEAL/public"
 REMOTE_BASE="heal"
 URL_BASE="https://resources.positiveness.club/heal"

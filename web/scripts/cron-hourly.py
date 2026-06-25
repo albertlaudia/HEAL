@@ -42,7 +42,7 @@ PB_PASSWORD = os.environ.get('PB_PASSWORD')
 
 CDN_BASE = 'https://resources.positiveness.club/heal'
 FTP_USER = os.environ.get('SMARTERASP_FTP_USER', 'respc')
-FTP_PASS = os.environ.get('SMARTERASP_FTP_PASSWORD', 'R3sourceSc4leupCRM!')
+FTP_PASS = os.environ['SMARTERASP_FTP_PASSWORD']
 
 CACHE_DIR = Path('/workspace/.mavis-cache/heal-hourly')
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
