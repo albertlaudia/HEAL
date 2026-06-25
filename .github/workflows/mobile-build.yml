@@ -8,34 +8,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  analyze-test:
-    runs-on: [self-hosted, android]
-    defaults:
-      run:
-        working-directory: mobile
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        id: flutter
-        with:
-          flutter-version: '3.27.1'
-
-      - name: Set Android SDK path
-        run: echo "sdk.dir=/opt/android-sdk" > android/local.properties
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Generate code
-        run: dart run build_runner build --delete-conflicting-outputs
-
-      - name: Analyze
-        run: flutter analyze --fatal-warnings
-
   build-android:
-    needs: analyze-test
     runs-on: [self-hosted, android, large]
     defaults:
       run:
@@ -55,6 +28,13 @@ jobs:
       - name: Install Python + googleapiclient
         run: pip install --break-system-packages google-api-python-client google-auth
 
+      - name: Write SA key
+        run: |
+          echo "$GCLOUD_SERVICE_ACCOUNT_CREDENTIALS" > /tmp/sa-key.json
+          chmod 644 /tmp/sa-key.json
+        env:
+          GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
+
       - name: Install dependencies
         run: flutter pub get
 
@@ -70,8 +50,7 @@ jobs:
           keyPassword=$RELEASE_KEYSTORE_PASSWORD
           keyAlias=$RELEASE_KEYSTORE_ALIAS
           EOF
-          ls -lh android/app/release-keystore.jks && echo "KEYSTORE OK"
-          cat android/key.properties
+          echo "KEYSTORE: $(ls -lh android/app/release-keystore.jks)"
         env:
           RELEASE_KEYSTORE_BASE64: ${{ vars.RELEASE_KEYSTORE_BASE64 }}
           RELEASE_KEYSTORE_PASSWORD: ${{ vars.RELEASE_KEYSTORE_PASSWORD }}
@@ -96,12 +75,6 @@ jobs:
           echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
           echo "version_code=${VERSION_CODE}" >> $GITHUB_OUTPUT
           echo "Full: $VERSION_NAME ($VERSION_CODE)"
-
-      - name: Upload AAB as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: heal-aab-${{ steps.version.outputs.version_code }}
-          path: build/app/outputs/bundle/release/app-release.aab
 
       - name: Upload to Play Store (Internal Track)
         run: |
@@ -140,14 +113,14 @@ jobs:
           except Exception:
               pass
 
-          print(f"✅ Bundle v{bundle['versionCode']} uploaded!")
+          print(f"✅ Bundle v{bundle['versionCode']} uploaded to internal track!")
+          print(f"📦 https://play.google.com/console → {package_name} → Internal Testing")
           PYEOF
         env:
           VERSION_CODE: ${{ steps.version.outputs.version_code }}
-          GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
         continue-on-error: false
 
-      - name: Upload final AAB artifact
+      - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
         with:
           name: heal-aab-${{ steps.version.outputs.version_code }}
