@@ -45,8 +45,6 @@ jobs:
             fs.chmodSync('/tmp/sa-key.json', 0o600);
         env:
           GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
-        env:
-          GCLOUD_SERVICE_ACCOUNT_CREDENTIALS: ${{ secrets.GCLOUD_SERVICE_ACCOUNT_CREDENTIALS }}
 
       - name: Install dependencies
         run: flutter pub get
