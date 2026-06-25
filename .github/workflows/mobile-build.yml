@@ -7,6 +7,10 @@ on:
       - 'mobile/**'
   workflow_dispatch:
 
+concurrency:
+  group: heal-android-build
+  cancel-in-progress: true
+
 jobs:
   build-android:
     runs-on: [self-hosted, android, large]
