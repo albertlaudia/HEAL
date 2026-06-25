@@ -12,3 +12,14 @@
 # Firebase
 -keep class com.google.firebase.** { *; }
 -keep class com.google.android.gms.** { *; }
+# Google Play Core library (Play Store, in-app updates, deferred components)
+-keep class com.google.android.play.core.tasks.** { *; }
+-keep class com.google.android.play.core.** { *; }
+-dontwarn com.google.android.play.core.**
+
+# flutter_local_notifications
+-keep class com.dexterous.** { *; }
+
+# Firebase
+-keep class com.google.firebase.** { *; }
+-dontwarn com.google.firebase.**
