@@ -4,7 +4,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,19 +22,19 @@ class OnboardingPage extends HookConsumerWidget {
     final currentPage = useState<int>(0);
 
     final pages = [
-      _OnboardingPage(
+      const _OnboardingPage(
         icon: Icons.spa_outlined,
         title: 'A quiet place\nto be still',
         body: 'Five minutes of scripture, breath, and prayer.\nFor the hurried and the weary.',
         color: HealTokens.brass,
       ),
-      _OnboardingPage(
+      const _OnboardingPage(
         icon: Icons.cloud_outlined,
         title: 'No tracking.\nNo noise.',
         body: 'Your practice is yours. No ads, no analytics, no accounts required.',
         color: HealTokens.amber,
       ),
-      _OnboardingPage(
+      const _OnboardingPage(
         icon: Icons.notifications_active_outlined,
         title: 'A gentle\nreminder',
         body: 'We can nudge you at sunrise and sunset. Or never. Your choice.',
