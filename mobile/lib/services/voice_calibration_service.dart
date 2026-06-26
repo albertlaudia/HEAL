@@ -44,6 +44,9 @@ class CalibrationState {
     this.savedExhale,
   });
 
+  int? get savedInhaleSeconds => savedInhale;
+  int? get savedExhaleSeconds => savedExhale;
+
   CalibrationState copyWith({
     CalibrationPhase? phase,
     int? inhaleSeconds,
