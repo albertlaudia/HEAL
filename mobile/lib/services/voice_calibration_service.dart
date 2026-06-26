@@ -27,6 +27,9 @@ class CalibrationState {
   final double? amplitude; // 0..1 — visual feedback
   final String? message;
   final String? error;
+  final bool hasProfile;
+  final int? savedInhale;
+  final int? savedExhale;
 
   const CalibrationState({
     this.phase = CalibrationPhase.idle,
@@ -36,6 +39,9 @@ class CalibrationState {
     this.amplitude,
     this.message,
     this.error,
+    this.hasProfile = false,
+    this.savedInhale,
+    this.savedExhale,
   });
 
   CalibrationState copyWith({
@@ -46,7 +52,11 @@ class CalibrationState {
     double? amplitude,
     String? message,
     String? error,
+    bool? hasProfile,
+    int? savedInhale,
+    int? savedExhale,
     bool clearError = false,
+    bool clearSaved = false,
   }) {
     return CalibrationState(
       phase: phase ?? this.phase,
@@ -56,6 +66,9 @@ class CalibrationState {
       amplitude: amplitude ?? this.amplitude,
       message: message ?? this.message,
       error: clearError ? null : (error ?? this.error),
+      hasProfile: hasProfile ?? this.hasProfile,
+      savedInhale: clearSaved ? null : (savedInhale ?? this.savedInhale),
+      savedExhale: clearSaved ? null : (savedExhale ?? this.savedExhale),
     );
   }
 }
@@ -80,9 +93,13 @@ class VoiceCalibrationService extends StateNotifier<CalibrationState> {
     final prefs = await SharedPreferences.getInstance();
     _savedInhale = prefs.getInt(_inhaleKey);
     _savedExhale = prefs.getInt(_exhaleKey);
+    state = state.copyWith(
+      hasProfile: _savedInhale != null && _savedExhale != null,
+      savedInhale: _savedInhale,
+      savedExhale: _savedExhale,
+    );
   }
 
-  bool get hasProfile => _savedInhale != null && _savedExhale != null;
   int? get savedInhaleSeconds => _savedInhale;
   int? get savedExhaleSeconds => _savedExhale;
 
@@ -243,6 +260,11 @@ class VoiceCalibrationService extends StateNotifier<CalibrationState> {
     await prefs.setBool(_calibratedKey, true);
     _savedInhale = inhaleSec;
     _savedExhale = exhaleSec;
+    state = state.copyWith(
+      hasProfile: true,
+      savedInhale: inhaleSec,
+      savedExhale: exhaleSec,
+    );
   }
 
   Future<void> clearProfile() async {
@@ -252,6 +274,7 @@ class VoiceCalibrationService extends StateNotifier<CalibrationState> {
     await prefs.remove(_calibratedKey);
     _savedInhale = null;
     _savedExhale = null;
+    state = state.copyWith(clearSaved: true, hasProfile: false);
   }
 
   @override

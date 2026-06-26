@@ -26,7 +26,6 @@ import '../features/home/splash_page.dart';
 import '../data/pb_repositories.dart';
 import '../data/pb_models.dart';
 import '../services/audio_service.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MainScaffold extends HookConsumerWidget {
   final int currentIndex;
@@ -329,27 +328,29 @@ class HealRouter {
             return _verticalSlide(state, SitWithVersePage(scripture: passed));
           }
           // Otherwise use the daily scripture via Consumer
-          return Consumer(
-            builder: (context, ref, _) {
-              final daily = ref.watch(_dailyScriptureProvider);
-              final child = daily.when(
-                data: (s) {
-                  if (s == null) {
-                    return const _NoVersePlaceholder();
-                  }
-                  return SitWithVersePage(scripture: s);
-                },
-                loading: () => const Scaffold(
-                  backgroundColor: HealTokens.rosewoodDeep,
-                  body: Center(child: CircularProgressIndicator()),
-                ),
-                error: (e, _) => Scaffold(
-                  appBar: AppBar(),
-                  body: Center(child: Text('Could not load verse: $e')),
-                ),
-              );
-              return _verticalSlide(state, child);
-            },
+          return _verticalSlide(
+            state,
+            Consumer(
+              builder: (context, ref, _) {
+                final daily = ref.watch(_dailyScriptureProvider);
+                return daily.when(
+                  data: (s) {
+                    if (s == null) {
+                      return const _NoVersePlaceholder();
+                    }
+                    return SitWithVersePage(scripture: s);
+                  },
+                  loading: () => const Scaffold(
+                    backgroundColor: HealTokens.rosewoodDeep,
+                    body: Center(child: CircularProgressIndicator()),
+                  ),
+                  error: (e, _) => Scaffold(
+                    appBar: AppBar(),
+                    body: Center(child: Text('Could not load verse: $e')),
+                  ),
+                );
+              },
+            ),
           );
         },
       ),

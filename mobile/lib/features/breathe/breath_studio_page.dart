@@ -335,7 +335,7 @@ class _BreathRunner extends HookConsumerWidget {
         phase.value = BreathPhase.ready;
         ref.read(_activePhaseProvider.notifier).state = BreathPhase.ready;
         tickInterval.value?.cancel();
-        return;
+        return null;
       }
 
       Future<void> chain() async {
