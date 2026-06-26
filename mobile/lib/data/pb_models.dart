@@ -58,11 +58,11 @@ class Meditation {
 
   String get cdnIllustration => illustrationUrl.isNotEmpty
       ? illustrationUrl
-      : 'https://resources.positiveness.club/heal/images/meditations/${slug}.jpg';
+      : 'https://resources.positiveness.club/heal/images/meditations/$slug.jpg';
 
   String get cdnAudio => audioUrl.isNotEmpty
       ? audioUrl
-      : 'https://resources.positiveness.club/heal/audio/meditations/${slug}.mp3';
+      : 'https://resources.positiveness.club/heal/audio/meditations/$slug.mp3';
 }
 
 class PraiseSong {
@@ -119,11 +119,11 @@ class PraiseSong {
 
   String get cdnIllustration => illustrationUrl.isNotEmpty
       ? illustrationUrl
-      : 'https://resources.positiveness.club/heal/images/praise/${slug}.jpg';
+      : 'https://resources.positiveness.club/heal/images/praise/$slug.jpg';
 
   String get cdnAudio => audioUrl.isNotEmpty
       ? audioUrl
-      : 'https://resources.positiveness.club/heal/audio/praise/${slug}.mp3';
+      : 'https://resources.positiveness.club/heal/audio/praise/$slug.mp3';
 }
 
 class Prayer {
@@ -179,7 +179,7 @@ class Prayer {
 
   String get cdnIllustration => illustrationUrl.isNotEmpty
       ? illustrationUrl
-      : 'https://resources.positiveness.club/heal/images/prayers/${slug}.jpg';
+      : 'https://resources.positiveness.club/heal/images/prayers/$slug.jpg';
 }
 
 class Scripture {
@@ -303,7 +303,7 @@ class BreathPattern {
 
   String get cdnIllustration => illustrationUrl.isNotEmpty
       ? illustrationUrl
-      : 'https://resources.positiveness.club/heal/images/breath/${slug}.jpg';
+      : 'https://resources.positiveness.club/heal/images/breath/$slug.jpg';
 }
 
 class Essay {
@@ -348,5 +348,5 @@ class Essay {
 
   String get cdnIllustration => illustrationUrl.isNotEmpty
       ? illustrationUrl
-      : 'https://resources.positiveness.club/heal/images/essays/${slug}.jpg';
+      : 'https://resources.positiveness.club/heal/images/essays/$slug.jpg';
 }

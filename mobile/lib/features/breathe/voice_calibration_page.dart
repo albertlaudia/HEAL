@@ -9,7 +9,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -37,7 +36,7 @@ class VoiceCalibrationPage extends HookConsumerWidget {
           if (cal.phase != CalibrationPhase.idle)
             TextButton(
               onPressed: () => controller.cancel(),
-              child: Text('CANCEL',
+              child: const Text('CANCEL',
                   style: TextStyle(color: HealTokens.creamDim)),
             ),
         ],
@@ -109,7 +108,7 @@ class _IdleView extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.check_circle_rounded, color: HealTokens.brass, size: 20),
+                const Icon(Icons.check_circle_rounded, color: HealTokens.brass, size: 20),
                 const SizedBox(width: HealTokens.s12),
                 Expanded(
                   child: Text(
@@ -264,7 +263,7 @@ class _ActiveCalibrationView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                Icon(Icons.error_outline_rounded, color: HealTokens.ember, size: 20),
+                const Icon(Icons.error_outline_rounded, color: HealTokens.ember, size: 20),
                 const SizedBox(width: HealTokens.s12),
                 Expanded(
                   child: Text(

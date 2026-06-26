@@ -381,7 +381,7 @@ class HealTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(HealTokens.r12),
-          borderSide: BorderSide(color: HealTokens.brass, width: 1.5),
+          borderSide: const BorderSide(color: HealTokens.brass, width: 1.5),
         ),
         hintStyle: textTheme.bodyMedium?.copyWith(color: HealTokens.creamDim),
       ),

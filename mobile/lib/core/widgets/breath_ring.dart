@@ -105,7 +105,7 @@ class BreathRingPainter extends CustomPainter {
           phase.glowColor,
         ],
         stops: const [0.0, 0.5, 1.0],
-        transform: GradientRotation(-math.pi / 2),
+        transform: const GradientRotation(-math.pi / 2),
       ).createShader(Rect.fromCircle(center: center, radius: maxRadius * 0.92))
       ..strokeWidth = 4
       ..strokeCap = StrokeCap.round
@@ -138,7 +138,7 @@ class BreathRingPainter extends CustomPainter {
     canvas.drawCircle(center, maxRadius * 0.6 * ringScale, innerBorder);
 
     // Cycle progress dots around outer ring
-    final dotCount = 16;
+    const dotCount = 16;
     for (var i = 0; i < dotCount; i++) {
       final angle = (i / dotCount) * 2 * math.pi - math.pi / 2;
       final dotRadius = maxRadius * 0.96;
