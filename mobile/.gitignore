@@ -42,3 +42,9 @@ linux/flutter/ephemeral/
 
 # Local icon generation scratch
 .icon-work/
+
+*.apk
+*.aab
+*.log
+*.DS_Store
+*.lock
