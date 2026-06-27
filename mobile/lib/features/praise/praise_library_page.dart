@@ -215,7 +215,7 @@ class PraiseDetailPage extends HookConsumerWidget {
                 imageUrl: song.cdnIllustration,
                 fit: BoxFit.cover,
                 placeholder: (_, __) => Container(color: HealTokens.rosewoodDeep),
-                errorWidget: (_, __, ___) => const Container(
+                errorWidget: (_, __, ___) => const DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
