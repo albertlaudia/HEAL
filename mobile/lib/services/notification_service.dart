@@ -25,6 +25,12 @@ class NotificationService {
 
   Future<void> init() async {
     if (_initialized) return;
+    if (kIsWeb) {
+      // Web push notifications use Firebase Messaging, not flutter_local_notifications.
+      // Skip init on web — the user can still set preferences which get honored on mobile.
+      _initialized = true;
+      return;
+    }
     tzdata.initializeTimeZones();
     // Use device local timezone
     final localName = DateTime.now().timeZoneName;

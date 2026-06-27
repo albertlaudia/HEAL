@@ -108,6 +108,16 @@ class VoiceCalibrationService extends StateNotifier<CalibrationState> {
 
   /// Begin a calibration session. Asks for mic permission first.
   Future<void> start() async {
+    if (kIsWeb) {
+      // Voice calibration needs raw PCM audio from `record` package, which
+      // doesn't work on web. Direct users to the native app instead.
+      state = state.copyWith(
+        phase: CalibrationPhase.idle,
+        message: 'Voice calibration is mobile-only. Install the iOS or Android app to use it.',
+        error: 'Voice calibration requires a native device. The web app uses default breath patterns.',
+      );
+      return;
+    }
     state = state.copyWith(
       phase: CalibrationPhase.requestingPermission,
       clearError: true,

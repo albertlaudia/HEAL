@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="HEAL — a quiet Christian mindfulness practice. Five minutes of scripture, breath, and prayer.">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1A1110">
+
+  <!-- iOS PWA tags -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="HEAL">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <!-- Social preview (used when shared) -->
+  <meta property="og:title" content="HEAL — a quiet Christian mindfulness practice">
+  <meta property="og:description" content="Five minutes of scripture, breath, and prayer.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://healf.positiveness.club">
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>HEAL</title>
+
+  <style>
+    /* Inline splash shown while Flutter bootstraps */
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #1A1110;
+      color: #EDE3D2;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow: hidden;
+    }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .splash {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+    .splash-mark {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #D4B26A, #B08C4F, #8B6A36);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 32px rgba(176, 140, 79, 0.4);
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+    .splash-mark span {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 56px;
+      font-weight: 300;
+      color: #1A1110;
+      line-height: 1;
+    }
+    .splash-title {
+      letter-spacing: 12px;
+      font-size: 22px;
+      font-weight: 300;
+      color: #EDE3D2;
+      opacity: 0.9;
+    }
+    .splash-tag {
+      letter-spacing: 2px;
+      font-size: 12px;
+      font-style: italic;
+      color: #C8B8A0;
+      opacity: 0.7;
+    }
+    .splash-err {
+      position: absolute;
+      bottom: 32px;
+      left: 32px;
+      right: 32px;
+      max-width: 480px;
+      text-align: center;
+      font-size: 12px;
+      color: #D9764E;
+      opacity: 0.8;
+      display: none;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 8px 32px rgba(176, 140, 79, 0.4); }
+      50%      { transform: scale(1.05); box-shadow: 0 8px 48px rgba(176, 140, 79, 0.6); }
+    }
+  </style>
+</head>
+<body>
+  <div class="splash" id="splash">
+    <div class="splash-mark"><span>H</span></div>
+    <div class="splash-title">HEAL</div>
+    <div class="splash-tag">a quiet practice</div>
+  </div>
+  <div class="splash-err" id="err"></div>
+
+  <script>
+    // Surface bootstrap errors so users aren't stuck on a frozen splash
+    window.addEventListener('error', function(e) {
+      var el = document.getElementById('err');
+      if (el) {
+        el.style.display = 'block';
+        el.textContent = 'HEAL failed to load. Try refreshing, or use the mobile app.';
+      }
+    });
+  </script>
+
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>
