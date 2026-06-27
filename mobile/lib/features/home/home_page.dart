@@ -318,7 +318,7 @@ class _StreakDetailsSheet extends StatelessWidget {
           ),
           Row(
             children: [
-              Icon(Icons.local_fire_department_rounded,
+              const Icon(Icons.local_fire_department_rounded,
                   color: HealTokens.brass, size: 32),
               const SizedBox(width: HealTokens.s12),
               Text(
@@ -441,7 +441,7 @@ class _WelcomeBackCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.coffee_outlined,
+                const Icon(Icons.coffee_outlined,
                     color: HealTokens.bronzeLight, size: 18),
                 const SizedBox(width: HealTokens.s8),
                 Expanded(
@@ -453,7 +453,7 @@ class _WelcomeBackCard extends StatelessWidget {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.close_rounded,
+                  icon: const Icon(Icons.close_rounded,
                       color: HealTokens.creamDim, size: 18),
                   onPressed: onDismiss,
                   padding: EdgeInsets.zero,
@@ -749,28 +749,28 @@ class _PracticeGrid extends StatelessWidget {
         title: 'Meditate',
         subtitle: 'Guided stillness',
         icon: Icons.self_improvement_rounded,
-        gradient: [HealTokens.brass, HealTokens.bronze],
+        gradient: const [HealTokens.brass, HealTokens.bronze],
         onTap: () => context.push('/meditate'),
       ),
       _PracticeTile(
         title: 'Praise',
         subtitle: 'Songs & hymns',
         icon: Icons.music_note_rounded,
-        gradient: [HealTokens.amber, HealTokens.brassDeep],
+        gradient: const [HealTokens.amber, HealTokens.brassDeep],
         onTap: () => context.push('/praise'),
       ),
       _PracticeTile(
         title: 'Pray',
         subtitle: 'Words for the hour',
         icon: Icons.favorite_outline_rounded,
-        gradient: [HealTokens.bronzeLight, HealTokens.bronze],
+        gradient: const [HealTokens.bronzeLight, HealTokens.bronze],
         onTap: () => context.push('/prayer'),
       ),
       _PracticeTile(
         title: 'Essays',
         subtitle: 'Slow reading',
         icon: Icons.menu_book_rounded,
-        gradient: [HealTokens.bronze, HealTokens.rosewood],
+        gradient: const [HealTokens.bronze, HealTokens.rosewood],
         onTap: () => context.push('/essays'),
       ),
     ];

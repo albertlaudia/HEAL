@@ -5,7 +5,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -216,7 +215,7 @@ class PraiseDetailPage extends HookConsumerWidget {
                 imageUrl: song.cdnIllustration,
                 fit: BoxFit.cover,
                 placeholder: (_, __) => Container(color: HealTokens.rosewoodDeep),
-                errorWidget: (_, __, ___) => Container(
+                errorWidget: (_, __, ___) => const Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [

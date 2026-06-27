@@ -40,7 +40,7 @@ linux/flutter/ephemeral/
 .env
 .env*.local
 
-# Local icon generation scratch
+# Local icon generation scratchSS
 .icon-work/
 
 *.apk

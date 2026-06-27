@@ -393,13 +393,11 @@ class _CandleFlame extends StatelessWidget {
 class _ReTypingText extends StatefulWidget {
   final String text;
   final TextStyle? style;
-  final TextAlign textAlign;
   final double phase;
   const _ReTypingText({
     super.key,
     required this.text,
     this.style,
-    this.textAlign = TextAlign.center,
     required this.phase,
   });
 
@@ -450,7 +448,7 @@ class _ReTypingTextState extends State<_ReTypingText>
     return Text(
       _visibleText,
       style: widget.style,
-      textAlign: widget.textAlign,
+      textAlign: TextAlign.center,
     );
   }
 }

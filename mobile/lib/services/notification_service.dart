@@ -158,8 +158,8 @@ class NotificationService {
     final prefs = await SharedPreferences.getInstance();
     final hour = prefs.getInt('notif_morning_hour') ?? 7;
     final minute = prefs.getInt('notif_morning_minute') ?? 0;
-    final title = 'A gentle morning awaits';
-    final body = 'Take five minutes. Begin with stillness.';
+    const title = 'A gentle morning awaits';
+    const body = 'Take five minutes. Begin with stillness.';
     await _scheduleDaily(_morningId, hour, minute, title, body);
   }
 
@@ -167,8 +167,8 @@ class NotificationService {
     final prefs = await SharedPreferences.getInstance();
     final hour = prefs.getInt('notif_evening_hour') ?? 21;
     final minute = prefs.getInt('notif_evening_minute') ?? 0;
-    final title = 'A quiet evening';
-    final body = 'Set down the day. Let the room hold you.';
+    const title = 'A quiet evening';
+    const body = 'Set down the day. Let the room hold you.';
     await _scheduleDaily(_eveningId, hour, minute, title, body);
   }
 

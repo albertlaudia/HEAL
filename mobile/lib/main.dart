@@ -88,8 +88,8 @@ Future<void> main() async {
     logger.i('App', 'Onboarded: $onboarded');
 
     runApp(
-      ProviderScope(
-        parent: container,
+      UncontrolledProviderScope(
+        container: container,
         child: HealApp(
           firstLaunch: !onboarded,
         ),
