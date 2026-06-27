@@ -16,7 +16,7 @@ jobs:
           DOKPLOY_API_KEY: ${{ secrets.DOKPLOY_API_KEY }}
         run: |
           # ID for the Flutter Web app on Dokploy (created via API + manual first Deploy in UI)
-          APPLICATION_ID="SfPob1m7havx47D5Y6ODy"
+          APPLICATION_ID="yC4hSrjj9xYT_ronMdBDo"
           curl -X POST "https://dokploy.scaleupcrm.com/api/trpc/application.redeploy" \
             -H "x-api-key: $DOKPLOY_API_KEY" \
             -H "Content-Type: application/json" \
