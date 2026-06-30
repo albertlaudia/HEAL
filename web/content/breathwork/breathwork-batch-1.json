@@ -1,0 +1,80 @@
+[
+  {
+    "name": "The 4-7-8 Breath",
+    "slug": "4-7-8",
+    "description": "A calming breath for falling asleep, releasing anxiety, or simply arriving back in your body.",
+    "instructions": "Inhale through the nose for 4 counts. Hold for 7. Exhale slowly through the mouth for 8. Repeat for 4 cycles. The long exhale activates your parasympathetic nervous system — the body's natural 'rest and be held' signal.",
+    "pattern": "4-7-8",
+    "inhale_seconds": 4,
+    "hold_seconds": 7,
+    "exhale_seconds": 8,
+    "cycles": 4,
+    "theme": "rest",
+    "sort_order": 1
+  },
+  {
+    "name": "Box Breath",
+    "slug": "box-breath",
+    "description": "An equal-count breath used by Navy SEALs, contemplatives, and parents. Brings steady attention.",
+    "instructions": "Inhale for 4. Hold for 4. Exhale for 4. Hold empty for 4. Each side of the box is the same length. Cycle 4 to 6 times. Useful before a difficult conversation, a presentation, or any moment that asks for clarity.",
+    "pattern": "4-4-4-4",
+    "inhale_seconds": 4,
+    "hold_seconds": 4,
+    "exhale_seconds": 4,
+    "cycles": 6,
+    "theme": "focus",
+    "sort_order": 2
+  },
+  {
+    "name": "The Long Exhale",
+    "slug": "long-exhale",
+    "description": "For moments of overwhelm. The shortest practice with the biggest effect.",
+    "instructions": "Inhale through the nose for 4. Exhale through the mouth for 8. The exhale is twice as long as the inhale. Continue for as long as you like. Even three rounds can lower your heart rate.",
+    "pattern": "4-8",
+    "inhale_seconds": 4,
+    "hold_seconds": 0,
+    "exhale_seconds": 8,
+    "cycles": 5,
+    "theme": "calm",
+    "sort_order": 3
+  },
+  {
+    "name": "Coherent Breath",
+    "slug": "coherent-breath",
+    "description": "A gentle, even breath for daily practice. Five seconds in, five seconds out.",
+    "instructions": "Inhale for 5 counts. Exhale for 5 counts. No holding. Let the breath be smooth and unhurried, like the tide. Practice for 5 to 10 minutes. This is the breath to come home to.",
+    "pattern": "5-5",
+    "inhale_seconds": 5,
+    "hold_seconds": 0,
+    "exhale_seconds": 5,
+    "cycles": 20,
+    "theme": "stillness",
+    "sort_order": 4
+  },
+  {
+    "name": "Resonant Breath 6-6",
+    "slug": "resonant-6-6",
+    "description": "Six in, six out. The breath-rate at which heart, breath, and nervous system align.",
+    "instructions": "Inhale for 6. Exhale for 6. No pause. The breath should be light, almost silent. If 6 feels long, begin with 4 or 5. The goal is the smoothest possible breath, not the longest.",
+    "pattern": "6-6",
+    "inhale_seconds": 6,
+    "hold_seconds": 0,
+    "exhale_seconds": 6,
+    "cycles": 12,
+    "theme": "stillness",
+    "sort_order": 5
+  },
+  {
+    "name": "The Morning Breath",
+    "slug": "morning-breath",
+    "description": "An awakening breath, done before your feet touch the floor.",
+    "instructions": "Lying in bed or sitting at the edge. Inhale for 4, filling the belly first, then the chest. Exhale for 6, gently, with a soft 'haa'. Three rounds. Open your eyes when you are ready.",
+    "pattern": "4-6",
+    "inhale_seconds": 4,
+    "hold_seconds": 0,
+    "exhale_seconds": 6,
+    "cycles": 3,
+    "theme": "energy",
+    "sort_order": 6
+  }
+]

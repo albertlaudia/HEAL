@@ -1,0 +1,42 @@
+# /web/.dockerignore — used when Dokploy builds the /web subfolder directly.
+# (The root .dockerignore is for full-monorepo builds.)
+
+# Build outputs
+node_modules
+.next
+out
+build
+dist
+.swc
+
+# Local artifacts
+.git
+.gitignore
+.eslintrc.json
+*.log
+*.tsbuildinfo
+.env
+.env.local
+.env.*.local
+.DS_Store
+
+# HEAL — all media lives on the CDN at resources.positiveness.club/heal.
+# These folders should never ship to Dokploy.
+public/images/**
+public/audio/meditations/**
+public/audio/praise/**
+public/.mavis-cache/
+
+# Dev artifacts
+coverage
+playwright-report
+test-results
+
+# Generated cache
+.mavis-cache/
+
+# node_modules in subdirs too
+**/node_modules/
+**/.next/
+**/build/
+**/.dart_tool/

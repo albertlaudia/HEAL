@@ -1,0 +1,19 @@
+{
+  "title": "A Simple Communion Hymn",
+  "slug": "a-simple-communion-hymn",
+  "subtitle": "For the breaking of the bread",
+  "lyrics": "[Verse 1]\nBread of the world, in mercy broken,\nWine of the soul, in mercy shed;\nBy whom the words of life were spoken,\nAnd in whose death our sins are dead.\n\n[Verse 2]\nLook on the heart by sorrow broken,\nLook on the tears by sinners shed,\nAnd be Thy feast to us the token\nThat by Thy grace our souls are fed.\n\n[Chorus]\nTake, eat, this is My body.\nTake, drink, this is My blood.\nDo this in remembrance of Me,\nUntil I come again.\n\n[Verse 3]\nLord, in the breaking, You are with us.\nLord, in the pouring, You are near.\nIn every fragment, every silence,\nYour love, Your grace, Your presence, here.",
+  "chords": "D        A        Bm       G\nBread of the world, in mercy broken\nD        A        G         D\nWine of the soul, in mercy shed\nD        A        Bm       G\nBy whom the words of life were spoken\nD        A        G         D\nAnd in whose death our sins are dead",
+  "scripture_refs": [
+    "1 Corinthians 11:23-26",
+    "Luke 22:19"
+  ],
+  "reflection": "Take, eat. This is the whole of the gospel, in two hands.",
+  "category": "celebration",
+  "key_signature": "D",
+  "tempo_bpm": 64,
+  "meter": "4/4",
+  "day_of_year": 11,
+  "sort_order": 11,
+  "is_published": true
+}

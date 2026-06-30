@@ -1,0 +1,144 @@
+{
+  "programs": [
+    {
+      "id": "finding-center",
+      "title": "Finding Your Center",
+      "tagline": "Seven steps back to yourself when you feel scattered",
+      "description": "There are days when the noise of the world has gotten so loud that you cannot remember what your own voice sounds like. This seven-step practice is for those days. It does not ask you to fix anything. It does not ask you to perform. It asks you, gently, to return to the one place that is always yours — the breath, the body, the still point underneath the thinking. Take it at your own pace. There is no rush. There is no finish line. There is only the practice of being here.",
+      "duration_label": "7 steps · self-paced",
+      "category": "anxiety",
+      "theme_color": "teal",
+      "illustration_url": "",
+      "illustration_prompt": "Soft watercolor meditation illustration. HEAL design language: hand-painted feel, loose washes, soft edges, no text, no people, no sharp details, calming negative space. Theme: Finding Center. Mood: deep teal, mirror-still water, horizon.",
+      "badge": {
+        "name": "Centered",
+        "affirmation": "I am not my thoughts. I am the one watching them pass.",
+        "scripture_ref": "Psalm 46:10",
+        "scripture_text": "Be still, and know that I am God.",
+        "image_prompt": "Soft watercolor badge medallion. HEAL design language: hand-painted feel, loose washes, no text, no people, no sharp details. Round circular shape with deep teal and soft cream gradient, soft gold leaf border, simple inner glow at center. Sacred geometry: a small concentric circle pattern, no text.",
+        "image_path": "/images/badges/finding-center.png"
+      },
+      "steps": [
+        {
+          "order": 1,
+          "title": "Notice where you are, in this moment",
+          "reflection": "Right now — wherever you are, whatever you are holding — pause. Notice the room. Notice the surface beneath you. Notice the air. You do not have to do anything with what you notice. Just notice. That noticing is the practice.",
+          "scripture_ref": "Psalm 46:10",
+          "scripture_text": "Be still, and know that I am God.",
+          "practice": {
+            "kind": "breath",
+            "title": "Box breath 4-4-4-2",
+            "slug": "box-breath"
+          },
+          "response": {
+            "headline": "You arrived.",
+            "body": "The first step of any practice is the act of showing up. You just did that. Most of our days are spent half a beat ahead of ourselves — answering the next thing, anticipating the next thing, dreading the next thing. For one moment, you were here. That is the whole of it. That is the practice.",
+            "scripture": "Psalm 46:10"
+          }
+        },
+        {
+          "order": 2,
+          "title": "Name one thing you can hear",
+          "reflection": "The mind often gets tangled when it tries to solve too many things at once. One way back is through the senses. Right now, name one thing you can hear. It does not have to be pleasant. It can be a car. A fan. Your own breath. Just name it.",
+          "scripture_ref": "1 Kings 19:12",
+          "scripture_text": "And after the earthquake a fire, but the LORD was not in the fire. And after the fire the sound of a low whisper.",
+          "practice": {
+            "kind": "meditation",
+            "title": "A short grounding reflection",
+            "slug": "the-still-small-voice"
+          },
+          "response": {
+            "headline": "You listened.",
+            "body": "The story of Elijah on the mountain — after the wind, the earthquake, the fire — says that the Lord was in the sound of a low whisper. Most of the time, the holy does not arrive as noise. It arrives as the small, almost-not-there sounds. By naming one, you just made yourself available to hear them.",
+            "scripture": "1 Kings 19:12"
+          }
+        },
+        {
+          "order": 3,
+          "title": "Drop your shoulders",
+          "reflection": "Many of us carry tension in our shoulders without realizing it. The shoulders are where we hold the world. Right now, on the next exhale, let them drop. Notice the small relief. Notice that nothing collapsed. The world did not fall apart because you relaxed for a moment.",
+          "scripture_ref": "Matthew 11:28",
+          "scripture_text": "Come to me, all who labor and are heavy laden, and I will give you rest.",
+          "practice": {
+            "kind": "breath",
+            "title": "Deep exhale breath",
+            "slug": "extended-exhale"
+          },
+          "response": {
+            "headline": "Your shoulders were holding more than they needed to.",
+            "body": "Most of the time, we do not realize how much we are carrying until we put it down. The gospel of Matthew has a line often quoted but rarely lived: come to me, all who labor and are heavy laden. 'Heavy laden' is not a metaphor. It is a description of shoulders. You just set yours down for a moment. They will be there when you pick them up again. You don't have to do it yet.",
+            "scripture": "Matthew 11:28"
+          }
+        },
+        {
+          "order": 4,
+          "title": "Name one worry — and place it outside of you for a moment",
+          "reflection": "Today, name one specific worry — not all of them, just one. Say it to yourself. Then, in your mind's eye, place it on a chair across from you, or on a table, or outside the door. You are not solving it. You are not forgetting it. You are simply giving yourself a small distance from it for a moment.",
+          "scripture_ref": "1 Peter 5:7",
+          "scripture_text": "Cast all your anxiety on him, because he cares for you.",
+          "practice": {
+            "kind": "meditation",
+            "title": "A short practice of letting go",
+            "slug": "letting-go-is-not-losing"
+          },
+          "response": {
+            "headline": "You made space between yourself and the worry.",
+            "body": "Casting a worry outward — onto God, onto a chair, onto the table — is not a way of pretending it does not exist. It is a way of being honest that you are carrying something that is bigger than your arms. The first letter of Peter says to cast your anxiety on God, 'because he cares for you.' The 'because' is the soft part. It is not a transaction. It is an invitation.",
+            "scripture": "1 Peter 5:7"
+          }
+        },
+        {
+          "order": 5,
+          "title": "Walk slowly for one minute",
+          "reflection": "If you are able, walk slowly for one minute. Do not go anywhere. Do not get somewhere. Just walk — heel to toe, breath in, breath out. If you cannot walk, do this with your hands. If you cannot do this with your hands, do it with your eyes — let them slowly move from one thing to another. Slow is the practice.",
+          "scripture_ref": "Psalm 37:7",
+          "scripture_text": "Be still before the LORD and wait patiently for him.",
+          "practice": {
+            "kind": "breath",
+            "title": "Coherent breath 5-5",
+            "slug": "coherent-breath"
+          },
+          "response": {
+            "headline": "You slowed down. That is not nothing.",
+            "body": "In a culture that rewards speed, slowing down is a small act of defiance. The psalmist's instruction — be still, and wait patiently — is not a luxury. It is, in many seasons, the only way through. You practiced that for one minute today. The minute is over. The skill is yours.",
+            "scripture": "Psalm 37:7"
+          }
+        },
+        {
+          "order": 6,
+          "title": "Name three things in your life that are still here",
+          "reflection": "When the mind is scattered, it often forgets what has not been lost. Right now, name three things in your life that are still here. A person. A place. A practice. A pet. A cup of coffee. Anything. Just three things that have not been taken from you.",
+          "scripture_ref": "Lamentations 3:22–23",
+          "scripture_text": "The steadfast love of the LORD never ceases; his mercies never come to an end. They are new every morning.",
+          "practice": {
+            "kind": "meditation",
+            "title": "A short gratitude reflection",
+            "slug": "small-grace-large-moment"
+          },
+          "response": {
+            "headline": "You remembered the things that are still here.",
+            "body": "The book of Lamentations — a book about the worst thing that ever happened to its writer — pauses in the middle to say that the steadfast love of the Lord never ceases. Even in grief, the writer remembers. Today, in your own small way, you did the same. You named three things that are still here. That is not a deflection. It is a kind of faith.",
+            "scripture": "Lamentations 3:22–23"
+          }
+        },
+        {
+          "order": 7,
+          "title": "Return to the breath, and finish",
+          "reflection": "This is the last step. Take one breath in, slowly. Take one breath out, slowly. Notice that the breath is the same as it was at the start of this practice. Notice that you are still here. Notice that, in some small way, you are not the same as you were when you began. That is what a practice does. It returns you to yourself.",
+          "scripture_ref": "Isaiah 26:3",
+          "scripture_text": "You keep him in perfect peace whose mind is stayed on you, because he trusts in you.",
+          "practice": {
+            "kind": "prayer",
+            "title": "A closing prayer for peace",
+            "slug": "prayer-for-anxiety"
+          },
+          "response": {
+            "headline": "You are not the same as when you started.",
+            "body": "You have done something almost no one in a hurry ever does — you took seven steps, in a row, in your own direction. The prophet Isaiah writes that God keeps the one whose mind is stayed on Him in perfect peace. 'Perfect peace' is not the absence of trouble. It is the presence of a return — a return you just practiced. Welcome back.",
+            "scripture": "Isaiah 26:3"
+          }
+        }
+      ]
+    }
+  ]
+}

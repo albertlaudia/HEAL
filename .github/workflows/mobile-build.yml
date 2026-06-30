@@ -1,0 +1,138 @@
+name: Build HEAL Mobile (Android)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+  workflow_dispatch:
+
+concurrency:
+  group: heal-android-build
+  cancel-in-progress: true
+
+jobs:
+  build-android:
+    runs-on: [self-hosted, android, large]
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        id: flutter
+        with:
+          flutter-version: '3.27.1'
+
+      - name: Configure isolated Gradle home
+        run: |
+          echo "GRADLE_USER_HOME=/opt/actions-runner-heal/_work/.gradle" >> $GITHUB_ENV
+          mkdir -p /opt/actions-runner-heal/_work/.gradle
+          echo "sdk.dir=/opt/android-sdk" > android/local.properties
+
+      - name: Install Python + googleapiclient
+        run: pip install --break-system-packages google-api-python-client google-auth
+
+      - name: Write SA key  # SKIPPED — SA key unavailable
+        run: echo "SA key step skipped — upload AAB artifact manually"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Set up release signing
+        run: |
+          echo "$RELEASE_KEYSTORE_BASE64" | base64 -d > android/app/release-keystore.jks
+          cat > android/key.properties << EOF
+          storeFile=app/release-keystore.jks
+          storePassword=$RELEASE_KEYSTORE_PASSWORD
+          keyPassword=$RELEASE_KEYSTORE_PASSWORD
+          keyAlias=$RELEASE_KEYSTORE_ALIAS
+          EOF
+          echo "KEYSTORE: $(ls -lh android/app/release-keystore.jks)"
+        env:
+          RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_KEYSTORE_ALIAS: ${{ secrets.RELEASE_KEYSTORE_ALIAS }}
+
+      - name: Cleanup flutter lockfile before build
+        run: rm -f flutter.lock
+
+      - name: Build AAB
+        run: |
+          flutter build appbundle --release \
+            --dart-define=CDN_BASE=https://resources.positiveness.club/heal \
+            --dart-define=POCKETBASE_URL=https://pocketbase.scaleupcrm.com 2>&1 | tee /tmp/flutter_build.log
+          RC=${PIPESTATUS[0]}
+          if [ $RC -ne 0 ]; then
+            echo "=== BUILD FAILED (RC=$RC) ==="
+            cat /tmp/flutter_build.log | grep -i "error\|Error\|FAILURE\|failed" | head -20
+            find build -name "*.aab" 2>/dev/null | head -5
+            ls -la build/app/outputs/bundle/release/ 2>/dev/null || echo "AAB dir not found"
+            exit 1
+          fi
+        env:
+          ANDROID_HOME: /opt/android-sdk
+
+      - name: Extract version
+        id: version
+        run: |
+          VERSION_NAME=$(grep version: pubspec.yaml | head -1 | awk '{print $2}')
+          VERSION_CODE=$(grep version: pubspec.yaml | head -1 | sed 's/.*+/\n+/' | tail -1)
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "version_code=${VERSION_CODE}" >> $GITHUB_OUTPUT
+          echo "Full: $VERSION_NAME ($VERSION_CODE)"
+
+      # - name: Upload to Play Store (Internal Track)  # SKIPPED — SA key unavailable
+      #   run: |
+      #     python3 << 'PYEOF'
+      #     import os
+      #     from google.oauth2 import service_account
+      #     from google.auth.transport.requests import Request
+      #     from googleapiclient.discovery import build
+      #     from googleapiclient.http import MediaFileUpload
+      #
+      #     SCOPES = ['https://www.googleapis.com/auth/androidpublisher']
+      #     creds = service_account.Credentials.from_service_account_file(
+      #         '/tmp/sa-key.json', scopes=SCOPES)
+      #     creds.refresh(Request())
+      #     service = build('androidpublisher', 'v3', credentials=creds)
+      #
+      #     version_code = int(os.environ.get('VERSION_CODE', '1'))
+      #     package_name = 'com.pclub.heal'
+      #
+      #     print(f"Uploading v{version_code} to Play Store...")
+      #     edit = service.edits().insert(body={}, packageName=package_name).execute()
+      #     edit_id = edit['id']
+      #
+      #     aab_path = 'build/app/outputs/bundle/release/app-release.aab'
+      #     media = MediaFileUpload(aab_path, mimetype='application/octet-stream')
+      #     bundle = service.edits().bundles().upload(
+      #         editId=edit_id, packageName=package_name, media_body=media).execute()
+      #
+      #     service.edits().tracks().update(
+      #         editId=edit_id, packageName=package_name, track='internal',
+      #         body={'releases': [{'versionCodes': [str(version_code)], 'status': 'draft'}]}
+      #     ).execute()
+      #
+      #     try:
+      #         service.edits().commit(editId=edit_id, packageName=package_name).execute()
+      #     except Exception:
+      #         pass
+      #
+      #     print(f"✅ Bundle v{bundle['versionCode']} uploaded to internal track!")
+      #     print(f"📦 https://play.google.com/console → {package_name} → Internal Testing")
+      #     PYEOF
+      #   env:
+      #     VERSION_CODE: ${{ steps.version.outputs.version_code }}
+      #   continue-on-error: false
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: heal-aab-${{ steps.version.outputs.version_code }}
+          path: build/app/outputs/bundle/release/app-release.aab

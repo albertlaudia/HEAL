@@ -1,0 +1,26 @@
+name: Trigger Dokploy (Flutter Web → healf.positiveness.club)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mobile/**'
+      - '.github/workflows/trigger-dokploy-flutter.yml'
+
+jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Dokploy redeploy via tRPC API
+        env:
+          DOKPLOY_API_KEY: ${{ secrets.DOKPLOY_API_KEY }}
+        run: |
+          # ID for the Flutter Web app on Dokploy (created via API + manual first Deploy in UI)
+          APPLICATION_ID="yC4hSrjj9xYT_ronMdBDo"
+          curl -X POST "https://dokploy.scaleupcrm.com/api/trpc/application.redeploy" \
+            -H "x-api-key: $DOKPLOY_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{\"json\":{\"applicationId\":\"${APPLICATION_ID}\"}}"
+          echo ""
+          echo "✓ Triggered Dokploy redeploy for healf.positiveness.club"
+          echo "  Note: API returns null on first deploy for new apps — use the UI to trigger manually the first time."

@@ -1,0 +1,190 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: #F8F4ED;
+    --ink: #2A2622;
+    --ink-soft: #5A5249;
+    --sage: #5F7E4E;
+    --dawn: #C89538;
+    --mist: #475679;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background-color: var(--bg);
+    color: var(--ink);
+    background-image: theme('backgroundImage.grain');
+    background-size: 200px 200px;
+  }
+
+  ::selection { background: #C5D3BB; color: #2D3D24; }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-serif), Georgia, serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+
+  /* Generous, slow feel */
+  p { line-height: 1.7; }
+
+  /* Hide focus rings unless keyboard */
+  :focus-visible { outline: 2px solid #5F7E4E; outline-offset: 4px; border-radius: 2px; }
+  :focus:not(:focus-visible) { outline: none; }
+}
+
+@layer components {
+  .container-quiet { @apply max-w-3xl mx-auto px-6 sm:px-8; }
+  .container-wide { @apply max-w-6xl mx-auto px-6 sm:px-8; }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full
+           bg-ink text-bone font-medium tracking-wide
+           hover:bg-ink/90 hover:scale-[1.02] active:scale-100
+           transition-all duration-300 ease-out;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full
+           border border-ink/20 text-ink
+           hover:bg-ink/5 hover:border-ink/40
+           transition-all duration-300;
+  }
+  .btn-pill {
+    @apply inline-flex items-center gap-2 px-4 py-1.5 rounded-full
+           bg-paper border border-ink/10 text-ink/80 text-sm
+           hover:border-ink/30 hover:text-ink transition-all;
+  }
+
+  .card-quiet {
+    @apply bg-paper border border-ink/5 rounded-2xl overflow-hidden
+           shadow-[0_1px_2px_rgba(42,38,34,0.04),0_8px_24px_-12px_rgba(42,38,34,0.08)]
+           hover:shadow-[0_2px_4px_rgba(42,38,34,0.06),0_16px_40px_-16px_rgba(42,38,34,0.12)]
+           transition-shadow duration-500;
+  }
+
+  .serif { font-family: var(--font-serif), Georgia, serif; }
+  .hand  { font-family: var(--font-hand), cursive; }
+
+  .prose-quiet {
+    @apply text-ink/85 leading-relaxed;
+  }
+  .prose-quiet p { @apply mb-5; }
+  .prose-quiet p:first-letter { @apply text-2xl; }
+  .prose-quiet em { @apply text-sage-700 not-italic font-serif text-lg; }
+  .prose-quiet strong { @apply text-ink font-semibold; }
+}
+
+/* Subtle ambient motion */
+@media (prefers-reduced-motion: no-preference) {
+  .float-slow { animation: float 9s ease-in-out infinite; }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+}
+
+/* Audio player niceties */
+audio::-webkit-media-controls-panel { background-color: rgba(248,244,237,0.85); }
+
+/* Page enter animation
+ *
+ * NOTE: must NOT use `transform` here. A non-none transform on the
+ * PageTransition wrapper would create a new containing block, which
+ * breaks `position: fixed` for descendant popups (WelcomeOverlay,
+ * MiniPlayer, AuthMenu dropdowns, InstallPrompt, etc.) — they would
+ * be positioned relative to the wrapper instead of the viewport, so
+ * the user has to scroll to see them. Keep this opacity-only.
+ */
+@keyframes page-enter {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-page-enter {
+  animation: page-enter 350ms ease-out both;
+}
+
+/* Soft ambient gradient shift on body */
+@keyframes ambient-shift {
+  0%, 100% { background-position: 0% 0%; }
+  50% { background-position: 100% 100%; }
+}
+
+/* Fade in */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fade-in 600ms ease-out both;
+}
+
+/* Heart-save: small heart pulse + ring */
+@keyframes heart-save {
+  0%   { transform: scale(1); }
+  30%  { transform: scale(1.4) rotate(-5deg); }
+  60%  { transform: scale(0.9) rotate(2deg); }
+  100% { transform: scale(1); }
+}
+.animate-heart-save {
+  animation: heart-save 600ms ease-out;
+  transform-origin: center;
+}
+
+/* Reveal-up for sections */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.animate-reveal {
+  animation: reveal-up 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Slow pulse for the breathing circle */
+@keyframes breath {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.04); }
+}
+.animate-breath {
+  animation: breath 8s ease-in-out infinite;
+}
+
+/* Soft float-up on cards */
+@keyframes float-up {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+.float-up {
+  animation: float-up 5s ease-in-out infinite;
+}
+
+/* Smooth transitions everywhere by default */
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    transition-duration: 500ms;
+  }
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .animate-page-enter,
+  .animate-fade-in,
+  .animate-reveal,
+  .animate-breath,
+  .float-up,
+  .float-slow {
+    animation: none !important;
+  }
+}

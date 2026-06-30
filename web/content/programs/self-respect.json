@@ -1,0 +1,195 @@
+{
+  "programs": [
+    {
+      "id": "self-respect",
+      "title": "10 Days of Self-Respect",
+      "tagline": "A practice of treating yourself like someone you love",
+      "description": "Self-respect is not arrogance. It is the quiet, daily decision to treat your own body, your own time, your own mind, and your own heart as something worth caring for. This ten-step program is for anyone who has spent years being hard on themselves and would like to try something gentler. Each step is a small practice — five to ten minutes — and is meant to be done at your own pace. The program does not have a deadline; you will have ten steps to complete, not ten days to rush through them. Move at the pace of your own life.",
+      "duration_label": "10 steps · self-paced",
+      "category": "identity",
+      "theme_color": "rose",
+      "illustration_url": "",
+      "illustration_prompt": "Soft watercolor meditation illustration. HEAL design language: hand-painted feel, loose washes, soft edges, no text, no people, no sharp details, calming negative space. Theme: Self-respect. Mood: soft rose and cream, gentle embrace, warm.",
+      "badge": {
+        "name": "Worthy of Care",
+        "affirmation": "I am worthy of care, even when I am not productive.",
+        "scripture_ref": "Psalm 139:14",
+        "scripture_text": "I praise you, for I am fearfully and wonderfully made.",
+        "image_prompt": "Soft watercolor badge medallion. HEAL design language: hand-painted feel, loose washes, no text, no people, no sharp details. Round circular shape with gentle rose and cream gradient, soft gold leaf border, simple inner glow at center. Sacred geometry: a small heart with a single line through it, no text.",
+        "image_path": "/images/badges/self-respect.png"
+      },
+      "steps": [
+        {
+          "order": 1,
+          "title": "Name one thing your body has carried for you",
+          "reflection": "Self-respect often begins with the body. Today, take a quiet moment and notice one thing your body has done for you this week — even something small. A walk. A breath held a little longer. Sleep. Rest. The fact that your heart is still beating. You do not have to feel grateful yet. Just notice.",
+          "scripture_ref": "1 Corinthians 6:19–20",
+          "scripture_text": "Do you not know that your body is a temple of the Holy Spirit within you, which you have from God?",
+          "practice": {
+            "kind": "breath",
+            "title": "Box breath 4-4-4-2",
+            "slug": "box-breath"
+          },
+          "response": {
+            "headline": "You showed up.",
+            "body": "The hardest part of any practice is the moment you choose to begin. You just did that. Notice that the body that carried you through today is the same body that will carry you through this practice. That is not nothing.",
+            "scripture": "1 Corinthians 6:19–20"
+          }
+        },
+        {
+          "order": 2,
+          "title": "Speak one sentence to yourself you would say to a friend",
+          "reflection": "Most of us would never say to a friend the things we say to ourselves in our own heads. Today, write down — or quietly say — one sentence you would offer a friend who was struggling the way you are. Then offer it to yourself.",
+          "scripture_ref": "Matthew 22:39",
+          "scripture_text": "You shall love your neighbor as yourself.",
+          "practice": {
+            "kind": "meditation",
+            "title": "A short reflection on self-kindness",
+            "slug": "the-same-yes-today"
+          },
+          "response": {
+            "headline": "The way you speak to yourself matters.",
+            "body": "You just practiced something almost no one teaches. The vast majority of us have inherited a voice that is harsher on us than we would ever be on a stranger. Today, for one sentence, you chose to be on your own side. That is a foundation to build on.",
+            "scripture": "Matthew 22:39"
+          }
+        },
+        {
+          "order": 3,
+          "title": "Notice one boundary you have been postponing",
+          "reflection": "Self-respect is not a feeling. It is a series of small boundaries. A 'no' you have been postponing. A 'yes to yourself' you keep pushing off. Today, identify one boundary — large or small — that you have been putting off.",
+          "scripture_ref": "Proverbs 4:23",
+          "scripture_text": "Keep your heart with all vigilance, for from it flow the springs of life.",
+          "practice": {
+            "kind": "breath",
+            "title": "4-7-8 breath",
+            "slug": "4-7-8-breath"
+          },
+          "response": {
+            "headline": "Boundaries are how love sounds out loud.",
+            "body": "Naming a boundary is the first half of setting it. You may not be ready to act on it today. That is okay. The point is that you noticed it. The point is that you are no longer pretending it does not exist. The springs of life, the proverb says, flow from a guarded heart.",
+            "scripture": "Proverbs 4:23"
+          }
+        },
+        {
+          "order": 4,
+          "title": "Say no to one thing that drains you",
+          "reflection": "Today, decline one thing — large or small — that you know will drain you. A meeting. A text. A second helping. A favor. You do not need to explain yourself. 'Not today' is a complete sentence.",
+          "scripture_ref": "Luke 5:16",
+          "scripture_text": "Jesus often withdrew to lonely places and prayed.",
+          "practice": {
+            "kind": "meditation",
+            "title": "The practice of letting go",
+            "slug": "letting-go-is-not-losing"
+          },
+          "response": {
+            "headline": "You made room.",
+            "body": "Every time you say no to one thing, you say yes to something else — even if that something is simply your own time. Even Jesus, the gospel says, often withdrew to lonely places. The sacred is not just in the doing. It is also in the resting. You just made room for that today.",
+            "scripture": "Luke 5:16"
+          }
+        },
+        {
+          "order": 5,
+          "title": "Do one thing that is just for you, with no productivity goal",
+          "reflection": "Self-respect is often the work of undoing the productivity trance. Today, do one thing — anything — purely for the experience of doing it. A long shower. A slow walk. A page of a book. Cooking something. Ate it slowly. There is nothing to finish.",
+          "scripture_ref": "Ecclesiastes 3:13",
+          "scripture_text": "That all should eat and drink and take pleasure in all their toil — this is the gift of God.",
+          "practice": {
+            "kind": "prayer",
+            "title": "A prayer of gratitude for the small good",
+            "slug": "prayer-for-the-small-free-good"
+          },
+          "response": {
+            "headline": "You practiced being a person, not a project.",
+            "body": "There is a phrase from the teacher of Ecclesiastes — that to eat, to drink, to take pleasure in one's toil is a gift from God. The teacher is not being cute. He is naming something most of us have been taught to forget. The simple enjoyments of being alive are themselves a form of praise. You just offered some.",
+            "scripture": "Ecclesiastes 3:13"
+          }
+        },
+        {
+          "order": 6,
+          "title": "Forgive yourself for one specific thing",
+          "reflection": "Today, name one specific thing you have been carrying as a personal failing. A conversation. A year. A choice. A slow email reply. Say, out loud or in your heart, 'I forgive myself for this.' You do not have to mean it fully. Try the words anyway.",
+          "scripture_ref": "Ephesians 4:32",
+          "scripture_text": "Be kind to one another, tenderhearted, forgiving one another, as God in Christ forgave you.",
+          "practice": {
+            "kind": "meditation",
+            "title": "On the practice of self-forgiveness",
+            "slug": "the-practice-of-self-forgiveness"
+          },
+          "response": {
+            "headline": "You named the wound out loud.",
+            "body": "Forgiveness, even of ourselves, is not a feeling that arrives. It is a practice we choose. The letter to the Ephesians does not say 'forgive if you feel like it.' It says 'forgive, as Christ forgave you.' The 'as' is the whole thing. You just took one small step in that direction today.",
+            "scripture": "Ephesians 4:32"
+          }
+        },
+        {
+          "order": 7,
+          "title": "Notice one thing you have done well this year",
+          "reflection": "It is easy to keep a precise list of our failures and a vague cloud over our successes. Today, name one thing you have done well. Be specific. 'Survived a hard month' counts. 'Showed up for someone' counts. 'Kept going' counts.",
+          "scripture_ref": "Philippians 1:6",
+          "scripture_text": "He who began a good work in you will bring it to completion at the day of Jesus Christ.",
+          "practice": {
+            "kind": "meditation",
+            "title": "A short gratitude reflection",
+            "slug": "small-grace-large-moment"
+          },
+          "response": {
+            "headline": "You are not just beginning — you are continuing.",
+            "body": "The letter to the Philippians uses a particular phrase — 'He who began a good work in you.' It does not say 'who began a perfect work.' It says 'a good work.' It is in progress. It includes everything you have done this year, including the things you just named. It will be brought to completion. Not by you alone.",
+            "scripture": "Philippians 1:6"
+          }
+        },
+        {
+          "order": 8,
+          "title": "Send a kind message to your past self",
+          "reflection": "Write a short message — three sentences is plenty — to yourself from one year ago. Tell that version of you one thing you wish they had known. 'You will get through this.' 'It gets better.' 'I am proud of you for staying.'",
+          "scripture_ref": "Isaiah 43:1",
+          "scripture_text": "Do not fear, for I have redeemed you; I have called you by name, you are mine.",
+          "practice": {
+            "kind": "meditation",
+            "title": "A meditation on being held",
+            "slug": "held-in-the-stillness"
+          },
+          "response": {
+            "headline": "You remembered yourself.",
+            "body": "Writing to your past self is a small act of time-traveling tenderness. You are now, in a sense, the answer to your own past prayer. That is not nothing. The prophet Isaiah writes 'I have called you by name, you are mine.' Even if you are not sure you believe that, you have just, in a small way, called yourself by name.",
+            "scripture": "Isaiah 43:1"
+          }
+        },
+        {
+          "order": 9,
+          "title": "Identify one habit that is not serving you — without judgment",
+          "reflection": "Today, name one habit — large or small — that you would like to change. Do not scold yourself. Do not commit to fixing it today. Just notice it. The noticing is the work.",
+          "scripture_ref": "Galatians 6:4",
+          "scripture_text": "Let each one test his own work, and then his reason to boast will be in himself alone.",
+          "practice": {
+            "kind": "meditation",
+            "title": "On patterns and gentleness",
+            "slug": "the-gentle-return"
+          },
+          "response": {
+            "headline": "Notice without judgment is half the work.",
+            "body": "The hardest part of any change is not the doing. It is the moment of seeing clearly, without flinching, without punishing yourself for what you see. Paul writes in Galatians to let each one 'test his own work' — and then he says the reason to boast will be in yourself alone. You are not the failure. You are the one who noticed. That is a different thing.",
+            "scripture": "Galatians 6:4"
+          }
+        },
+        {
+          "order": 10,
+          "title": "Stand in front of a mirror and say one true thing about yourself",
+          "reflection": "This is the hardest step. Stand in front of a mirror. Look at your own face. Say one true thing about yourself — not a compliment, just a fact. 'I am here.' 'I have tried.' 'I am doing my best.' That is enough. You are done.",
+          "scripture_ref": "Genesis 1:27",
+          "scripture_text": "So God created mankind in his own image, in the image of God he created them.",
+          "practice": {
+            "kind": "prayer",
+            "title": "A closing prayer for self-respect",
+            "slug": "prayer-of-gratitude"
+          },
+          "response": {
+            "headline": "You finished the program. You are not the same as when you started.",
+            "body": "You have done something almost no one ever does — you spent ten steps, in a row, practicing being on your own side. The story of creation in Genesis says that human beings are made in the image of God. That is not a metaphor for perfection. It is a statement that the person in the mirror, the one you just looked at, carries something holy. You have honored that. Welcome to the other side.",
+            "scripture": "Genesis 1:27"
+          }
+        }
+      ]
+    }
+  ]
+}

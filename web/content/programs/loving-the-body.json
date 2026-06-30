@@ -1,0 +1,178 @@
+{
+  "programs": [
+    {
+      "id": "loving-the-body",
+      "title": "Loving the Body You Have",
+      "tagline": "Nine steps toward a gentler relationship with your body",
+      "description": "Most of us have been taught, in small and large ways, to be at war with our bodies. To treat them as projects. To evaluate them in the mirror. To compare them to the people we pass on the street. This nine-step program is for anyone who is tired of that war. It is not a body-image cure. It is a slow, gentle, honest reintroduction to the body you have — the one that has carried you through every single day of your life. Take it at your own pace. There is no deadline. There is no achievement. There is only the slow, patient work of being on your own side.",
+      "duration_label": "9 steps · self-paced",
+      "category": "body",
+      "theme_color": "warm-cream",
+      "illustration_url": "",
+      "illustration_prompt": "Soft watercolor meditation illustration. HEAL design language: hand-painted feel, loose washes, soft edges, no text, no people, no sharp details, calming negative space. Theme: Loving the Body. Mood: soft rose and warm cream, gentle embrace, warm.",
+      "badge": {
+        "name": "At Home in My Skin",
+        "affirmation": "My body is not a project. It is the home I have lived in all my life.",
+        "scripture_ref": "1 Corinthians 6:19",
+        "scripture_text": "Do you not know that your body is a temple of the Holy Spirit within you, which you have from God?",
+        "image_prompt": "Soft watercolor badge medallion. HEAL design language: hand-painted feel, loose washes, no text, no people, no sharp details. Round circular shape with warm cream and soft rose gradient, soft gold leaf border, simple inner glow at center. Sacred geometry: a small simple house outline with a single small heart inside, no text.",
+        "image_path": "/images/badges/loving-the-body.png"
+      },
+      "steps": [
+        {
+          "order": 1,
+          "title": "Thank one body part — by name",
+          "reflection": "Today, pick one body part — your hands, your eyes, your legs, your stomach, your heart — and silently thank it. Not for what it looks like. For what it does. It has carried you here.",
+          "scripture_ref": "Psalm 139:14",
+          "scripture_text": "I praise you, for I am fearfully and wonderfully made. Wonderful are your works; my soul knows it very well.",
+          "practice": {
+            "kind": "breath",
+            "title": "Box breath 4-4-4-2",
+            "slug": "box-breath"
+          },
+          "response": {
+            "headline": "You thanked your own body.",
+            "body": "Psalm 139 is one of the most quoted psalms in the Bible. 'I am fearfully and wonderfully made.' The verb is 'praise' — not 'evaluate.' Not 'optimize.' Praise. To praise the body is to step out of the loop of judgment, even for a moment. You did that today.",
+            "scripture": "Psalm 139:14"
+          }
+        },
+        {
+          "order": 2,
+          "title": "Notice one sensation — without trying to change it",
+          "reflection": "Right now, notice one sensation in your body. A warmth. A tension. A heartbeat. A pulse. The breath. Do not try to change it. Do not try to fix it. Just notice. Noticing, without trying to change, is a form of love.",
+          "scripture_ref": "Galatians 5:22–23",
+          "scripture_text": "But the fruit of the Spirit is love, joy, peace, patience, kindness, goodness, faithfulness, gentleness, self-control.",
+          "practice": {
+            "kind": "meditation",
+            "title": "A short body-scan",
+            "slug": "body-scan-short"
+          },
+          "response": {
+            "headline": "You noticed without trying to change.",
+            "body": "The fruit of the Spirit, in the letter to the Galatians, includes gentleness and self-control. The two, in a body-relationship, are close cousins. Gentleness is the willingness to be where you are. Self-control is the willingness to not run from where you are. Today, by noticing without changing, you practiced both.",
+            "scripture": "Galatians 5:22–23"
+          }
+        },
+        {
+          "order": 3,
+          "title": "Wear something comfortable today — on purpose",
+          "reflection": "Most of our clothing is chosen for how it makes us look. Today, choose one piece — anything — that is chosen for how it makes you feel. Soft. Loose. Warm. Old. Let it be enough. Let comfort be the practice.",
+          "scripture_ref": "Matthew 11:30",
+          "scripture_text": "For my yoke is easy, and my burden is light.",
+          "practice": {
+            "kind": "meditation",
+            "title": "On lightness",
+            "slug": "the-lightness-of-easier"
+          },
+          "response": {
+            "headline": "You chose comfort on purpose.",
+            "body": "The gospel of Matthew, in one of its most tender lines, says 'my yoke is easy, and my burden is light.' The word 'light' is not a metaphor for weight loss. It is a metaphor for ease. The invitation is to take on what is easy. To let the rest go. Today, you wore something easy. That is, in a small way, a gospel-shaped choice.",
+            "scripture": "Matthew 11:30"
+          }
+        },
+        {
+          "order": 4,
+          "title": "Move your body — not to change it, just to thank it",
+          "reflection": "Today, move your body. Walk. Stretch. Dance. Lift something. The point is not the workout. The point is to say, with the body itself, thank you. Movement as gratitude, not as punishment.",
+          "scripture_ref": "1 Timothy 4:8",
+          "scripture_text": "For while bodily training is of some value, godliness is of value in every way, as it holds promise for the present life and also for the life to come.",
+          "practice": {
+            "kind": "breath",
+            "title": "Moving breath",
+            "slug": "moving-breath"
+          },
+          "response": {
+            "headline": "You moved as a thank you.",
+            "body": "The first letter to Timothy has a famously balanced line — bodily training is of some value, but godliness holds promise for the present life and the life to come. The writer is not dismissing the body. He is putting it in proportion. Today, by moving as gratitude rather than punishment, you put your own body in proportion. You are training for more than a body.",
+            "scripture": "1 Timothy 4:8"
+          }
+        },
+        {
+          "order": 5,
+          "title": "Eat one thing with full attention",
+          "reflection": "Pick one thing to eat today. Eat it slowly. Notice the taste, the texture, the temperature. Notice the way your body receives it. Eating can be a chore, a habit, a guilty pleasure. Today, let it be a practice of attention.",
+          "scripture_ref": "1 Corinthians 10:31",
+          "scripture_text": "So, whether you eat or drink, or whatever you do, do all to the glory of God.",
+          "practice": {
+            "kind": "prayer",
+            "title": "A prayer before a meal",
+            "slug": "prayer-before-a-meal"
+          },
+          "response": {
+            "headline": "You ate as a form of attention.",
+            "body": "Paul's first letter to the Corinthians has a small instruction that has echoed for two thousand years — 'whether you eat or drink, or whatever you do, do all to the glory of God.' The instruction is not 'eat perfectly.' It is 'eat attentively.' Today, by eating one thing with full attention, you practiced the small, ordinary glory of being present to your own life.",
+            "scripture": "1 Corinthians 10:31"
+          }
+        },
+        {
+          "order": 6,
+          "title": "Stand in front of a mirror and notice one thing you have not criticized",
+          "reflection": "Today, stand in front of a mirror for one minute. The instruction is not to find something beautiful. The instruction is to notice one part of you that you have not, today, criticized. Your eyes. Your jaw. Your shoulders. The freckles you forget you have. Just notice. Notice without the inner voice of judgment.",
+          "scripture_ref": "Song of Solomon 4:7",
+          "scripture_text": "You are altogether beautiful, my love; there is no flaw in you.",
+          "practice": {
+            "kind": "meditation",
+            "title": "On seeing without judgment",
+            "slug": "seeing-without-judgment"
+          },
+          "response": {
+            "headline": "You saw without the inner voice.",
+            "body": "The Song of Solomon — that strange, beautiful book of the Bible — has a line that has been interpreted a hundred different ways: 'You are altogether beautiful, my love; there is no flaw in you.' Read it as addressed to yourself, today, in the mirror, even just for one minute. The line is not a denial of your flaws. It is an invitation to a different way of seeing. You took that invitation today.",
+            "scripture": "Song of Solomon 4:7"
+          }
+        },
+        {
+          "order": 7,
+          "title": "Notice the body's small kindnesses",
+          "reflection": "Most of the time, the body is doing a thousand things for us that we do not notice. The breath keeps coming. The heart keeps beating. The food gets digested. The eyes keep seeing. Today, name three of these small kindnesses.",
+          "scripture_ref": "Psalm 139:13",
+          "scripture_text": "For you formed my inward parts; you knitted me together in my mother's womb.",
+          "practice": {
+            "kind": "meditation",
+            "title": "On the body's quiet work",
+            "slug": "the-quiet-work-of-the-body"
+          },
+          "response": {
+            "headline": "You noticed the small kindnesses.",
+            "body": "Psalm 139, perhaps the most intimate psalm in the Bible, has a phrase that is almost shocking in its physicality — 'you knitted me together in my mother's womb.' The verb in Hebrew is a slow, careful one. Like a mother. Like a hand. The body was made with that kind of care. You noticed a few of the small kindnesses that care has produced, today.",
+            "scripture": "Psalm 139:13"
+          }
+        },
+        {
+          "order": 8,
+          "title": "Rest, on purpose, for ten minutes",
+          "reflection": "Rest is one of the most radical things a body can do. Today, rest for ten minutes — not because you have finished your work, but because rest is, in itself, a kind of work. Lie down. Sit. Close your eyes. The body is allowed to do this.",
+          "scripture_ref": "Exodus 20:8",
+          "scripture_text": "Remember the Sabbath day, to keep it holy. Six days you shall labor, and do all your work, but the seventh day is a Sabbath to the LORD your God.",
+          "practice": {
+            "kind": "breath",
+            "title": "Coherent breath 5-5",
+            "slug": "coherent-breath"
+          },
+          "response": {
+            "headline": "You rested on purpose.",
+            "body": "The fourth commandment — 'Remember the Sabbath day, to keep it holy' — is in a list of instructions about how to love God and neighbor. It is the only one that begins with 'remember.' Notice that. The instruction is not 'work.' The instruction is 'remember.' You did that for ten minutes today. The work can wait. The body has permission.",
+            "scripture": "Exodus 20:8"
+          }
+        },
+        {
+          "order": 9,
+          "title": "Say to the body: thank you, I am learning to stay",
+          "reflection": "This is the last step. Place one hand on your body — your chest, your arm, your stomach. Say, silently or out loud: 'Thank you. I am learning to stay.' The body has been yours since the day you were born. It has been your home, your vehicle, your companion, in every season. Today, you chose to thank it. That is the practice. Welcome to the other side of it.",
+          "scripture_ref": "2 Corinthians 4:16",
+          "scripture_text": "So we do not lose heart. Though our outer self is wasting away, our inner self is being renewed day by day.",
+          "practice": {
+            "kind": "prayer",
+            "title": "A closing prayer of gratitude for the body",
+            "slug": "prayer-of-gratitude"
+          },
+          "response": {
+            "headline": "You finished. The body is still yours, and you are still in it.",
+            "body": "Paul's second letter to the Corinthians has a line that has carried many people through many years — 'though our outer self is wasting away, our inner self is being renewed day by day.' The body changes. The body ages. The body, in some seasons, fails. The inner self — the one who chose to thank the body today — is being renewed, day by day. You have been doing that work. Welcome to the other side of these nine steps. The body is still yours. The practice continues.",
+            "scripture": "2 Corinthians 4:16"
+          }
+        }
+      ]
+    }
+  ]
+}

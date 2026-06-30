@@ -1,0 +1,27 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  language:
+    strict-casts: false
+    strict-raw-types: false
+  errors:
+    invalid_annotation_target: ignore
+    unused_import: ignore
+    unused_local_variable: ignore
+    unused_field: ignore
+    unnecessary_null_comparison: ignore
+    dead_null_aware_expression: ignore
+    unused_element: ignore
+  exclude:
+    - '**/*.g.dart'
+    - '**/*.freezed.dart'
+    - test/
+    - '**/test/**'
+
+linter:
+  rules:
+    - avoid_print
+    - use_key_in_widget_constructors
+    - prefer_const_constructors: false
+    - prefer_const_declarations: false
+    - deprecated_member_use: false

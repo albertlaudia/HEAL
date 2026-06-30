@@ -1,0 +1,26 @@
+// Firestore composite indexes — recommended for HEAL
+// Drop into Firebase Console → Firestore → Indexes → Add Index.
+// ──────────────────────────────────────────────────────────────────
+// Without these, some `where` + `orderBy` combinations throw
+// "The query requires an index" at runtime.
+// ──────────────────────────────────────────────────────────────────
+
+// users/{uid}/favorites — by kind, newest first
+// Collection: favorites
+// Fields: kind ASC, createdAt DESC
+// (used by listFavorites(uid, kindFilter))
+
+// users/{uid}/favorites — newest first (no filter)
+// Collection: favorites
+// Fields: createdAt DESC
+// (used by listFavorites(uid))
+
+// users/{uid}/journal — newest first
+// Collection: journal
+// Fields: createdAt DESC
+// (used by listJournalPage)
+
+// users/{uid}/history — newest first
+// Collection: history
+// Fields: viewedAt DESC
+// (used by listHistory)

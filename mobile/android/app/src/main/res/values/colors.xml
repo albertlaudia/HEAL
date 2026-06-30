@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Bone (warm off-white) — matches the web bg -->
+    <color name="launchBackground">#F8F4ED</color>
+
+    <!-- Rosewood / brass — primary brand accents -->
+    <color name="rosewood">#7C4A4A</color>
+    <color name="brass">#B08C4F</color>
+    <color name="bronze">#8C6A3A</color>
+
+    <!-- Dark theme base — for dark splash -->
+    <color name="ink">#2A2622</color>
+    <color name="inkSurface">#1C1814</color>
+</resources>

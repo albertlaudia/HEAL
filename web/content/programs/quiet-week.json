@@ -1,0 +1,144 @@
+{
+  "programs": [
+    {
+      "id": "quiet-week",
+      "title": "The Quiet Week",
+      "tagline": "Seven days of practicing being less busy",
+      "description": "For one week — really, for as long as it takes to walk through seven steps — give yourself the gift of less. Less input. Less output. Less noise. This program is not a digital detox. It is not a fasting protocol. It is a small, daily practice of pulling back from the busy, the loud, the productive, and finding the still point that has been there all along. Each step is meant to take only a few minutes. The work of the week is not in the steps. It is in the small, repeatable choice to be quiet.",
+      "duration_label": "7 steps · self-paced",
+      "category": "rhythm",
+      "theme_color": "amber",
+      "illustration_url": "",
+      "illustration_prompt": "Soft watercolor meditation illustration. HEAL design language: hand-painted feel, loose washes, soft edges, no text, no people, no sharp details, calming negative space. Theme: The Quiet Week. Mood: warm amber, golden light, simple abundance.",
+      "badge": {
+        "name": "Quiet Heart",
+        "affirmation": "I do not have to be busy to be valuable.",
+        "scripture_ref": "Exodus 14:14",
+        "scripture_text": "The LORD will fight for you; you need only to be still.",
+        "image_prompt": "Soft watercolor badge medallion. HEAL design language: hand-painted feel, loose washes, no text, no people, no sharp details. Round circular shape with warm amber and soft cream gradient, soft gold leaf border, simple inner glow at center. Sacred geometry: a small sun with seven soft rays, no text.",
+        "image_path": "/images/badges/quiet-week.png"
+      },
+      "steps": [
+        {
+          "order": 1,
+          "title": "Set one boundary around your phone",
+          "reflection": "The phone is the loudest thing in most of our lives. Today, set one small boundary around it. A 'no-phone' first hour of the morning. A 'no-phone' dinner. A 'no-phone' walk. Pick one. Honor it for the day.",
+          "scripture_ref": "Psalm 46:10",
+          "scripture_text": "Be still, and know that I am God.",
+          "practice": {
+            "kind": "breath",
+            "title": "Box breath 4-4-4-2",
+            "slug": "box-breath"
+          },
+          "response": {
+            "headline": "You made a small space.",
+            "body": "Most of our days are spent reacting to the next notification. Setting a small boundary is not about rejecting technology. It is about remembering that the screen is not the boss. The psalmist's invitation to be still is older than any of our devices. You just made room for that invitation today.",
+            "scripture": "Psalm 46:10"
+          }
+        },
+        {
+          "order": 2,
+          "title": "Eat one meal in silence",
+          "reflection": "Today, eat one meal without input. No phone. No book. No podcast. Just the food. Notice the flavors. Notice when you are full. Notice what it feels like to give a meal the gift of your full attention.",
+          "scripture_ref": "Matthew 6:11",
+          "scripture_text": "Give us this day our daily bread.",
+          "practice": {
+            "kind": "prayer",
+            "title": "A prayer before a meal",
+            "slug": "prayer-before-a-meal"
+          },
+          "response": {
+            "headline": "You gave a meal your full attention.",
+            "body": "There is a line in the Lord's Prayer that most of us say without thinking — 'Give us this day our daily bread.' It is a request, but it is also an instruction. The bread is today. The day is today. You just gave a meal — a small daily bread — the gift of your full attention. That is a form of prayer.",
+            "scripture": "Matthew 6:11"
+          }
+        },
+        {
+          "order": 3,
+          "title": "Take a 10-minute walk without a destination",
+          "reflection": "Today, walk for ten minutes. Not to get somewhere. Not to count steps. Not to clear your head for the next task. Just walk. Notice your feet. Notice the air. Notice the way the world looks when you are not rushing through it.",
+          "scripture_ref": "Genesis 1:2",
+          "scripture_text": "The earth was without form and void, and darkness was over the face of the deep. And the Spirit of God was hovering over the face of the waters.",
+          "practice": {
+            "kind": "meditation",
+            "title": "A short reflection on being unhurried",
+            "slug": "unhurried-presence"
+          },
+          "response": {
+            "headline": "You walked without a destination.",
+            "body": "There is a phrase in the very first chapter of Genesis — the Spirit of God was hovering over the face of the waters. The word used in Hebrew is 'merachefet' — a soft, slow movement, like a bird circling, like a mother rocking a child. The world began, in part, with unhurried presence. You practiced a small version of that today.",
+            "scripture": "Genesis 1:2"
+          }
+        },
+        {
+          "order": 4,
+          "title": "Listen to one full song without doing anything else",
+          "reflection": "Pick one song — any song — and listen to the whole thing. Start to finish. Do not scroll. Do not skip. Do not multitask. Just listen. Notice the music, the words, the silence between the notes.",
+          "scripture_ref": "Psalm 150:6",
+          "scripture_text": "Let everything that has breath praise the LORD. Praise the LORD!",
+          "practice": {
+            "kind": "praise",
+            "title": "A simple song of praise",
+            "slug": "praise-be-still"
+          },
+          "response": {
+            "headline": "You listened to a whole song.",
+            "body": "The shortest psalm — Psalm 150 — ends with 'Let everything that has breath praise the LORD.' Notice the verb. Not 'preach.' Not 'lecture.' Praise. The invitation to praise is, in part, an invitation to sing. To listen. To let the breath itself become a kind of music. You just did that for one song today.",
+            "scripture": "Psalm 150:6"
+          }
+        },
+        {
+          "order": 5,
+          "title": "Skip one piece of news, and notice the day",
+          "reflection": "Today, skip one piece of news. A headline. A scroll. A podcast. The world will still be there tomorrow. Notice what fills the space when you do not fill it with input. The space is the practice.",
+          "scripture_ref": "Matthew 6:34",
+          "scripture_text": "Therefore do not be anxious about tomorrow, for tomorrow will be anxious for itself. Sufficient for the day is its own trouble.",
+          "practice": {
+            "kind": "meditation",
+            "title": "A short reflection on what is enough",
+            "slug": "what-is-enough"
+          },
+          "response": {
+            "headline": "You let the day be the day.",
+            "body": "The Sermon on the Mount has a line that is hard to live and easy to say: 'Sufficient for the day is its own trouble.' Note — the trouble. Not the joy. Not the peace. The trouble. Jesus is not promising that tomorrow will be lighter. He is saying that tomorrow will be tomorrow. Today is enough to be today. You just let it be.",
+            "scripture": "Matthew 6:34"
+          }
+        },
+        {
+          "order": 6,
+          "title": "Sit in silence for five minutes",
+          "reflection": "Today, sit in silence for five minutes. Not to think. Not to plan. Not to solve. Just sit. Notice the thoughts. Notice that they are not you. Notice the breath. Notice that the silence is not empty — it is full of the kind of presence we forget how to notice.",
+          "scripture_ref": "Habakkuk 2:20",
+          "scripture_text": "The LORD is in his holy temple; let all the earth be silent before him.",
+          "practice": {
+            "kind": "breath",
+            "title": "Coherent breath 5-5",
+            "slug": "coherent-breath"
+          },
+          "response": {
+            "headline": "You sat in the silence.",
+            "body": "The prophet Habakkuk writes, at the end of a long complaint, a small instruction — 'let all the earth be silent before him.' The instruction is not to think harder. It is to stop. To let the world be quiet enough to notice what is, in the silence, also there. You practiced that today. The skill is yours now.",
+            "scripture": "Habakkuk 2:20"
+          }
+        },
+        {
+          "order": 7,
+          "title": "End the week with a prayer of gratitude",
+          "reflection": "End this week, the way you might end a Sabbath — with a prayer of gratitude. Not a list of resolutions. Not a plan for the next week. Just a small, honest 'thank you.' Thank you for the breath. Thank you for the day. Thank you for the small quiet you were able to make this week.",
+          "scripture_ref": "Psalm 118:24",
+          "scripture_text": "This is the day that the LORD has made; let us rejoice and be glad in it.",
+          "practice": {
+            "kind": "prayer",
+            "title": "A closing prayer of gratitude",
+            "slug": "prayer-of-gratitude"
+          },
+          "response": {
+            "headline": "You finished the quiet week.",
+            "body": "You walked through seven small steps. Each one was tiny. The point was never any one of them. The point was the week — the way the small choices, made in a row, begin to change the texture of a life. The 118th Psalm says, simply, 'This is the day that the LORD has made.' Note the verb. Made. Not 'making.' Made. Today is a finished work. So is this week. Welcome to the other side of it.",
+            "scripture": "Psalm 118:24"
+          }
+        }
+      ]
+    }
+  ]
+}
