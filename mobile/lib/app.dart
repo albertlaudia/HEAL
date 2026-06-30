@@ -31,17 +31,15 @@ class _HealAppState extends ConsumerState<HealApp> {
     Timer(const Duration(milliseconds: 2200), () {
       if (mounted) {
         setState(() => _showSplash = false);
-        // After splash, decide where to go
-        if (_showOnboarding) {
-          // Navigate to onboarding after splash
-          Future.microtask(() {
+        // After splash, decide where to go — use addPostFrameCallback so the
+        // GoRouter navigator is fully mounted before we attempt navigation.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (_showOnboarding) {
             HealRouter.router.push('/onboarding');
-          });
-        } else {
-          Future.microtask(() {
+          } else {
             HealRouter.router.go('/home');
-          });
-        }
+          }
+        });
       }
     });
   }

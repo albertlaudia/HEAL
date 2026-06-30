@@ -44,8 +44,9 @@ Future<void> main() async {
       ],
     );
 
-    // Init notifications
-    await container.read(notificationServiceProvider).init();
+    // Init notifications (with timeout so a slow plugin can't block launch)
+    await container.read(notificationServiceProvider).init()
+        .timeout(const Duration(seconds: 5), onTimeout: () {});
 
     // Load streak state from local storage
     await container.read(streakServiceProvider.notifier).load();
