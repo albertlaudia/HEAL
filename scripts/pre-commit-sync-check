@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# HEAL — pre-commit hook: ensure remote is not ahead before committing.
+# Prevents the "I committed but didn't see 5 new remote commits" pattern.
+#
+# Install:  cp scripts/pre-commit-sync-check .git/hooks/pre-commit
+#           chmod +x .git/hooks/pre-commit
+# Or run:    ./scripts/install-hooks.sh
+
+# Allow bypass with: git commit --no-verify
+[ -n "${GIT_HEAL_SKIP_SYNC:-}" ] && exit 0
+
+# Quiet mode for bulk commits (e.g. from cron) — skip the network check
+[ -n "${GIT_HEAL_QUIET:-}" ] && exit 0
+
+# Only run if origin is configured
+if ! git remote get-url origin >/dev/null 2>&1; then
+  exit 0
+fi
+
+BRANCH=$(git branch --show-current)
+[ -z "$BRANCH" ] && exit 0
+
+# Cheap check: just fetch and compare
+git fetch origin "$BRANCH" --quiet 2>/dev/null || exit 0
+LOCAL=$(git rev-parse HEAD)
+REMOTE=$(git rev-parse "origin/$BRANCH" 2>/dev/null || echo "")
+
+[ -z "$REMOTE" ] && exit 0
+[ "$LOCAL" = "$REMOTE" ] && exit 0
+
+# Check if we're behind
+BEHIND=$(git rev-list --count "HEAD..origin/$BRANCH" 2>/dev/null || echo "0")
+AHEAD=$(git rev-list --count "origin/$BRANCH..HEAD" 2>/dev/null || echo "0")
+
+if [ "$BEHIND" -gt 0 ] && [ "$AHEAD" -eq 0 ]; then
+  echo ""
+  echo "⚠️  HEAL sync warning: remote is $BEHIND commit(s) ahead of local."
+  echo "   Run:  ./scripts/git-sync.sh --pull  (or: git pull --ff-only origin $BRANCH)"
+  echo "   Bypass once: GIT_HEAL_SKIP_SYNC=1 git commit ..."
+  echo ""
+  exit 1
+fi
+
+exit 0
