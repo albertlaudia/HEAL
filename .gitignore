@@ -9,6 +9,7 @@ web/.turbo/
 web/next-env.d.ts
 web/*.tsbuildinfo
 web/.swc/
+web/public/.next-tmp/
 
 # ─── Mobile (Flutter at /mobile) ───────────────────────────────
 mobile/.dart_tool/
@@ -31,6 +32,7 @@ mobile/ios/Flutter/ephemeral/
 mobile/ios/Runner/GeneratedPluginRegistrant.h
 mobile/ios/Runner/GeneratedPluginRegistrant.m
 mobile/android/.gradle/
+mobile/android/.kotlin/
 mobile/android/local.properties
 mobile/android/app/debug/
 mobile/android/app/profile/
@@ -53,16 +55,48 @@ node_modules/
 out/
 build/
 dist/
+*.dart_tool/
 *.log
 .env
 .env*.local
 .DS_Store
 *.tsbuildinfo
 
-# ─── Media caches ──────────────────────────────────────────────
-content/meditations/*.mp3
-content/meditations/*.png
-content/meditations/*.json.tmp
+# ─── Media / content caches ──────────────────────────────────────────────
+content/**/*.mp3
+content/**/*.wav
+content/**/*.m4a
+content/**/*.ogg
+content/**/*.flac
+content/**/*.png
+content/**/*.jpg
+content/**/*.jpeg
+content/**/*.webp
+content/**/*.avif
+content/**/*.gif
+content/**/*.bmp
+content/**/*.tiff
+content/**/*.ico
+content/**/*.json.tmp
+
+web/public/**/*.mp3
+web/public/**/*.wav
+web/public/**/*.m4a
+web/public/**/*.ogg
+web/public/**/*.flac
+web/public/**/*.png
+web/public/**/*.jpg
+web/public/**/*.jpeg
+web/public/**/*.webp
+web/public/**/*.avif
+web/public/**/*.gif
+web/public/**/*.bmp
+web/public/**/*.tiff
+web/public/**/*.ico
+!web/public/icon.svg
+!web/public/favicon.ico
+!web/public/manifest.json
+
 scripts/.cache/
 b2-cache/
 .mavis-cache/
