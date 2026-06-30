@@ -1,5 +1,13 @@
 // HEAL — PocketBase repositories.
 // One repo per content type. All fetch from PB; cache for 5 minutes.
+//
+// IMPORTANT — PB sort quirks (learned the hard way):
+//   PocketBase's getList() API validates sort fields against the schema.
+//   System fields like `created` / `updated` are NOT exposed in
+//   `?meta=schema` and so sorting by `-created` returns HTTP 400 from PB.
+//   To get "newest first" we sort by `-id` instead — PB assigns id in
+//   insertion order, so this is correct behaviour and far cheaper.
+//   Use `safeSort()` below to keep the call sites readable.
 
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -7,6 +15,19 @@ import 'package:pocketbase/pocketbase.dart';
 import 'pb_models.dart';
 
 const _cacheTtl = Duration(minutes: 5);
+
+/// PB-friendly sort strings.
+/// `-id` = newest first (PB assigns id in insertion order)
+/// `-sort_order` = user-defined order
+/// Plain field name = ascending on that field
+String _safeSort(String requested, {bool hasSortOrder = true}) {
+  // Don't try to be clever — just keep what was asked if it's safe.
+  // Insertion-order: anything ending in -created or containing -created maps to -id.
+  if (requested.contains('-created') && !requested.contains('-sort')) {
+    return hasSortOrder ? '-sort_order,-id' : '-id';
+  }
+  return requested;
+}
 
 class _CachedList<T> {
   final List<T> data;
@@ -26,20 +47,16 @@ class MeditationRepository {
     int page = 1,
     int perPage = 50,
     String? filter,
-    String? sort = '-sort_order,-created',
+    String sort = '-sort_order,-id',
   }) async {
-    final key = '${page}_${perPage}_${filter ?? ''}_$sort';
+    final safeSortStr = _safeSort(sort);
+    final key = '${page}_${perPage}_${filter ?? ''}_$safeSortStr';
     final cached = _cache[key];
     if (cached != null && cached.fresh) return cached.data;
 
-    final params = {
-      'page': page,
-      'perPage': perPage,
-      'filter': 'is_published=true${filter != null ? ' && ($filter)' : ''}',
-      'sort': sort,
-    };
+    final f = 'is_published=true${filter != null ? ' && ($filter)' : ''}';
     final records =
-        await _pb.collection('HEAL_meditations').getList(page: page, perPage: perPage, filter: params['filter'] as String?, sort: sort);
+        await _pb.collection('HEAL_meditations').getList(page: page, perPage: perPage, filter: f, sort: safeSortStr);
     final list = records.items.map((r) => Meditation.fromJson(r.toJson())).toList();
     _cache[key] = _CachedList(list);
     return list;
@@ -63,6 +80,7 @@ class PraiseRepository {
   PraiseRepository(this._pb);
 
   Future<List<PraiseSong>> list({String? category, int limit = 100}) async {
+    const sort = '-sort_order,-id';
     final key = 'all_${category ?? ''}_$limit';
     final cached = _cache[key];
     if (cached != null && cached.fresh) return cached.data;
@@ -72,7 +90,7 @@ class PraiseRepository {
       page: 1,
       perPage: limit,
       filter: filter,
-      sort: '-sort_order,-created',
+      sort: sort,
     );
     final list = records.items.map((r) => PraiseSong.fromJson(r.toJson())).toList();
     _cache[key] = _CachedList(list);
@@ -88,6 +106,7 @@ class PrayerRepository {
   PrayerRepository(this._pb);
 
   Future<List<Prayer>> list({String? emotion, String? category, int limit = 200}) async {
+    const sort = '-sort_order,-id';
     final key = '${emotion ?? ''}_${category ?? ''}_$limit';
     final cached = _cache[key];
     if (cached != null && cached.fresh) return cached.data;
@@ -101,7 +120,7 @@ class PrayerRepository {
       page: 1,
       perPage: limit,
       filter: filter,
-      sort: '-created',
+      sort: sort,
     );
     final list = records.items.map((r) => Prayer.fromJson(r.toJson())).toList();
     _cache[key] = _CachedList(list);
@@ -117,6 +136,9 @@ class ScriptureRepository {
   ScriptureRepository(this._pb);
 
   Future<List<Scripture>> list({int limit = 100, int? dayOfYear, String? theme}) async {
+    // scriptures have NO sort_order field — sort by -day_of_year (newest first
+    // in the calendar), tie-break by -id
+    const sort = '-day_of_year,-id';
     final key = '${dayOfYear ?? ''}_${theme ?? ''}_$limit';
     final cached = _cache[key];
     if (cached != null && cached.fresh) return cached.data;
@@ -130,7 +152,7 @@ class ScriptureRepository {
       page: 1,
       perPage: limit,
       filter: filter,
-      sort: '-day_of_year,-created',
+      sort: sort,
     );
     final list = records.items.map((r) => Scripture.fromJson(r.toJson())).toList();
     _cache[key] = _CachedList(list);
@@ -146,6 +168,7 @@ class QuoteRepository {
   QuoteRepository(this._pb);
 
   Future<List<Quote>> list({int? dayOfYear, String? emotion, int limit = 200}) async {
+    const sort = '-day_of_year,-id';
     final key = '${dayOfYear ?? ''}_${emotion ?? ''}_$limit';
     final cached = _cache[key];
     if (cached != null && cached.fresh) return cached.data;
@@ -159,7 +182,7 @@ class QuoteRepository {
       page: 1,
       perPage: limit,
       filter: filter,
-      sort: '-created',
+      sort: sort,
     );
     final list = records.items.map((r) => Quote.fromJson(r.toJson())).toList();
     _cache[key] = _CachedList(list);
@@ -175,6 +198,7 @@ class BreathRepository {
   BreathRepository(this._pb);
 
   Future<List<BreathPattern>> list() async {
+    const sort = 'sort_order'; // ascending — patterns have explicit order
     const key = 'all';
     final cached = _cache[key];
     if (cached != null && cached.fresh) return cached.data;
@@ -183,7 +207,7 @@ class BreathRepository {
       page: 1,
       perPage: 50,
       filter: 'is_published=true',
-      sort: 'sort_order',
+      sort: sort,
     );
     final list = records.items.map((r) => BreathPattern.fromJson(r.toJson())).toList();
     _cache[key] = _CachedList(list);
@@ -199,6 +223,8 @@ class EssayRepository {
   EssayRepository(this._pb);
 
   Future<List<Essay>> list({int limit = 50}) async {
+    // essays have no sort_order — sort by -id (newest first)
+    const sort = '-id';
     const key = 'all';
     final cached = _cache[key];
     if (cached != null && cached.fresh) return cached.data;
@@ -207,7 +233,7 @@ class EssayRepository {
       page: 1,
       perPage: limit,
       filter: 'is_published=true',
-      sort: '-created',
+      sort: sort,
     );
     final list = records.items.map((r) => Essay.fromJson(r.toJson())).toList();
     _cache[key] = _CachedList(list);
