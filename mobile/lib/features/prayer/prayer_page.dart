@@ -81,14 +81,46 @@ class PrayerPage extends HookConsumerWidget {
             valueColor: AlwaysStoppedAnimation(HealTokens.brass),
           ),
         ),
-        error: (e, _) => Center(child: Text('Could not load: $e')),
+        error: (e, _) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(HealTokens.s32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.cloud_off_rounded,
+                    color: HealTokens.creamDim, size: 40),
+                const SizedBox(height: HealTokens.s16),
+                Text(
+                  'Could not load prayers',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: HealTokens.cream,
+                      ),
+                ),
+                const SizedBox(height: HealTokens.s8),
+                Text(
+                  '$e',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: HealTokens.creamDim,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: HealTokens.s24),
+                FilledButton.icon(
+                  onPressed: () => ref.invalidate(prayersProvider),
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: const Text('Retry'),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
 }
 
 final prayersProvider = FutureProvider<List<Prayer>>((ref) {
-  return ref.read(prayerRepoProvider).list();
+  return ref.watch(prayerRepoProvider).list();
 });
 
 class _PrayerCard extends StatelessWidget {
