@@ -17,7 +17,9 @@ mobile/.flutter-plugins-dependencies
 mobile/.packages
 mobile/.pub-cache/
 mobile/.pub/
+mobile/.flutter-version
 mobile/build/
+mobile/.icon-work/
 mobile/.idea/
 mobile/.vscode/
 mobile/ios/Pods/
@@ -25,6 +27,9 @@ mobile/ios/.symlinks/
 mobile/ios/Flutter/Flutter.framework
 mobile/ios/Flutter/Flutter.podspec
 mobile/ios/Flutter/flutter_export_environment.sh
+mobile/ios/Flutter/ephemeral/
+mobile/ios/Runner/GeneratedPluginRegistrant.h
+mobile/ios/Runner/GeneratedPluginRegistrant.m
 mobile/android/.gradle/
 mobile/android/local.properties
 mobile/android/app/debug/
@@ -37,6 +42,10 @@ mobile/macos/Pods/
 mobile/macos/Flutter/ephemeral/
 mobile/windows/flutter/ephemeral/
 mobile/linux/flutter/ephemeral/
+mobile/*.apk
+mobile/*.aab
+mobile/*.lock
+!mobile/pubspec.lock
 
 # ─── Repo root ─────────────────────────────────────────────────
 node_modules/
@@ -62,5 +71,6 @@ b2-cache/
 Thumbs.db
 .idea/
 .vscode/
+*.iml
 *.swp
 .DS_Store
