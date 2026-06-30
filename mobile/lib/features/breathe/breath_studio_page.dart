@@ -306,11 +306,16 @@ class _BreathRunner extends HookConsumerWidget {
     final phase = useState<BreathPhase>(BreathPhase.ready);
     final tickInterval = useRef<Timer?>(null);
     final breathCount = useState<int>(0);
+    final isMounted = useRef<bool>(true);
+    useEffect(() {
+      isMounted.value = true;
+      return () => isMounted.value = false;
+    }, const []);
 
     Future<void> runPhase(BreathPhase next, int seconds) async {
       if (!isRunning.value) return;
       phase.value = next;
-      ref.read(_activePhaseProvider.notifier).state = next;
+      if (isMounted.value) ref.read(_activePhaseProvider.notifier).state = next;
 
       // In-pocket mode uses selectionClick (more subtle)
       // Standard mode uses lightImpact (more present)
@@ -332,7 +337,9 @@ class _BreathRunner extends HookConsumerWidget {
       if (!isRunning.value) {
         phaseCtrl.stop();
         phase.value = BreathPhase.ready;
-        ref.read(_activePhaseProvider.notifier).state = BreathPhase.ready;
+        if (isMounted.value) {
+          ref.read(_activePhaseProvider.notifier).state = BreathPhase.ready;
+        }
         tickInterval.value?.cancel();
         return null;
       }
@@ -355,6 +362,7 @@ class _BreathRunner extends HookConsumerWidget {
             await Future.delayed(Duration(seconds: pattern.holdOutSeconds));
             if (!isRunning.value) break;
           }
+          if (!isMounted.value) break;
           onCycle();
           breathCount.value++;
           await runPhase(BreathPhase.inhale, pattern.inhaleSeconds);
