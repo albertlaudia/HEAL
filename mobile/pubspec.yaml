@@ -14,15 +14,15 @@ dependencies:
     sdk: flutter
 
   # ── State management ───────────────────────────────────────────
-  flutter_riverpod: ^2.5.1
-  hooks_riverpod: ^2.5.2
+  flutter_riverpod: ^2.6.1
+  hooks_riverpod: ^2.6.1
 
   # ── Routing ────────────────────────────────────────────────────
-  go_router: ^14.6.1
+  go_router: ^14.8.1
 
   # ── Audio ──────────────────────────────────────────────────────
-  audioplayers: ^6.1.0
-  audio_session: ^0.1.21
+  audioplayers: ^6.8.0
+  audio_session: ^0.1.25
   record: ^7.1.0  # voice calibration — mic recording for breath detection
 
   # ── Backend ────────────────────────────────────────────────────
@@ -59,7 +59,7 @@ dependencies:
   rxdart: ^0.28.0 # streams for audio progress + DB updates
   visibility_detector: ^0.4.0+2 # for performance-aware animations
   shimmer: ^3.0.0 # for skeleton loading states
-  smooth_page_indicator: ^1.2.0+3 # for onboarding
+  smooth_page_indicator: ^1.2.1 # for onboarding
   flutter_svg: ^2.0.10+1
   cached_network_image: ^3.4.1 # for illustration caching
 
