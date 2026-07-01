@@ -21,19 +21,19 @@ dependencies:
   go_router: ^14.8.1
 
   # ── Audio ──────────────────────────────────────────────────────
-  audioplayers: ^6.8.0
+  audioplayers: ^6.8.1  # was 6.8.0 — patch upgrade (safe)
   audio_session: ^0.1.25
   record: ^7.1.0  # voice calibration — mic recording for breath detection
 
   # ── Backend ────────────────────────────────────────────────────
-  pocketbase: ^0.21.0
+  pocketbase: ^0.24.0  # was 0.21.0 — minor upgrade (API stable)
   firebase_core: ^3.6.0
   firebase_auth: ^5.3.1
   cloud_firestore: ^5.4.4
 
   # ── Local storage ──────────────────────────────────────────────
-  drift: ^2.20.3
-  drift_flutter: ^0.2.2
+  drift: ^2.31.0  # was 2.20.3 — minor upgrade (within 2.x, backwards compat)
+  drift_flutter: ^0.2.8  # was 0.2.2 — minor upgrade (matches drift)
   path_provider: ^2.1.4
   shared_preferences: ^2.3.2
 
@@ -47,7 +47,7 @@ dependencies:
   flutter_hooks: ^0.20.5
   google_fonts: ^6.2.1
   cupertino_icons: ^1.0.8
-  rive: ^0.13.13 # for the breath ring animation (optional fallback to CustomPainter)
+  rive: ^0.13.20  # was 0.13.13 — minor upgrade (within 0.13, API stable). Used for the breath ring animation (optional fallback to CustomPainter)
 
   # ── Networking ─────────────────────────────────────────────────
   dio: ^5.7.0
@@ -67,7 +67,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
-  drift_dev: ^2.20.3
+  drift_dev: ^2.31.0  # was 2.20.3 — matches drift
   build_runner: ^2.4.13
 
 flutter:
