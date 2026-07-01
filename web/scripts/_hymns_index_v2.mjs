@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // HEAL — Accelerated path builder. Concurrent folders per letter, then save incrementally.
-// Strategy: list each letter dir, then fan out and probe each subdir in parallel.
+// Resume from existing index so partial runs accumulate.
 
-import { writeFile, appendFile, readFile } from 'node:fs/promises';
+import { writeFile, readFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -10,8 +11,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0 Safari/537.36';
 const BASE = 'https://hymnstogod.org';
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-
-const map = {};
 const OUT = path.join(__dirname, '_hymn_paths.json');
 
 async function fetchText(url) {
@@ -55,16 +54,21 @@ function folderToSlug(folderName) {
   return folderName.toLowerCase().replace(/[_-]+/g, '-').replace(/^-+|-+$/g, '').replace(/[^a-z0-9-]/g, '');
 }
 
-async function processLetter(letter) {
+async function processLetter(letter, map) {
   const letterDir = `${letter}-Hymns`;
   const folders = await listFolders(letterDir);
   console.log(`[${letter}] ${folders.length} folders`);
-  // Probe all folders in this letter concurrently (8 at a time)
+  // Skip folders whose slug is already in map
+  const todo = folders.filter(f => !map[folderToSlug(f)]);
+  if (todo.length === 0) {
+    console.log(`  (all ${folders.length} already indexed)`);
+    return 0;
+  }
   const CONCURRENCY = 8;
   let i = 0;
   const results = [];
-  while (i < folders.length) {
-    const batch = folders.slice(i, i + CONCURRENCY);
+  while (i < todo.length) {
+    const batch = todo.slice(i, i + CONCURRENCY);
     i += CONCURRENCY;
     const batchResults = await Promise.all(batch.map(f => {
       const slug = folderToSlug(f);
@@ -79,16 +83,20 @@ async function processLetter(letter) {
       hits++;
     }
   }
-  // Save incrementally
   await writeFile(OUT, JSON.stringify(map, null, 2));
   return hits;
 }
 
 async function main() {
   console.log(`═══ HEAL — PD hymn path index builder ═══\n`);
-  let total = 0;
+  let map = {};
+  if (existsSync(OUT)) {
+    map = JSON.parse(await readFile(OUT, 'utf8'));
+    console.log(`Resuming from existing index: ${Object.keys(map).length} slugs\n`);
+  }
+  let total = Object.keys(map).length;
   for (const letter of LETTERS) {
-    const hits = await processLetter(letter);
+    const hits = await processLetter(letter, map);
     total += hits;
   }
   console.log(`\n✓ Total slugs indexed: ${total}`);
