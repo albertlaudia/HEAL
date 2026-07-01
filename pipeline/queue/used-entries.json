@@ -1,18 +1,26 @@
 {
   "used_themes": [
     "stillness",
-    "rest"
+    "rest",
+    "courage",
+    "love"
   ],
   "used_slugs": [
     "batch-001-1-stillness",
-    "batch-001-2-rest"
+    "batch-001-2-rest",
+    "batch-002-1-courage",
+    "batch-002-2-love"
   ],
   "used_titles": [
     "Be Still and Know That I Am God",
-    "Come to Me and Find Rest"
+    "Come to Me and Find Rest",
+    "Be Strong and Courageous — God Is With You",
+    "Loved Before You Could Love Back"
   ],
   "used_scripture_refs": [
     "Psalm 46:10",
-    "Matthew 11:28"
+    "Matthew 11:28",
+    "Joshua 1:9",
+    "1 John 4:19"
   ]
 }
