@@ -1,0 +1,471 @@
+[
+  {
+    "slug": "a-mighty-fortress-is-our-god",
+    "status": "mixed",
+    "duration": 27.428571
+  },
+  {
+    "slug": "abide-with-me",
+    "status": "mixed",
+    "duration": 30.850612
+  },
+  {
+    "slug": "all-creatures-of-our-god-and-king",
+    "status": "mixed",
+    "duration": 86.491429
+  },
+  {
+    "slug": "all-hail-the-power-of-jesus-name",
+    "status": "mixed",
+    "duration": 39.418776
+  },
+  {
+    "slug": "amazing-grace-full",
+    "status": "mixed",
+    "duration": 74.657959
+  },
+  {
+    "slug": "as-the-deer",
+    "status": "mixed",
+    "duration": 42.266122
+  },
+  {
+    "slug": "be-still-and-know-slow",
+    "status": "mixed",
+    "duration": 154.226939
+  },
+  {
+    "slug": "be-thou-my-vision",
+    "status": "mixed",
+    "duration": 34.76898
+  },
+  {
+    "slug": "be-unto-your-name",
+    "status": "mixed",
+    "duration": 27.715918
+  },
+  {
+    "slug": "beautiful-savior",
+    "status": "mixed",
+    "duration": 25.6
+  },
+  {
+    "slug": "before-the-throne-of-god-above",
+    "status": "mixed",
+    "duration": 32
+  },
+  {
+    "slug": "bless-the-lord-ten-thousand-reasons",
+    "status": "mixed",
+    "duration": 18.729796
+  },
+  {
+    "slug": "blessed-assurance",
+    "status": "mixed",
+    "duration": 61.596735
+  },
+  {
+    "slug": "breathe-on-me-breath-of-god",
+    "status": "mixed",
+    "duration": 247.536327
+  },
+  {
+    "slug": "christ-the-lord-is-risen-today",
+    "status": "mixed",
+    "duration": 28.786939
+  },
+  {
+    "slug": "come-holy-ghost-our-souls-inspire",
+    "status": "mixed",
+    "duration": 23.797551
+  },
+  {
+    "slug": "come-thou-long-expected-jesus",
+    "status": "mixed",
+    "duration": 29.413878
+  },
+  {
+    "slug": "cornerstone",
+    "status": "mixed",
+    "duration": 15.56898
+  },
+  {
+    "slug": "create-in-me-a-clean-heart",
+    "status": "mixed",
+    "duration": 61.44
+  },
+  {
+    "slug": "crown-him-with-many-crowns",
+    "status": "mixed",
+    "duration": 39.131429
+  },
+  {
+    "slug": "day-by-day",
+    "status": "mixed",
+    "duration": 30.458776
+  },
+  {
+    "slug": "dear-lord-and-father-of-mankind",
+    "status": "mixed",
+    "duration": 43.702857
+  },
+  {
+    "slug": "depth-of-mercy",
+    "status": "mixed",
+    "duration": 93.048163
+  },
+  {
+    "slug": "doxology",
+    "status": "mixed",
+    "duration": 14.759184
+  },
+  {
+    "slug": "draw-me-close-to-you",
+    "status": "mixed",
+    "duration": 69.485714
+  },
+  {
+    "slug": "emmanuel",
+    "status": "mixed",
+    "duration": 19.2
+  },
+  {
+    "slug": "even-unto-death",
+    "status": "mixed",
+    "duration": 43.990204
+  },
+  {
+    "slug": "fairest-lord-jesus",
+    "status": "mixed",
+    "duration": 103.209796
+  },
+  {
+    "slug": "faith-of-our-fathers",
+    "status": "mixed",
+    "duration": 17.162449
+  },
+  {
+    "slug": "father-i-adore-you",
+    "status": "mixed",
+    "duration": 60.26449
+  },
+  {
+    "slug": "forever-chris-tomlin",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "give-me-jesus",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "glory-be-to-god-the-father",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "glory-to-god-in-the-highest",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "god-be-with-you-till-we-meet-again",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "god-moves-in-a-mysterious-way",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "god-of-grace-and-god-of-glory",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "grace-alone",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "great-is-thy-faithfulness-a-cappella-feel",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "hallelujah-what-a-savior",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "he-leadeth-me",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "he-will-hold-me-fast",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "here-is-love",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "his-eye-is-on-the-sparrow",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "holy-god-we-praise-thy-name",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "holy-holy-holy",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "how-deep-the-fathers-love-for-us",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "how-firm-a-foundation",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "i-am-thine-o-lord",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "i-could-sing-of-your-love-forever",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "i-gave-my-life-for-thee",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "i-need-thee-every-hour",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "i-surrender-all",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "i-will-glory-in-the-cross",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "in-christ-alone",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "it-came-upon-the-midnight-clear",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "it-is-well-with-my-soul-full",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "jesus-i-my-cross-have-taken",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "jesus-lover-of-my-soul",
+    "status": "mixed",
+    "duration": 30.693878
+  },
+  {
+    "slug": "jesus-loves-me",
+    "status": "mixed",
+    "duration": 15.542857
+  },
+  {
+    "slug": "jesus-paid-it-all",
+    "status": "mixed",
+    "duration": 29.570612
+  },
+  {
+    "slug": "jesus-the-very-thought-of-thee",
+    "status": "mixed",
+    "duration": 93.022041
+  },
+  {
+    "slug": "joy-to-the-world",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "just-as-i-am",
+    "status": "mixed",
+    "duration": 21.446531
+  },
+  {
+    "slug": "lead-kindly-light",
+    "status": "mixed",
+    "duration": 174.236735
+  },
+  {
+    "slug": "leaning-on-the-everlasting-arms",
+    "status": "mixed",
+    "duration": 22.177959
+  },
+  {
+    "slug": "let-all-mortal-flesh-keep-silence",
+    "status": "mixed",
+    "duration": 33.697959
+  },
+  {
+    "slug": "like-a-river-glorious",
+    "status": "mixed",
+    "duration": 64.705306
+  },
+  {
+    "slug": "lord-i-lift-your-name-on-high",
+    "status": "mixed",
+    "duration": 21.838367
+  },
+  {
+    "slug": "lord-speak-to-me",
+    "status": "mixed",
+    "duration": 412.995918
+  },
+  {
+    "slug": "love-divine-all-loves-excelling",
+    "status": "mixed",
+    "duration": 95.216327
+  },
+  {
+    "slug": "loving-my-jesus",
+    "status": "mixed",
+    "duration": 21.237551
+  },
+  {
+    "slug": "majesty",
+    "status": "already-mixed"
+  },
+  {
+    "slug": "may-the-mind-of-christ-my-savior",
+    "status": "mixed",
+    "duration": 41.952653
+  },
+  {
+    "slug": "morning-has-broken",
+    "status": "mixed",
+    "duration": 45.374694
+  },
+  {
+    "slug": "my-faith-has-found-a-resting-place",
+    "status": "error",
+    "error": "exit 1: \", \"ProduceID\": \"0689dadfb8f1ab589f822d9819166bff\"}}\n    encoder         : Lavf59.27.100\n  Duration: 00:00:22.36, start: 0.025057, bitrate: 192 kb/s\n  Stream #0:0: Audio: mp3, 44100 Hz, stereo, fltp, 192 kb/s\n    Metadata:\n      encoder         : Lavc59.37\n[mp3 @ 0x5649944bae40] Format mp3 detected only with low score of 1, misdetection possible!\n[mp3 @ 0x5649944bae40] Failed to read frame size: Could not seek to 1026.\n/tmp/heal-mix-my-faith-has-found-a-resting-place-instr.mp3: Invalid argument\n"
+  },
+  {
+    "slug": "my-god-my-father-make-me-strong",
+    "status": "mixed",
+    "duration": 25.626122
+  },
+  {
+    "slug": "my-jesus-i-love-thee",
+    "status": "mixed",
+    "duration": 59.585306
+  },
+  {
+    "slug": "my-shepherd-will-supply-my-need",
+    "status": "error",
+    "error": "exit 1: E01\", \"ProduceID\": \"0689dae9bb844709e79df6e4c0329490\"}}\n    encoder         : Lavf59.27.100\n  Duration: 00:00:18.44, start: 0.025057, bitrate: 192 kb/s\n  Stream #0:0: Audio: mp3, 44100 Hz, stereo, fltp, 192 kb/s\n    Metadata:\n      encoder         : Lavc59.37\n[mp3 @ 0x5628757c5dc0] Format mp3 detected only with low score of 1, misdetection possible!\n[mp3 @ 0x5628757c5dc0] Failed to read frame size: Could not seek to 1026.\n/tmp/heal-mix-my-shepherd-will-supply-my-need-instr.mp3: Invalid argument\n"
+  },
+  {
+    "slug": "nearer-my-god-to-thee",
+    "status": "mixed",
+    "duration": 25.182041
+  },
+  {
+    "slug": "nothing-but-the-blood-full",
+    "status": "mixed",
+    "duration": 30.014694
+  },
+  {
+    "slug": "oceans-where-feet-may-be",
+    "status": "mixed",
+    "duration": 49.998367
+  },
+  {
+    "slug": "on-eagles-wings",
+    "status": "mixed",
+    "duration": 33.567347
+  },
+  {
+    "slug": "our-father-sung",
+    "status": "mixed",
+    "duration": 95.137959
+  },
+  {
+    "slug": "psalm-121-chanted",
+    "status": "mixed",
+    "duration": 84.68898
+  },
+  {
+    "slug": "psalm-23-sung",
+    "status": "mixed",
+    "duration": 17.658776
+  },
+  {
+    "slug": "psalm-91-chanted",
+    "status": "mixed",
+    "duration": 21.838367
+  },
+  {
+    "slug": "seek-ye-first-the-kingdom-of-god",
+    "status": "mixed",
+    "duration": 16.248163
+  },
+  {
+    "slug": "shout-to-the-lord",
+    "status": "mixed",
+    "duration": 24.006531
+  },
+  {
+    "slug": "the-doxology-modern",
+    "status": "mixed",
+    "duration": 19.748571
+  },
+  {
+    "slug": "this-is-the-day",
+    "status": "mixed",
+    "duration": 18.155102
+  },
+  {
+    "slug": "waiting-for-you-communion",
+    "status": "mixed",
+    "duration": 25.835083
+  },
+  {
+    "slug": "walk-in-the-light",
+    "status": "error",
+    "error": "exit 1: [mp3 @ 0x556cad0b6600] Failed to read frame size: Could not seek to 1026.\n/workspace/.mavis-cache/heal-song-mixes/original-walk-in-the-light.mp3: Invalid argument\n"
+  },
+  {
+    "slug": "when-the-music-fades",
+    "status": "mixed",
+    "duration": 13.844898
+  },
+  {
+    "slug": "whiter-than-snow",
+    "status": "mixed",
+    "duration": 19.121633
+  },
+  {
+    "slug": "you-are-my-all-in-all",
+    "status": "mixed",
+    "duration": 27.297959
+  },
+  {
+    "slug": "you-are-my-hiding-place",
+    "status": "mixed",
+    "duration": 266.109388
+  },
+  {
+    "slug": "your-great-name",
+    "status": "mixed",
+    "duration": 18.155102
+  },
+  {
+    "slug": "your-love-oh-lord",
+    "status": "mixed",
+    "duration": 46.497959
+  },
+  {
+    "slug": "your-word-is-a-lamp",
+    "status": "already-mixed"
+  }
+]
