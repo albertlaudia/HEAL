@@ -277,9 +277,20 @@ export function PraiseLibrary({
         </div>
       ) : (
         <div className="space-y-6">
-          {filtered.map(song => (
+          {filtered.slice(0, page * PAGE_SIZE).map(song => (
             <SongCard key={song.id} song={song} />
           ))}
+        </div>
+      )}
+
+      {filtered.length > page * PAGE_SIZE && (
+        <div className="mt-10 text-center">
+          <button
+            onClick={() => setPage(p => p + 1)}
+            className="px-6 py-3 rounded-full bg-paper border border-ink/10 text-ink/70 hover:border-ink/30 hover:text-ink transition-all"
+          >
+            Load more ({filtered.length - page * PAGE_SIZE} remaining)
+          </button>
         </div>
       )}
     </div>

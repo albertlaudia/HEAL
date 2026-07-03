@@ -2,6 +2,19 @@
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false, // don't leak Next.js
+  // Bug fixes from 2026-07-03 audit:
+  // - /prayer, /library/* returned 404; nav says Prayers, /meditate is the library
+  // - Old external links may point to /prayer or /library/praise etc.
+  async redirects() {
+    return [
+      { source: '/prayer', destination: '/prayers', permanent: true },
+      { source: '/library', destination: '/meditate', permanent: true },
+      { source: '/library/praise', destination: '/praise', permanent: true },
+      { source: '/library/meditate', destination: '/meditate', permanent: true },
+      { source: '/library/prayer', destination: '/prayers', permanent: true },
+      { source: '/library/prayers', destination: '/prayers', permanent: true },
+    ];
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**.backblazeb2.com' },
