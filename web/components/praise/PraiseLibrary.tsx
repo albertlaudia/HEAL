@@ -43,6 +43,8 @@ export function PraiseLibrary({
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [activeContext, setActiveContext] = useState<string | null>(null);
   const [sortKey, setSortKey] = useState<SortKey>('sort_order');
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 30;
 
   const filtered = useMemo(() => {
     let list = songs;
