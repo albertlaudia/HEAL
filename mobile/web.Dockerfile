@@ -5,7 +5,7 @@
 # Output:       static SPA bundle served by Nginx
 
 # ── Stage 1: Build the Flutter web bundle ────────────────────────
-FROM ghcr.io/cirruslabs/flutter:3.27.1 AS builder
+FROM ghcr.io/cirruslabs/flutter:3.32.0 AS builder
 
 WORKDIR /build
 
