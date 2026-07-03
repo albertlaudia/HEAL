@@ -4,6 +4,9 @@ import { TrackView } from '@/components/tracking/TrackView';
 import { MeditationRitualClient } from '@/components/meditate/MeditationRitualClient';
 
 export const revalidate = 3600;
+// Slugs are now dynamic — built per-request to avoid PB fetch timeout
+// when generating 267 static params during `next build`.
+export const dynamicParams = true;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -16,8 +19,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export async function generateStaticParams() {
-  const all = await getPublished('HEAL_meditations', 'sort_order', 'is_published = true');
-  return all.map((m: any) => ({ slug: m.slug }));
+  // Return empty so build skips PB fetch for 267 slugs.
+  // Pages render on-demand per request (with ISR via `revalidate`).
+  return [];
 }
 
 export default async function MeditationPage({ params }: { params: Promise<{ slug: string }> }) {

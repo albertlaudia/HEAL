@@ -6,16 +6,10 @@ import { StepNavigation } from '@/components/programs/StepNavigation';
 import { ArrowLeft } from 'lucide-react';
 
 export const revalidate = 3600;
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  const programs = await getAllPrograms();
-  const params: { slug: string; stepId: string }[] = [];
-  for (const p of programs) {
-    for (let i = 1; i <= p.step_count; i++) {
-      params.push({ slug: p.slug, stepId: String(i) });
-    }
-  }
-  return params;
+  return [];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string; stepId: string }> }) {

@@ -6,10 +6,11 @@ import { ArrowLeft } from 'lucide-react';
 import { cdnUrl } from '@/lib/utils';
 
 export const revalidate = 3600;
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  const all = await getPublished('HEAL_essays', '-published_at', 'is_published = true');
-  return all.map((e: any) => ({ slug: e.slug }));
+  // Skip PB fetch during build — render on-demand per request
+  return [];
 }
 
 export default async function EssayPage({ params }: { params: Promise<{ slug: string }> }) {

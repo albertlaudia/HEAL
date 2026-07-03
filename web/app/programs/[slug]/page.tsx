@@ -7,10 +7,10 @@ import { ProgramStepList } from '@/components/programs/ProgramStepList';
 import { Award, BookOpen, ArrowLeft } from 'lucide-react';
 
 export const revalidate = 3600;
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  const programs = await getAllPrograms();
-  return programs.map((p) => ({ slug: p.slug }));
+  return [];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
