@@ -13,16 +13,7 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
-// Set Kotlin JVM target to 17 for all subprojects.
-subprojects {
-    plugins.withType(org.jetbrains.kotlin.gradle.plugin.KotlinBasePlugin) {
-        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-            compilerOptions {
-                jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
-            }
-        }
-    }
-}
+
 
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
