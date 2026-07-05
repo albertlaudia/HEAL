@@ -32,7 +32,7 @@ if (keyFile.exists()) {
 android {
     namespace "com.pclub.heal"
     compileSdk 36
-    ndkVersion = "27.0.12077973"  // Required by firebase/firestore/audio plugins
+    ndkVersion = "26.3.11579264"  // Required by firebase/firestore/audio plugins; NDK 27 has broken CMake on runner
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_21
