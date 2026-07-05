@@ -92,9 +92,13 @@ flutter {
 
 // Force Kotlin JVM target to 17 (matches Java compileOptions above).
 // Required because Kotlin 2.x defaults to JVM 21, causing AGP to reject the build.
-project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-    compilerOptions {
-        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+// Set Kotlin JVM target to 17 after Kotlin plugin is loaded.
+// Required because Kotlin 2.x defaults to JVM 21, causing AGP to reject mismatched JVM targets.
+afterEvaluate {
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        compilerOptions {
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+        }
     }
 }
 
