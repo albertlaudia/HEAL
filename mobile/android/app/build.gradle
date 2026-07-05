@@ -32,7 +32,7 @@ if (keyFile.exists()) {
 android {
     namespace "com.pclub.heal"
     compileSdk 36
-    ndkVersion flutter.ndkVersion
+    ndkVersion = "27.0.12077973"  // Required by firebase/firestore/audio plugins
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_21
@@ -48,7 +48,7 @@ android {
 
     defaultConfig {
         applicationId "com.pclub.heal"
-        minSdkVersion flutter.minSdkVersion
+        minSdkVersion 23  // Required by record_android (minSdk 23)
         targetSdk 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
