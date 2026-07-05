@@ -40,13 +40,7 @@ android {
         coreLibraryDesugaringEnabled true
     }
 
-    // Force Kotlin compiler to use JVM target 17 to match Java compileOptions.
-    // Kotlin 2.2.20 defaults to JVM target 21, which causes Gradle to fail with
-    // "Inconsistent JVM-target compatibility detected for tasks 'compileDebugJavaWithJavac' (17)
-    // and 'compileDebugKotlin' (21)".
-    kotlin {
-        jvmToolchain(17)
-    }
+
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -94,6 +88,14 @@ android {
 
 flutter {
     source '../..'
+}
+
+// Force Kotlin JVM target to 17 (matches Java compileOptions above).
+// Required because Kotlin 2.x defaults to JVM 21, causing AGP to reject the build.
+project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+    }
 }
 
 dependencies {
