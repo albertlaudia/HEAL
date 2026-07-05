@@ -322,7 +322,7 @@ final todayMeditationsProvider = FutureProvider<Meditation?>((ref) async {
 
 final todayScriptureProvider = FutureProvider<Scripture?>((ref) async {
   try {
-    final all = await ref.watch(scriptureRepoProvider).list(perPage: 60);
+    final all = await ref.watch(scriptureRepoProvider).list(limit: 60);
     if (all.isEmpty) return null;
     final now = DateTime.now();
     final doy = int.parse('${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}');
@@ -334,7 +334,7 @@ final todayScriptureProvider = FutureProvider<Scripture?>((ref) async {
 
 final todayPrayerProvider = FutureProvider<Prayer?>((ref) async {
   try {
-    final all = await ref.watch(prayerRepoProvider).list(perPage: 60);
+    final all = await ref.watch(prayerRepoProvider).list(limit: 60);
     if (all.isEmpty) return null;
     final now = DateTime.now();
     final doy = int.parse('${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}');
@@ -346,7 +346,7 @@ final todayPrayerProvider = FutureProvider<Prayer?>((ref) async {
 
 final praisesProvider = FutureProvider<List<PraiseSong>>((ref) async {
   try {
-    return await ref.watch(praiseRepoProvider).list(perPage: 30);
+    return await ref.watch(praiseRepoProvider).list(limit: 30);
   } catch (_) {
     return [];
   }
