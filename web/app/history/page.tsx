@@ -52,7 +52,7 @@ export default function HistoryPage() {
                 className="card-quiet p-4 flex items-center justify-between gap-4 hover:scale-[1.005] transition-transform"
               >
                 <div>
-                  <p className="text-xs text-ink/40 uppercase tracking-wider">{h.kind}</p>
+                  <p className="text-xs text-ink/40 uppercase tracking-wider">{h.kind === 'essay' ? 'reflection' : h.kind}</p>
                   <p className="serif text-lg">{h.title}</p>
                 </div>
                 <p className="text-xs text-ink/40">

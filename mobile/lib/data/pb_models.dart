@@ -350,3 +350,68 @@ class Essay {
       ? illustrationUrl
       : 'https://resources.positiveness.club/heal/images/essays/$slug.jpg';
 }
+/// HEALWorld — a daily "world invitation" piece.
+class WorldDay {
+  final String id;
+  final String slug;
+  final String title;
+  final String prompt;
+  final String? promptKind;  // 'challenge' | 'grace' | 'gratitude'
+  final String? tone;
+  final String? scriptureRef;
+  final String? scriptureText;
+  final String prayer;
+  final String reflection;
+  final String expectation;
+  final List<String>? tags;
+  final String? illustrationUrl;
+  final int? dayOfYear;
+  final bool? isPublished;
+  final DateTime? publishedAt;
+
+  const WorldDay({
+    required this.id,
+    required this.slug,
+    required this.title,
+    required this.prompt,
+    required this.prayer,
+    required this.reflection,
+    required this.expectation,
+    this.promptKind,
+    this.tone,
+    this.scriptureRef,
+    this.scriptureText,
+    this.tags,
+    this.illustrationUrl,
+    this.dayOfYear,
+    this.isPublished,
+    this.publishedAt,
+  });
+
+  factory WorldDay.fromJson(Map<String, dynamic> json) {
+    return WorldDay(
+      id:            (json['id'] ?? '') as String,
+      slug:          (json['slug'] ?? '') as String,
+      title:         (json['title'] ?? '') as String,
+      prompt:        (json['prompt'] ?? '') as String,
+      promptKind:    json['prompt_kind'] as String?,
+      tone:          json['tone'] as String?,
+      scriptureRef:  json['scripture_ref'] as String?,
+      scriptureText: json['scripture_text'] as String?,
+      prayer:        (json['prayer'] ?? '') as String,
+      reflection:    (json['reflection'] ?? '') as String,
+      expectation:   (json['expectation'] ?? '') as String,
+      tags:          (json['tags'] as List?)?.cast<String>(),
+      illustrationUrl: json['illustration_url'] as String?,
+      dayOfYear:     json['day_of_year'] as int?,
+      isPublished:   json['is_published'] as bool?,
+      publishedAt:   _parseDate(json['published_at']),
+    );
+  }
+
+  static DateTime? _parseDate(dynamic v) {
+    if (v == null) return null;
+    final s = v.toString();
+    try { return DateTime.parse(s); } catch (_) { return null; }
+  }
+}

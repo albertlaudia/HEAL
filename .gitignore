@@ -34,3 +34,4 @@ mobile/ios/Flutter/flutter_export_environment.sh
 *.g.dart
 *.freezed.dart
 *.mocks.dart
+__pycache__/

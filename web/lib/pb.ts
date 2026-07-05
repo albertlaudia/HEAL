@@ -175,6 +175,28 @@ export async function getDailyPrayer<T = any>(category?: string, coord: Calendar
 }
 
 // Helper: get a quote by category (for the rotating wisdom section)
+
+// Helper: get today's "world invitation" piece.
+// Each piece has prompt + scripture_ref + scripture_text + reflection + prayer + expectation.
+// Deterministic: slug is world-YYYY-MM-DD, so we look up directly.
+export async function getDailyWorld<T = any>(coord: CalendarCoord = getCalendarCoord()): Promise<T | null> {
+  try {
+    // Compute the slug the cron would have used for "today" in Australia.
+    // Cron fires 21:00 UTC which is 06:00 in WST (UTC+8). In AEST (UTC+10) it's 07:00.
+    // Australia-local "today" = UTC + 8h truncated to date.
+    // For the web dashboard, we want to show whichever world piece the user is most
+    // likely meant to see right now. For users anywhere, "UTC + 8h" approximates
+    // the Australia morning.
+    const AUSTRALIA_OFFSET_MS = 8 * 60 * 60 * 1000;  // WST (most reliable)
+    const now  = new Date();
+    const australiaDate = new Date(now.getTime() + AUSTRALIA_OFFSET_MS);
+    const slug = `world-${australiaDate.toISOString().slice(0, 10)}`;
+    return await pb.collection('HEAL_world').getFirstListItem(`slug = "${slug}" && is_published = true`);
+  } catch {
+    return null;
+  }
+}
+
 export async function getQuoteByDay<T = any>(offset = 0, coord: CalendarCoord = getCalendarCoord()): Promise<T | null> {
   try {
     const all = await pb.collection('HEAL_quotes').getFullList({ filter: 'is_published = true' }) as unknown as T[];
@@ -283,4 +305,29 @@ export type HEALPraise = {
   day_of_year?: number;
   sort_order?: number;
   is_published?: boolean;
+};
+
+// HEALWorld — a daily "world invitation" piece.
+// Generated daily at 6am Australia by scripts/daily-world.py.
+// prompt_kind: 'challenge' (a real problem in the world),
+//              'grace'     (an invitation to notice good already happening),
+//              'gratitude' (a thing worth giving thanks for).
+// tone: 'tender' | 'honest' | 'awestruck' | 'hopeful' | 'rejoicing' | 'steady'
+export type HEALWorld = {
+  id: string;
+  slug: string;
+  title: string;             // "For the world's grief" / "For a good harvest"
+  prompt: string;            // 1-3 sentence description of the situation
+  prompt_kind?: 'challenge' | 'grace' | 'gratitude';
+  tone?: 'tender' | 'honest' | 'awestruck' | 'hopeful' | 'rejoicing' | 'steady';
+  scripture_ref?: string;    // "Matthew 11:28"
+  scripture_text?: string;   // The verse text
+  prayer: string;            // 60-100 words, the prayer/blessing
+  reflection: string;        // 100-200 words, what the Bible says about this
+  expectation: string;        // 30-60 words, how we could expect the best
+  tags?: string[];
+  illustration_url?: string;
+  day_of_year?: number;
+  is_published?: boolean;
+  published_at?: string;
 };

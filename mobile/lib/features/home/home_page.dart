@@ -19,6 +19,8 @@ import '../../core/time_palette.dart';
 import '../../core/widgets/brass_widgets.dart';
 import '../../services/streak_service.dart';
 import '../../services/voice_calibration_service.dart';
+import '../../data/pb_models.dart';
+import '../../data/pb_repositories.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -168,9 +170,39 @@ class HomePage extends HookConsumerWidget {
               ),
               const SizedBox(height: HealTokens.s32),
 
-              // ── Practice tiles ───────────────────────────────
+              // ── TODAY'S CONTENT ──────────────────────────────
+              FadeInOnMount(
+                delay: const Duration(milliseconds: 450),
+                child: Text(
+                  'TODAY',
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        letterSpacing: 2.5,
+                        color: palette.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ),
+              const SizedBox(height: HealTokens.s8),
+              FadeInOnMount(
+                delay: const Duration(milliseconds: 480),
+                child: Text(
+                  'A small shelf of the day\'s practice.',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: HealTokens.creamDim,
+                        fontStyle: FontStyle.italic,
+                      ),
+                ),
+              ),
+              const SizedBox(height: HealTokens.s16),
               FadeInOnMount(
                 delay: const Duration(milliseconds: 500),
+                child: const _TodayShelf(),
+              ),
+              const SizedBox(height: HealTokens.s40),
+
+              // ── Practice tiles ───────────────────────────────
+              FadeInOnMount(
+                delay: const Duration(milliseconds: 600),
                 child: Text(
                   'PRACTICE',
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
@@ -767,7 +799,7 @@ class _PracticeGrid extends StatelessWidget {
         onTap: () => context.push('/prayer'),
       ),
       _PracticeTile(
-        title: 'Essays',
+        title: 'Reflections',
         subtitle: 'Slow reading',
         icon: Icons.menu_book_rounded,
         gradient: const [HealTokens.bronze, HealTokens.rosewood],
@@ -863,6 +895,245 @@ class _PracticeTile extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+/// ─────────────────────────────────────────────────────────────────────
+/// TODAY SHELF — a swipeable rail of the day's content.
+/// Each card pulls the day's pick from its provider and routes the user
+/// straight into that piece. Fetches all six in parallel for snappy paint.
+/// ─────────────────────────────────────────────────────────────────────
+
+class _TodayShelf extends HookConsumerWidget {
+  const _TodayShelf();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final meditationsAsync = ref.watch(todayMeditationsProvider);
+    final scriptureAsync   = ref.watch(todayScriptureProvider);
+    final prayerAsync       = ref.watch(todayPrayerProvider);
+    final reflectionsAsync  = ref.watch(reflectionsProvider);
+    final praiseAsync       = ref.watch(praisesProvider);
+    final worldAsync        = ref.watch(todayWorldProvider);
+
+    return SizedBox(
+      height: 168,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        physics: const BouncingScrollPhysics(),
+        children: [
+          _TodayCard(
+            icon: Icons.self_improvement_rounded,
+            eyebrow: 'Meditation',
+            title: meditationsAsync.maybeWhen(
+              data: (m) => m?.title ?? 'A small practice',
+              orElse: () => 'A small practice',
+            ),
+            subtitle: meditationsAsync.maybeWhen(
+              data: (m) {
+                if (m == null) return 'Five minutes';
+                final s = m.subtitle.isNotEmpty ? m.subtitle : 'A quiet practice';
+                return s.length > 60 ? '${s.substring(0, 60)}…' : s;
+              },
+              orElse: () => 'Five minutes',
+            ),
+            palette: const [Color(0xFF4A6B5E), Color(0xFF2C3E36)],
+            onTap: () => context.push('/meditate'),
+          ),
+          const SizedBox(width: HealTokens.s12),
+          _TodayCard(
+            icon: Icons.menu_book_rounded,
+            eyebrow: 'Scripture',
+            title: scriptureAsync.maybeWhen(
+              data: (s) => s?.text ?? 'Be still',
+              orElse: () => 'Be still',
+            ),
+            subtitle: scriptureAsync.maybeWhen(
+              data: (s) => s?.reference ?? 'A verse for the day',
+              orElse: () => 'A verse for the day',
+            ),
+            palette: const [Color(0xFF8E6F47), Color(0xFF5B4530)],
+            onTap: () => context.push('/scripture'),
+          ),
+          const SizedBox(width: HealTokens.s12),
+          _TodayCard(
+            icon: Icons.favorite_rounded,
+            eyebrow: 'Prayer',
+            title: prayerAsync.maybeWhen(
+              data: (p) => p?.title ?? 'A prayer',
+              orElse: () => 'A prayer',
+            ),
+            subtitle: prayerAsync.maybeWhen(
+              data: (p) => p?.body?.split('\n').first ?? 'Bring it to God',
+              orElse: () => 'Bring it to God',
+            ),
+            palette: const [Color(0xFFA66B5C), Color(0xFF6F4538)],
+            onTap: () => context.push('/prayer'),
+          ),
+          const SizedBox(width: HealTokens.s12),
+          _TodayCard(
+            icon: Icons.menu_book_rounded,
+            eyebrow: 'Reflection',
+            title: reflectionsAsync.maybeWhen(
+              data: (r) => r.isNotEmpty ? r.first.title : 'A long read',
+              orElse: () => 'A long read',
+            ),
+            subtitle: reflectionsAsync.maybeWhen(
+              data: (r) => r.isNotEmpty ? (r.first.subtitle ?? 'A reflection') : 'A reflection',
+              orElse: () => 'A reflection',
+            ),
+            palette: const [Color(0xFF5B6E8E), Color(0xFF394861)],
+            onTap: () => context.push('/essays'),
+          ),
+          const SizedBox(width: HealTokens.s12),
+          _TodayCard(
+            icon: Icons.music_note_rounded,
+            eyebrow: 'Praise',
+            title: praiseAsync.maybeWhen(
+              data: (p) => p.isNotEmpty ? p.first.title : 'A hymn',
+              orElse: () => 'A hymn',
+            ),
+            subtitle: praiseAsync.maybeWhen(
+              data: (p) => p.isNotEmpty ? (p.first.subtitle ?? 'A song for today') : 'A song for today',
+              orElse: () => 'A song for today',
+            ),
+            palette: const [Color(0xFF6E5BA6), Color(0xFF44386F)],
+            onTap: () => context.push('/praise'),
+          ),
+          const SizedBox(width: HealTokens.s12),
+          _TodayCard(
+            icon: Icons.public_rounded,
+            eyebrow: worldAsync.maybeWhen(
+              data: (w) {
+                if (w == null) return 'The world';
+                switch (w.promptKind) {
+                  case 'challenge': return 'A weight to pray into';
+                  case 'grace':     return 'Good, already happening';
+                  case 'gratitude': return 'Worth pausing for';
+                  default:          return 'The world, today';
+                }
+              },
+              orElse: () => 'The world, today',
+            ),
+            title: worldAsync.maybeWhen(
+              data: (w) => w?.title ?? 'Today in the world',
+              orElse: () => 'Today in the world',
+            ),
+            subtitle: worldAsync.maybeWhen(
+              data: (w) => w?.scriptureRef ?? 'A prayer, a verse, an expectation',
+              orElse: () => 'A prayer, a verse, an expectation',
+            ),
+            palette: const [Color(0xFF4A8E8E), Color(0xFF2E6363)],
+            onTap: () {
+              final slug = worldAsync.maybeWhen(
+                data: (w) => w?.slug,
+                orElse: () => null,
+              );
+              if (slug != null) context.push('/world/$slug');
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TodayCard extends StatelessWidget {
+  final IconData icon;
+  final String eyebrow;
+  final String title;
+  final String subtitle;
+  final List<Color> palette;
+  final VoidCallback onTap;
+  const _TodayCard({
+    required this.icon,
+    required this.eyebrow,
+    required this.title,
+    required this.subtitle,
+    required this.palette,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
+      child: Container(
+        width: 220,
+        padding: const EdgeInsets.all(HealTokens.s16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(HealTokens.r20),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              palette[0],
+              palette[1],
+            ],
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: palette[0].withValues(alpha: 0.3),
+              blurRadius: 16,
+              spreadRadius: -4,
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 16),
+                ),
+                const SizedBox(width: HealTokens.s8),
+                Expanded(
+                  child: Text(
+                    eyebrow.toUpperCase(),
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          letterSpacing: 1.5,
+                          fontWeight: FontWeight.w700,
+                        ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    height: 1.2,
+                  ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 6),
+            Text(
+              subtitle,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    fontStyle: FontStyle.italic,
+                  ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

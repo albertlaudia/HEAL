@@ -1,0 +1,5 @@
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# Every 5 minutes, check cron is alive. If not, restart it.
+*/5 * * * * root if ! pgrep -x cron >/dev/null; then /usr/sbin/cron; fi

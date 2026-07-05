@@ -13,7 +13,7 @@ export async function generateStaticParams() {
   return [];
 }
 
-export default async function EssayPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ReflectionPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const essay: any = await getBySlug('HEAL_essays', slug);
   if (!essay) notFound();
@@ -21,7 +21,7 @@ export default async function EssayPage({ params }: { params: Promise<{ slug: st
   return (
     <article className="container-quiet py-16">
       <Link href="/essays" className="inline-flex items-center gap-2 text-sm text-ink/60 hover:text-ink mb-8">
-        <ArrowLeft size={14} /> Essays
+        <ArrowLeft size={14} /> Reflections
       </Link>
 
       <header className="mb-12">

@@ -3,20 +3,25 @@ import { getPublished } from '@/lib/pb';
 
 export const revalidate = 3600;
 
-export default async function EssaysPage() {
+export const metadata = {
+  title: 'Reflections — long reads on the practice',
+  description: 'Slower pieces on the practice of Christian mindfulness — theology, psychology, story. A short reading for a quiet hour.',
+};
+
+export default async function ReflectionsPage() {
   const essays = await getPublished('HEAL_essays', '-published_at', 'is_published = true');
   return (
     <div className="container-wide py-16">
       <header className="max-w-2xl mb-12">
         <p className="text-xs tracking-[0.3em] uppercase text-ink/50 mb-3">Long reads</p>
-        <h1 className="serif text-5xl md:text-6xl mb-4">Essays</h1>
+        <h1 className="serif text-5xl md:text-6xl mb-4">Reflections</h1>
         <p className="text-ink/60 leading-relaxed">
-          Slower pieces on the practice of Christian mindfulness — theology, psychology, story.
+          Slower pieces on the practice of Christian mindfulness — theology, psychology, story. A short reading for a quiet hour.
         </p>
       </header>
 
       {essays.length === 0 ? (
-        <p className="text-ink/50 serif italic">The first essay is being written.</p>
+        <p className="text-ink/50 serif italic">The first reflection is being written.</p>
       ) : (
         <div className="space-y-6 max-w-3xl">
           {essays.map((e: any) => (
