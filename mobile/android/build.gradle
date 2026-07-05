@@ -13,6 +13,18 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
+// Force Kotlin JVM target to 17 for all subprojects.
+// Required because Kotlin 2.x defaults to JVM target 21, causing AGP to reject mismatched Java/Kotlin JVM targets.
+subprojects {
+    afterEvaluate { subproject ->
+        subproject.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach { task ->
+            task.compilerOptions {
+                jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+            }
+        }
+    }
+}
+
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
