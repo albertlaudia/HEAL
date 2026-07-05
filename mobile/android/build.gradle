@@ -13,7 +13,17 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
-
+// Force Kotlin JVM target to 17 (Kotlin 2.x defaults to JVM 21 which requires JDK 21)
+// Using pluginManager.withPlugin ensures this runs when kotlin-android is applied
+subprojects {
+    project.pluginManager.withPlugin('org.jetbrains.kotlin.android') {
+        project.tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+            compilerOptions {
+                jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+            }
+        }
+    }
+}
 
 tasks.register("clean", Delete) {
     delete rootProject.buildDir

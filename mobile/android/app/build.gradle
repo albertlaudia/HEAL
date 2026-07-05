@@ -35,8 +35,8 @@ android {
     ndkVersion = "26.3.11579264"  // Required by firebase/firestore/audio plugins; NDK 27 has broken CMake on runner
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_21
-        targetCompatibility JavaVersion.VERSION_21
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
         coreLibraryDesugaringEnabled true
     }
 
