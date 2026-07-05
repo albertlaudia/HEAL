@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getDailyMeditation, getDailyQuote, getDailyScripture, getPublished, getCalendarCoord } from '@/lib/pb';
+import { getDailyMeditation, getDailyQuote, getDailyScripture, getDailyWorld, getPublished, getCalendarCoord } from '@/lib/pb';
 import { formatDuration, themeHue, cdnUrl } from '@/lib/utils';
 import { QuickBreath } from '@/components/home/QuickBreath';
 import { TodayAtAGlance } from '@/components/home/TodayAtAGlance';
