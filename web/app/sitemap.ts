@@ -12,6 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE}/prayers`,   changeFrequency: 'weekly', priority: 0.7 },
     { url: `${SITE}/praise`,    changeFrequency: 'weekly', priority: 0.8 },
     { url: `${SITE}/essays`,    changeFrequency: 'weekly', priority: 0.6 },
+    { url: `${SITE}/world`,     changeFrequency: 'daily',  priority: 0.8 },
     { url: `${SITE}/programs`,  changeFrequency: 'weekly', priority: 0.7 },
     { url: `${SITE}/now`,       changeFrequency: 'yearly',  priority: 0.5 },
     { url: `${SITE}/about`,     changeFrequency: 'yearly',  priority: 0.4 },
@@ -36,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.warn('sitemap: PB fetch failed, returning static only', err);
   }
 
-  // Dynamic: every published essay
+  // Dynamic: every published reflection (PB collection: HEAL_essays)
   let essayRoutes: MetadataRoute.Sitemap = [];
   try {
     const essays = await getPublished('HEAL_essays', '-published_at', 'is_published = true');
@@ -45,6 +46,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: e.updated || e.published_at || undefined,
       changeFrequency: 'monthly',
       priority: 0.5,
+    }));
+  } catch {}
+
+  // Dynamic: every world-invitation record (PB collection: HEAL_world)
+  let worldRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const worlds = await getPublished('HEAL_world', '-published_at', 'is_published = true');
+    worldRoutes = (worlds || []).map((w: any) => ({
+      url: `${SITE}/world/${w.slug}`,
+      lastModified: w.updated || w.published_at || undefined,
+      changeFrequency: 'never',
+      priority: 0.6,
     }));
   } catch {}
 
@@ -60,5 +73,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
   } catch {}
 
-  return [...staticRoutes, ...meditationRoutes, ...essayRoutes, ...programRoutes];
+  return [...staticRoutes, ...meditationRoutes, ...essayRoutes, ...programRoutes, ...worldRoutes];
 }

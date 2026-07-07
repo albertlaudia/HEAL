@@ -31,11 +31,12 @@ export function Footer() {
             <h4 className="text-sm tracking-widest uppercase text-ink/50 mb-4">Practice</h4>
             <ul className="space-y-2 text-ink/70">
               <li><Link href="/" className="hover:text-ink">Today</Link></li>
+              <li><Link href="/world" className="hover:text-ink">The world, today</Link></li>
               <li><Link href="/meditate" className="hover:text-ink">Meditate</Link></li>
               <li><Link href="/breathe" className="hover:text-ink">Breathe</Link></li>
               <li><Link href="/scripture" className="hover:text-ink">Scripture</Link></li>
               <li><Link href="/prayers" className="hover:text-ink">Prayers</Link></li>
-              <li><Link href="/essays" className="hover:text-ink">Essays</Link></li>
+              <li><Link href="/essays" className="hover:text-ink">Reflections</Link></li>
               <li><Link href="/praise" className="hover:text-ink">Praise</Link></li>
               <li><Link href="/programs" className="hover:text-ink">Programs</Link></li>
               <li><Link href="/badges" className="hover:text-ink">Badges</Link></li>

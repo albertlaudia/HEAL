@@ -260,3 +260,102 @@ final breathRepoProvider =
     Provider<BreathRepository>((ref) => BreathRepository(ref.watch(pocketbaseProvider)));
 final essayRepoProvider =
     Provider<EssayRepository>((ref) => EssayRepository(ref.watch(pocketbaseProvider)));
+/// ── World (today's invitation) ────────────────────────────────────
+class WorldRepository {
+  final PocketBase _pb;
+  WorldRepository(this._pb);
+
+  Future<WorldDay?> today() async {
+    try {
+      // Australia-local date (UTC+8) to match the cron slug
+      final nowMs = DateTime.now().toUtc().millisecondsSinceEpoch + 8 * 3600 * 1000;
+      final local = DateTime.fromMillisecondsSinceEpoch(nowMs, isUtc: true);
+      final slug = 'world-${local.year.toString().padLeft(4, '0')}-${local.month.toString().padLeft(2, '0')}-${local.day.toString().padLeft(2, '0')}';
+      final r = await _pb.collection('HEAL_world').getFirstListItem('slug="$slug" && is_published=true');
+      return WorldDay.fromJson(r.toJson());
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<WorldDay?> get(String id) async {
+    try {
+      final r = await _pb.collection('HEAL_world').getOne(id);
+      return WorldDay.fromJson(r.toJson());
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<List<WorldDay>> recent({int limit = 30}) async {
+    try {
+      final records = await _pb.collection('HEAL_world').getList(
+        page: 1, perPage: limit,
+        filter: 'is_published=true',
+        sort: '-published_at',
+      );
+      return records.items.map((r) => WorldDay.fromJson(r.toJson())).toList();
+    } catch (_) {
+      return [];
+    }
+  }
+}
+
+final worldRepoProvider = Provider<WorldRepository>((ref) => WorldRepository(ref.watch(pocketbaseProvider)));
+
+final todayWorldProvider = FutureProvider<WorldDay?>((ref) async {
+  return ref.watch(worldRepoProvider).today();
+});
+
+final recentWorldsProvider = FutureProvider<List<WorldDay>>((ref) async {
+  return ref.watch(worldRepoProvider).recent();
+});
+
+// ── TODAY'S PICKS — light per-day determinism ───────────────────────
+final todayMeditationsProvider = FutureProvider<Meditation?>((ref) async {
+  final all = await ref.watch(meditationRepoProvider).list(perPage: 60);
+  if (all.isEmpty) return null;
+  final now = DateTime.now();
+  final doy = int.parse('${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}');
+  return all[doy % all.length];
+});
+
+final todayScriptureProvider = FutureProvider<Scripture?>((ref) async {
+  try {
+    final all = await ref.watch(scriptureRepoProvider).list(limit: 60);
+    if (all.isEmpty) return null;
+    final now = DateTime.now();
+    final doy = int.parse('${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}');
+    return all[doy % all.length];
+  } catch (_) {
+    return null;
+  }
+});
+
+final todayPrayerProvider = FutureProvider<Prayer?>((ref) async {
+  try {
+    final all = await ref.watch(prayerRepoProvider).list(limit: 60);
+    if (all.isEmpty) return null;
+    final now = DateTime.now();
+    final doy = int.parse('${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}');
+    return all[doy % all.length];
+  } catch (_) {
+    return null;
+  }
+});
+
+final praisesProvider = FutureProvider<List<PraiseSong>>((ref) async {
+  try {
+    return await ref.watch(praiseRepoProvider).list(limit: 30);
+  } catch (_) {
+    return [];
+  }
+});
+
+final reflectionsProvider = FutureProvider<List<Essay>>((ref) async {
+  try {
+    return await ref.watch(essayRepoProvider).list(limit: 30);
+  } catch (_) {
+    return [];
+  }
+});

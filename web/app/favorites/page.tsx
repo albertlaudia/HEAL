@@ -54,7 +54,7 @@ export default function FavoritesPage() {
               href={f.kind === 'meditation' ? `/meditate/${f.slug}` : f.kind === 'essay' ? `/essays/${f.slug}` : '#'}
               className="card-quiet p-6 hover:scale-[1.01] transition-transform"
             >
-              <p className="text-xs tracking-widest uppercase text-sage-700 mb-2">{f.kind}</p>
+              <p className="text-xs tracking-widest uppercase text-sage-700 mb-2">{f.kind === 'essay' ? 'reflection' : f.kind}</p>
               <h3 className="serif text-2xl mb-2">{f.title}</h3>
               {f.subtitle && <p className="text-sm text-ink/60 serif italic">{f.subtitle}</p>}
             </Link>

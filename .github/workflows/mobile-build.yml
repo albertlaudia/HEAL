@@ -24,7 +24,7 @@ jobs:
         uses: subosito/flutter-action@v2
         id: flutter
         with:
-          flutter-version: '3.27.1'
+          flutter-version: '3.29.3'
 
       - name: Configure isolated Gradle home
         run: |
@@ -55,9 +55,9 @@ jobs:
           EOF
           echo "KEYSTORE: $(ls -lh android/app/release-keystore.jks)"
         env:
-          RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
-          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
-          RELEASE_KEYSTORE_ALIAS: ${{ secrets.RELEASE_KEYSTORE_ALIAS }}
+          RELEASE_KEYSTORE_BASE64: ${{ vars.RELEASE_KEYSTORE_BASE64 }}
+          RELEASE_KEYSTORE_PASSWORD: ${{ vars.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_KEYSTORE_ALIAS: ${{ vars.RELEASE_KEYSTORE_ALIAS }}
 
       - name: Cleanup flutter lockfile before build
         run: rm -f flutter.lock

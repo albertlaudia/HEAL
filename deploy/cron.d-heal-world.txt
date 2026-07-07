@@ -1,0 +1,9 @@
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+# 21:00 UTC = 06:00 in WST (Western Australia) year-round
+# = 07:00 in AEST, 08:00 in AEDT (Eastern Australia summer)
+# AEST/AEDT not aligned — but WST is the common reference.
+# For Sydney/Melbourne (AEST+10), they get the world record ~7am their time.
+SHELL=/bin/bash
+0 21 * * * root set -a; . /etc/heal-world.env; set +a; /workspace/HEAL/web/scripts/run-daily-world.sh >> /var/log/heal-world.log 2>&1

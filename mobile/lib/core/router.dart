@@ -16,6 +16,7 @@ import '../features/prayer/prayer_page.dart';
 import '../features/praise/praise_library_page.dart';
 import '../features/meditate/meditate_detail_page.dart';
 import '../features/essays/essay_page.dart';
+import '../features/world/world_day_page.dart';
 import '../features/breathe/breath_studio_page.dart';
 import '../features/breathe/voice_calibration_page.dart';
 import '../features/scripture/sit_with_verse_page.dart';
@@ -236,6 +237,17 @@ class MiniPlayer extends ConsumerWidget {
   }
 }
 
+/// Australia's local 'today' for the daily world piece (matches the cron slug).
+String _todaySlug() {
+  // UTC + 8h = WST. Cron runs at 21:00 UTC = 06:00 WST.
+  final ms = DateTime.now().toUtc().millisecondsSinceEpoch + 8 * 3600 * 1000;
+  final d  = DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true);
+  final y  = d.year.toString().padLeft(4, '0');
+  final m  = d.month.toString().padLeft(2, '0');
+  final day = d.day.toString().padLeft(2, '0');
+  return 'world-$y-$m-$day';
+}
+
 class HealRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/',
@@ -307,6 +319,17 @@ class HealRouter {
       GoRoute(
         path: '/essays',
         pageBuilder: (context, state) => _sharedAxis(state, const EssayPage()),
+      ),
+      GoRoute(
+        path: '/world',
+        redirect: (_, __) => '/world/world-${_todaySlug()}',
+      ),
+      GoRoute(
+        path: '/world/:slug',
+        pageBuilder: (context, state) {
+          final slug = state.pathParameters['slug'] ?? '';
+          return _verticalSlide(state, WorldDayPage(slug: slug));
+        },
       ),
       GoRoute(
         path: '/breathe',

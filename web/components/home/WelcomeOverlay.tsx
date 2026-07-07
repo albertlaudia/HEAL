@@ -128,7 +128,7 @@ export function WelcomeOverlay() {
               <BookHeart size={11} className="inline mr-1" /> Pray
             </Link>
             <Link href="/essays" onClick={dismiss} className="px-2.5 py-1.5 md:px-3 rounded-full border border-ink/10 hover:border-ink/30 text-ink/60 hover:text-ink">
-              Read an essay
+              Read a reflection
             </Link>
             <Link href="/about" onClick={dismiss} className="px-2.5 py-1.5 md:px-3 rounded-full border border-ink/10 hover:border-ink/30 text-ink/60 hover:text-ink">
               Why HEAL

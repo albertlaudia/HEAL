@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { getDailyMeditation, getDailyQuote, getDailyScripture, getPublished, getCalendarCoord } from '@/lib/pb';
+import { getDailyMeditation, getDailyQuote, getDailyScripture, getDailyWorld, getPublished, getCalendarCoord } from '@/lib/pb';
 import { formatDuration, themeHue, cdnUrl } from '@/lib/utils';
 import { QuickBreath } from '@/components/home/QuickBreath';
 import { TodayAtAGlance } from '@/components/home/TodayAtAGlance';
@@ -9,6 +9,14 @@ import { ContinueProgram } from "@/components/home/ContinueProgram";
 import { HealPrinciples } from "@/components/home/HealPrinciples";
 import { WelcomeOverlay, WelcomePill } from "@/components/home/WelcomeOverlay";
 import { ArrowRight } from 'lucide-react';
+
+// Human-readable labels for the "kind" discriminator on the recent items rail.
+// Internal kind stays 'meditation' | 'essay' | 'praise' for type safety + PB routing.
+const KIND_LABELS: Record<string, string> = {
+  meditation: 'meditation',
+  essay:      'reflection',
+  praise:     'praise',
+};
 
 export const revalidate = 3600;
 
@@ -29,13 +37,14 @@ export default async function HomePage() {
   const safeGet = <T,>(p: Promise<T>, fallback: T): Promise<T> =>
     p.catch((e) => { if (typeof console !== 'undefined') console.warn('home data fetch failed:', e?.message); return fallback; });
 
-  const [meditation, quote, scripture, recentMeditations, recentEssays, recentPraise] = await Promise.all([
+  const [meditation, quote, scripture, recentMeditations, recentEssays, recentPraise, todayWorld] = await Promise.all([
     safeGet(getDailyMeditation(coord), null as any),
     safeGet(getDailyQuote(coord), null as any),
     safeGet(getDailyScripture(coord), null as any),
     safeGet(getPublished('HEAL_meditations', '-id', 'is_published = true', 6), [] as any[]),
     safeGet(getPublished('HEAL_essays', '-published_at', 'is_published = true', 3), [] as any[]),
     safeGet(getPublished('HEAL_praise', '-id', 'is_published = true', 3), [] as any[]),
+    safeGet(getDailyWorld(coord), null as any),
   ]);
 
   // A single soft "from the practice" rail — recent meditations, essays, and praise.
@@ -117,6 +126,41 @@ export default async function HomePage() {
           )}
         </div>
       </section>
+
+      {/* ── THE WORLD, TODAY — a daily 'invitation' piece. ────── */}
+      {todayWorld && (
+        <section className="container-wide pb-12 md:pb-16">
+          <div className="max-w-2xl mx-auto">
+            <Link href={`/world/${todayWorld.slug}`} className="group block card-quiet p-6 md:p-8 hover:scale-[1.005] transition-all">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-[10px] tracking-[0.3em] uppercase text-ink/45">The world, today</span>
+                <span className={`text-[10px] tracking-[0.2em] uppercase px-2 py-0.5 rounded-full ${
+                  todayWorld.prompt_kind === 'gratitude' ? 'bg-amber-50 text-amber-800 border border-amber-200/60'
+                  : todayWorld.prompt_kind === 'grace'     ? 'bg-sage-50  text-sage-800  border border-sage-200/60'
+                  :                                          'bg-cyan-50  text-cyan-800  border border-cyan-200/60'
+                }`}>
+                  {todayWorld.prompt_kind}
+                </span>
+              </div>
+              <h3 className="serif text-2xl md:text-3xl leading-snug mb-3 group-hover:text-sage-800 transition-colors">
+                {todayWorld.title}
+              </h3>
+              <p className="text-ink/65 leading-relaxed line-clamp-3 mb-4">
+                {todayWorld.prompt}
+              </p>
+              {todayWorld.scripture_ref && (
+                <p className="serif italic text-sm text-ink/45">
+                  — {todayWorld.scripture_ref}
+                </p>
+              )}
+              <div className="mt-4 flex items-center gap-2 text-xs text-ink/40 group-hover:text-ink/70 transition-colors">
+                <span>Prayer. Reflection. Expectation.</span>
+                <ArrowRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+              </div>
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* ── H.E.A.L. — the framework. The whole point of being here. */}
       <HealPrinciples />
@@ -201,7 +245,7 @@ export default async function HomePage() {
                     />
                   </div>
                 )}
-                <p className="serif italic text-ink/45 text-xs mb-1">{item.kind}</p>
+                <p className="serif italic text-ink/45 text-xs mb-1">{KIND_LABELS[item.kind] || item.kind}</p>
                 <h3 className="serif text-lg md:text-xl leading-tight mb-1 group-hover:text-sage-800 transition-colors">
                   {item.title}
                 </h3>

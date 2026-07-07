@@ -1,4 +1,4 @@
-// HEAL — Essays reader.
+// HEAL — Reflections reader (longer-form essays).
 // PageView with horizontal swipe between articles. Generous typography.
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -20,12 +20,12 @@ class EssayPage extends HookConsumerWidget {
     final essaysAsync = ref.watch(essaysProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Essays')),
+      appBar: AppBar(title: const Text('Reflections')),
       body: essaysAsync.when(
         data: (essays) {
           if (essays.isEmpty) {
             return const Center(
-              child: Text('No essays yet.', style: TextStyle(color: HealTokens.creamDim)),
+              child: Text('No reflections yet.', style: TextStyle(color: HealTokens.creamDim)),
             );
           }
           return PageView.builder(
