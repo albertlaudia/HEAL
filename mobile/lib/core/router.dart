@@ -19,6 +19,7 @@ import '../features/praise/timed_lyrics.dart';
 import '../features/meditate/meditate_detail_page.dart';
 import '../features/essays/essay_page.dart';
 import '../features/world/world_day_page.dart';
+import '../features/bible/bible_program_page.dart';
 import '../features/breathe/breath_studio_page.dart';
 import '../features/breathe/voice_calibration_page.dart';
 import '../features/scripture/sit_with_verse_page.dart';
@@ -626,6 +627,11 @@ class HealRouter {
           final slug = state.pathParameters['slug'] ?? '';
           return _verticalSlide(state, WorldDayPage(slug: slug));
         },
+      ),
+      GoRoute(
+        path: '/bible',
+        pageBuilder: (context, state) =>
+            _verticalSlide(state, const BibleProgramPage()),
       ),
       GoRoute(
         path: '/breathe',

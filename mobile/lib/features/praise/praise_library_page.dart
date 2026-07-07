@@ -158,7 +158,15 @@ class PraiseLibraryPage extends HookConsumerWidget {
     );
   }
 
+  /// Play a list of songs as a queue. Resolves local file paths for any
+  /// that are downloaded so they play offline.
   static Future<void> _playPlaylist(WidgetRef ref, List<PraiseSong> songs, int index) async {
+    final cache = ref.read(offlineCacheProvider.notifier);
+    final localPaths = <String>[];
+    for (final s in songs) {
+      final p = await cache.localPath(s.slug);
+      localPaths.add(p ?? '');
+    }
     final queue = songs.map((s) => AudioTrack(
           id: s.id,
           url: s.cdnAudio,
@@ -168,36 +176,18 @@ class PraiseLibraryPage extends HookConsumerWidget {
           lyrics: s.lyrics,
           source: AudioSource.praise,
         )).toList();
-    // Resolve local paths for any cached tracks
-    final cache = ref.read(offlineCacheProvider.notifier);
-    for (final t in queue) {
-      final i = queue.indexOf(t);
-      final song = songs[i];
-      final p = await cache.localPath(song.slug);
-      if (p != null && i == index) {
-        // Play the first track from local if cached
-        ref.read(audioServiceProvider.notifier).play(AudioTrack(
-          id: t.id,
-          url: t.url,
-          title: t.title,
-          subtitle: t.subtitle,
-          illustrationUrl: t.illustrationUrl,
-          lyrics: t.lyrics,
-          source: t.source,
-        ));
-        // Then queue the rest via playPlaylist — but playPlaylist doesn't support mixed source.
-        // Simplest: just play with queue + first item from local
-        await ref.read(audioServiceProvider.notifier).playPlaylist(
-          queue,
-          index,
-        );
-        return;
-      }
-    }
-    await ref.read(audioServiceProvider.notifier).playPlaylist(queue, index);
+    await ref
+        .read(audioServiceProvider.notifier)
+        .playPlaylist(queue, index, localPaths: localPaths);
   }
 
-  static void _openPlayer(BuildContext context, WidgetRef ref, List<PraiseSong> songs, int index) {
+  static void _openPlayer(BuildContext context, WidgetRef ref, List<PraiseSong> songs, int index) async {
+    final cache = ref.read(offlineCacheProvider.notifier);
+    final localPaths = <String>[];
+    for (final s in songs) {
+      final p = await cache.localPath(s.slug);
+      localPaths.add(p ?? '');
+    }
     final queue = songs.map((s) => AudioTrack(
           id: s.id,
           url: s.cdnAudio,
@@ -207,7 +197,10 @@ class PraiseLibraryPage extends HookConsumerWidget {
           lyrics: s.lyrics,
           source: AudioSource.praise,
         )).toList();
-    ref.read(audioServiceProvider.notifier).playPlaylist(queue, index);
+    await ref
+        .read(audioServiceProvider.notifier)
+        .playPlaylist(queue, index, localPaths: localPaths);
+    if (!context.mounted) return;
     Navigator.of(context).push(MaterialPageRoute(
       builder: (_) => PraisePlayerPage(songs: songs, queue: queue, index: index),
     ));
@@ -718,14 +711,11 @@ class PraisePlayerPage extends HookConsumerWidget {
                             ref.read(audioServiceProvider.notifier).togglePlay();
                           } else {
                             // Re-issue play with the right track (e.g. tapped after seek)
-                            final localPathFuture = ref.read(offlineCacheProvider.notifier).localPath(song.slug);
-                            localPathFuture.then((localPath) {
-                              if (localPath != null) {
-                                // Offline playback: refactor needed for local; for now use URL
-                                // audioplayers will fall back to network if local missing
-                              }
-                              ref.read(audioServiceProvider.notifier).playPlaylist(queue, currentIdx);
-                            });
+                            // Use the audio state's queueLocalPaths (resolved at queue build time)
+                            final localPaths = ref.read(audioServiceProvider).queueLocalPaths;
+                            ref
+                                .read(audioServiceProvider.notifier)
+                                .playPlaylist(queue, currentIdx, localPaths: localPaths);
                           }
                         },
                       ),
