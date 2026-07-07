@@ -315,6 +315,7 @@ class PraiseDetailPage extends HookConsumerWidget {
                                   title: song.title,
                                   subtitle: song.subtitle,
                                   illustrationUrl: song.cdnIllustration,
+                                  lyrics: song.lyrics,
                                   source: AudioSource.praise,
                                 ));
                               }

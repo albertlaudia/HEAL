@@ -48,7 +48,7 @@ class MainScaffold extends HookConsumerWidget {
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (audio.hasTrack && audio.track?.source != AudioSource.praise)
+          if (audio.hasTrack)
             const MiniPlayer(),
           _BottomNav(currentIndex: currentIndex),
         ],
@@ -162,7 +162,28 @@ class MiniPlayer extends ConsumerWidget {
     return GestureDetector(
       onTap: () {
         HapticFeedback.selectionClick();
-        context.push('/now');
+        final src = audio.track?.source;
+        // Praise tracks: tap opens the lyrics sheet so you can read while it plays.
+        // Other sources: tap opens the full /now player.
+        if (src == AudioSource.praise && (audio.track?.lyrics ?? '').isNotEmpty) {
+          showModalBottomSheet(
+            context: context,
+            backgroundColor: HealTokens.rosewoodDeep,
+            isScrollControlled: true,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(HealTokens.r24)),
+            ),
+            builder: (_) => _LyricsSheet(
+              title: audio.track?.title ?? '',
+              subtitle: audio.track?.subtitle ?? '',
+              lyrics: audio.track!.lyrics!,
+              position: audio.position,
+              duration: audio.duration,
+            ),
+          );
+        } else {
+          context.push('/now');
+        }
       },
       child: Container(
         height: 56,
@@ -219,6 +240,31 @@ class MiniPlayer extends ConsumerWidget {
                 ],
               ),
             ),
+            if (audio.track?.source == AudioSource.praise &&
+                (audio.track?.lyrics ?? '').isNotEmpty) ...[
+              IconButton(
+                icon: const Icon(Icons.lyrics_rounded, size: 20),
+                onPressed: () {
+                  HapticFeedback.selectionClick();
+                  showModalBottomSheet(
+                    context: context,
+                    backgroundColor: HealTokens.rosewoodDeep,
+                    isScrollControlled: true,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(HealTokens.r24)),
+                    ),
+                    builder: (_) => _LyricsSheet(
+                      title: audio.track?.title ?? '',
+                      subtitle: audio.track?.subtitle ?? '',
+                      lyrics: audio.track!.lyrics!,
+                      position: audio.position,
+                      duration: audio.duration,
+                    ),
+                  );
+                },
+              ),
+            ],
             IconButton(
               icon: Icon(
                 audio.playing
@@ -234,6 +280,315 @@ class MiniPlayer extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+/// ── Lyrics bottom sheet ────────────────────────────────────────────────
+/// Shown when the user taps the MiniPlayer (or the lyrics icon) while a
+/// praise track is playing. The track keeps playing underneath — this sheet
+/// only overlays the lyrics so the user can read along, sing along, or share.
+class _LyricsSheet extends HookConsumerWidget {
+  final String title;
+  final String subtitle;
+  final String lyrics;
+  final Duration position;
+  final Duration duration;
+
+  const _LyricsSheet({
+    required this.title,
+    required this.subtitle,
+    required this.lyrics,
+    required this.position,
+    required this.duration,
+  });
+
+  /// Parse lyrics into blocks (verse/chorus/bridge) by `[Tag]` markers, then
+  /// lines. Falls back to a single block if no tags are present.
+  List<_LyricsBlock> _parse(String raw) {
+    final blocks = <_LyricsBlock>[];
+    String? currentTag;
+    final currentLines = <String>[];
+
+    void flush() {
+      if (currentLines.isNotEmpty || currentTag != null) {
+        blocks.add(_LyricsBlock(tag: currentTag, lines: List.of(currentLines)));
+      }
+      currentLines.clear();
+      currentTag = null;
+    }
+
+    for (final line in raw.split('\n')) {
+      final t = line.trim();
+      if (t.isEmpty) {
+        flush();
+        continue;
+      }
+      final tagMatch = RegExp(r'^\[(.+?)\]$').firstMatch(t);
+      if (tagMatch != null) {
+        flush();
+        currentTag = tagMatch.group(1);
+        continue;
+      }
+      currentLines.add(t);
+    }
+    flush();
+    return blocks.isEmpty ? [_LyricsBlock(tag: null, lines: raw.split('\n').where((l) => l.trim().isNotEmpty).toList())] : blocks;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final blocks = useMemoized(() => _parse(lyrics), [lyrics]);
+    final audio = ref.watch(audioServiceProvider);
+    final pos = audio.position;
+    final dur = audio.duration;
+
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.75,
+      minChildSize: 0.4,
+      maxChildSize: 0.95,
+      builder: (_, controller) => Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [HealTokens.rosewoodDeep, Color(0xFF1A1010)],
+          ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(HealTokens.r24)),
+        ),
+        child: Column(
+          children: [
+            // Grab handle
+            Container(
+              margin: const EdgeInsets.only(top: 10),
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: HealTokens.creamDim.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Header
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                HealTokens.s24, HealTokens.s16, HealTokens.s24, HealTokens.s8,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                color: HealTokens.cream,
+                                fontWeight: FontWeight.w500,
+                              ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        if (subtitle.isNotEmpty)
+                          Text(
+                            subtitle,
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: HealTokens.creamDim,
+                                  fontStyle: FontStyle.italic,
+                                ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close_rounded),
+                    color: HealTokens.creamDim,
+                    onPressed: () => Navigator.of(context).maybePop(),
+                  ),
+                ],
+              ),
+            ),
+            // Lyrics scroll
+            Expanded(
+              child: ListView.builder(
+                controller: controller,
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.fromLTRB(
+                  HealTokens.s32, HealTokens.s16, HealTokens.s32, HealTokens.s120,
+                ),
+                itemCount: blocks.length,
+                itemBuilder: (_, i) {
+                  final b = blocks[i];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: HealTokens.s24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (b.tag != null) ...[
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: HealTokens.s10, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: HealTokens.brass.withValues(alpha: 0.18),
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                            child: Text(
+                              b.tag!.toUpperCase(),
+                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                    color: HealTokens.brassLight,
+                                    letterSpacing: 1.6,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                            ),
+                          ),
+                          const SizedBox(height: HealTokens.s12),
+                        ],
+                        ...b.lines.map((line) => Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Text(
+                                line,
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      color: HealTokens.cream,
+                                      height: 1.5,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                              ),
+                            )),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+            // Bottom playback bar
+            Container(
+              padding: const EdgeInsets.fromLTRB(
+                HealTokens.s24, HealTokens.s12, HealTokens.s24, HealTokens.s32,
+              ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    HealTokens.rosewoodDeep.withValues(alpha: 0.95),
+                  ],
+                ),
+              ),
+              child: Column(
+                children: [
+                  // Progress bar
+                  _ProgressBarInline(pos: pos, dur: dur),
+                  const SizedBox(height: HealTokens.s8),
+                  // Mini controls
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.replay_10_rounded, size: 28),
+                        color: HealTokens.cream,
+                        onPressed: () => ref
+                            .read(audioServiceProvider.notifier)
+                            .skipBack(const Duration(seconds: 10)),
+                      ),
+                      const SizedBox(width: HealTokens.s24),
+                      GestureDetector(
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          ref.read(audioServiceProvider.notifier).togglePlay();
+                        },
+                        child: Container(
+                          width: 64,
+                          height: 64,
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [HealTokens.brassLight, HealTokens.brass, HealTokens.brassDeep],
+                            ),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            audio.playing
+                                ? Icons.pause_rounded
+                                : Icons.play_arrow_rounded,
+                            color: HealTokens.rosewoodDeep,
+                            size: 36,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: HealTokens.s24),
+                      IconButton(
+                        icon: const Icon(Icons.forward_10_rounded, size: 28),
+                        color: HealTokens.cream,
+                        onPressed: () => ref
+                            .read(audioServiceProvider.notifier)
+                            .skipForward(const Duration(seconds: 10)),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LyricsBlock {
+  final String? tag;
+  final List<String> lines;
+  _LyricsBlock({required this.tag, required this.lines});
+}
+
+class _ProgressBarInline extends StatelessWidget {
+  final Duration pos;
+  final Duration dur;
+  const _ProgressBarInline({required this.pos, required this.dur});
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = dur.inMilliseconds == 0
+        ? 0.0
+        : (pos.inMilliseconds / dur.inMilliseconds).clamp(0.0, 1.0);
+    return Row(
+      children: [
+        Text(_fmt(pos),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: HealTokens.creamDim)),
+        const SizedBox(width: HealTokens.s8),
+        Expanded(
+          child: Container(
+            height: 3,
+            decoration: BoxDecoration(
+              color: HealTokens.creamDim.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(2),
+            ),
+            child: FractionallySizedBox(
+              alignment: Alignment.centerLeft,
+              widthFactor: progress,
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [HealTokens.brassLight, HealTokens.brass],
+                  ),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: HealTokens.s8),
+        Text(_fmt(dur),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: HealTokens.creamDim)),
+      ],
+    );
+  }
+
+  static String _fmt(Duration d) {
+    final m = d.inMinutes.toString().padLeft(1, '0');
+    final s = (d.inSeconds % 60).toString().padLeft(2, '0');
+    return '$m:$s';
   }
 }
 
