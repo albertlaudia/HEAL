@@ -6,7 +6,7 @@
 //   - Tap "Play all" on a tab → plays the queue, auto-advances
 //   - Auto-resolves local file path for offline-cached songs
 
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart' hide DownloadProgress;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -15,6 +15,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme.dart';
+import '../../core/time_palette.dart';
 import '../../core/widgets/brass_widgets.dart';
 import '../../data/pb_repositories.dart';
 import '../../data/pb_models.dart';
@@ -45,7 +46,7 @@ class PraiseLibraryPage extends HookConsumerWidget {
       ),
       body: songsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator(strokeWidth: 1.2)),
-        error: (e, _) => Center(
+        error: (e, _) => const Center(
           child: Text('Could not load.', style: TextStyle(color: HealTokens.creamDim)),
         ),
         data: (songs) {
@@ -235,23 +236,23 @@ class _PraiseTabs extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _Tab(label: 'All',          count: null,          active: current == _Tab.all,          onTap: () => onChange(_Tab.all)),
+          _TabChip(label: 'All',          count: null,          active: current == _Tab.all,          onTap: () => onChange(_Tab.all)),
           const SizedBox(width: HealTokens.s8),
-          _Tab(label: 'Favorites',    count: favoritesCount, active: current == _Tab.favorites,    onTap: () => onChange(_Tab.favorites)),
+          _TabChip(label: 'Favorites',    count: favoritesCount, active: current == _Tab.favorites,    onTap: () => onChange(_Tab.favorites)),
           const SizedBox(width: HealTokens.s8),
-          _Tab(label: 'Downloaded',   count: downloadedCount, active: current == _Tab.downloaded, onTap: () => onChange(_Tab.downloaded)),
+          _TabChip(label: 'Downloaded',   count: downloadedCount, active: current == _Tab.downloaded, onTap: () => onChange(_Tab.downloaded)),
         ],
       ),
     );
   }
 }
 
-class _Tab extends StatelessWidget {
+class _TabChip extends StatelessWidget {
   final String label;
   final int? count;
   final bool active;
   final VoidCallback onTap;
-  const _Tab({required this.label, required this.count, required this.active, required this.onTap});
+  const _TabChip({required this.label, required this.count, required this.active, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -300,7 +301,7 @@ class _PraiseEmpty extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String title; String body; IconData icon;
+    late String title; late String body; late IconData icon;
     switch (tab) {
       case _Tab.favorites:
         title = 'No favorites yet';
@@ -489,7 +490,7 @@ class _DownloadButton extends ConsumerWidget {
                 backgroundColor: HealTokens.creamDim.withValues(alpha: 0.16),
               ),
             ),
-            Icon(Icons.close_rounded, size: 12, color: HealTokens.creamDim),
+            const Icon(Icons.close_rounded, size: 12, color: HealTokens.creamDim),
           ],
         ),
       );
@@ -701,7 +702,7 @@ class PraisePlayerPage extends HookConsumerWidget {
                             : null,
                       ),
                       IconButton(
-                        icon: Icon(Icons.replay_10_rounded),
+                        icon: const Icon(Icons.replay_10_rounded),
                         iconSize: 30,
                         color: HealTokens.cream,
                         onPressed: isThisTrack

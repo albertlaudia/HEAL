@@ -10,6 +10,7 @@
 //   )
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../../core/theme.dart';
 import 'timed_lyrics.dart';
@@ -97,7 +98,7 @@ class _KaraokeLyricsState extends State<KaraokeLyrics> {
     final lines = widget.timed.lines;
 
     if (lines.isEmpty) {
-      return Center(
+      return const Center(
         child: Text('No lyrics',
             style: TextStyle(color: HealTokens.creamDim, fontStyle: FontStyle.italic)),
       );
@@ -108,7 +109,7 @@ class _KaraokeLyricsState extends State<KaraokeLyrics> {
       physics: const BouncingScrollPhysics(),
       padding: const EdgeInsets.symmetric(
         horizontal: HealTokens.s24,
-        vertical: HealTokens.s120, // generous top/bottom so first/last line can centre
+        vertical: HealTokens.s96, // generous top/bottom so first/last line can centre
       ),
       itemCount: lines.length,
       itemBuilder: (_, i) {
