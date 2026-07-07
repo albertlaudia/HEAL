@@ -46,7 +46,7 @@ class PraiseLibraryPage extends HookConsumerWidget {
       ),
       body: songsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator(strokeWidth: 1.2)),
-        error: (e, _) => Center(
+        error: (e, _) => const Center(
           child: Text('Could not load.', style: TextStyle(color: HealTokens.creamDim)),
         ),
         data: (songs) {
@@ -490,7 +490,7 @@ class _DownloadButton extends ConsumerWidget {
                 backgroundColor: HealTokens.creamDim.withValues(alpha: 0.16),
               ),
             ),
-            Icon(Icons.close_rounded, size: 12, color: HealTokens.creamDim),
+            const Icon(Icons.close_rounded, size: 12, color: HealTokens.creamDim),
           ],
         ),
       );
@@ -702,7 +702,7 @@ class PraisePlayerPage extends HookConsumerWidget {
                             : null,
                       ),
                       IconButton(
-                        icon: Icon(Icons.replay_10_rounded),
+                        icon: const Icon(Icons.replay_10_rounded),
                         iconSize: 30,
                         color: HealTokens.cream,
                         onPressed: isThisTrack
