@@ -53,6 +53,11 @@ class AudioState {
   final List<AudioTrack> queue;
   final int queueIndex;
 
+  /// Parallel list to `queue` of local file paths for tracks that are
+  /// downloaded for offline playback. `queueLocalPaths[i]` corresponds to
+  /// `queue[i]`. Empty string = use the URL.
+  final List<String> queueLocalPaths;
+
   const AudioState({
     this.track,
     this.playing = false,
@@ -63,6 +68,7 @@ class AudioState {
     this.error,
     this.queue = const [],
     this.queueIndex = -1,
+    this.queueLocalPaths = const [],
   });
 
   bool get hasTrack => track != null;
@@ -88,6 +94,7 @@ class AudioState {
     String? error,
     List<AudioTrack>? queue,
     int? queueIndex,
+    List<String>? queueLocalPaths,
     bool clearError = false,
   }) {
     return AudioState(
@@ -100,6 +107,7 @@ class AudioState {
       error: clearError ? null : (error ?? this.error),
       queue: queue ?? this.queue,
       queueIndex: queueIndex ?? this.queueIndex,
+      queueLocalPaths: queueLocalPaths ?? this.queueLocalPaths,
     );
   }
 }
@@ -167,9 +175,22 @@ class AudioService extends StateNotifier<AudioState> {
   }
 
   /// Play a track as part of a playlist queue. Auto-advances on completion.
-  Future<void> playPlaylist(List<AudioTrack> queue, int index) async {
+  /// `localPaths` is an optional parallel list of local file paths for
+  /// offline-cached tracks. Empty strings mean "use the URL".
+  Future<void> playPlaylist(
+    List<AudioTrack> queue,
+    int index, {
+    List<String> localPaths = const [],
+  }) async {
     if (index < 0 || index >= queue.length) return;
-    await _playInternal(queue[index], queue: queue, index: index);
+    final path = index < localPaths.length ? localPaths[index] : '';
+    await _playInternal(
+      queue[index],
+      queue: queue,
+      index: index,
+      localPath: path.isEmpty ? null : path,
+      queueLocalPaths: localPaths,
+    );
   }
 
   Future<void> _playInternal(
@@ -177,6 +198,7 @@ class AudioService extends StateNotifier<AudioState> {
     required List<AudioTrack> queue,
     required int index,
     String? localPath,
+    List<String> queueLocalPaths = const [],
   }) async {
     final isNewTrack = state.track?.id != track.id;
     state = state.copyWith(
@@ -187,6 +209,7 @@ class AudioService extends StateNotifier<AudioState> {
       playing: false,
       queue: queue,
       queueIndex: index,
+      queueLocalPaths: queueLocalPaths,
       clearError: true,
     );
 
@@ -213,8 +236,17 @@ class AudioService extends StateNotifier<AudioState> {
     if (!state.inPlaylist) return;
     if (index < 0 || index >= state.queue.length) return;
     final t = state.queue[index];
+    final localPath = index < state.queueLocalPaths.length
+        ? state.queueLocalPaths[index]
+        : '';
     state = state.copyWith(queueIndex: index);
-    await _playInternal(t, queue: state.queue, index: index);
+    await _playInternal(
+      t,
+      queue: state.queue,
+      index: index,
+      localPath: localPath.isEmpty ? null : localPath,
+      queueLocalPaths: state.queueLocalPaths,
+    );
   }
 
   Future<void> next() async {
