@@ -23,10 +23,10 @@ dependencies:
   # ── Audio ──────────────────────────────────────────────────────
   audioplayers: ^6.1.0  # was 6.8.1 — pinned to 6.1 for Flutter 3.29.3 compat (Flutter 3.44 not yet on cirruslabs)
   audio_session: ^0.1.25
-  record: ^6.0.0
+  record: ^7.1.0
 
   # ── Backend ────────────────────────────────────────────────────
-  pocketbase: ^0.21.0
+  pocketbase: ^0.24.0
   firebase_core: ^3.6.0
   firebase_auth: ^5.3.1
   cloud_firestore: ^5.4.4
