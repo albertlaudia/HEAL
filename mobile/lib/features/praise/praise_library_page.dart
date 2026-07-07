@@ -235,23 +235,23 @@ class _PraiseTabs extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _Tab(label: 'All',          count: null,          active: current == _Tab.all,          onTap: () => onChange(_Tab.all)),
+          _TabButton(label: 'All',          count: null,          active: current == _Tab.all,          onTap: () => onChange(_Tab.all)),
           const SizedBox(width: HealTokens.s8),
-          _Tab(label: 'Favorites',    count: favoritesCount, active: current == _Tab.favorites,    onTap: () => onChange(_Tab.favorites)),
+          _TabButton(label: 'Favorites',    count: favoritesCount, active: current == _Tab.favorites,    onTap: () => onChange(_Tab.favorites)),
           const SizedBox(width: HealTokens.s8),
-          _Tab(label: 'Downloaded',   count: downloadedCount, active: current == _Tab.downloaded, onTap: () => onChange(_Tab.downloaded)),
+          _TabButton(label: 'Downloaded',   count: downloadedCount, active: current == _Tab.downloaded, onTap: () => onChange(_Tab.downloaded)),
         ],
       ),
     );
   }
 }
 
-class _Tab extends StatelessWidget {
+class _TabButton extends StatelessWidget {
   final String label;
   final int? count;
   final bool active;
   final VoidCallback onTap;
-  const _Tab({required this.label, required this.count, required this.active, required this.onTap});
+  const _TabButton({required this.label, required this.count, required this.active, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -463,7 +463,7 @@ class _DownloadButton extends ConsumerWidget {
   final String url;
   final bool isCached;
   final bool isDownloading;
-  final DownloadProgress? progress;
+  final CacheDownloadProgress? progress;
   const _DownloadButton({
     required this.slug,
     required this.url,

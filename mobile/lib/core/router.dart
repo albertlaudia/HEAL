@@ -606,13 +606,6 @@ class HealRouter {
         },
       ),
       GoRoute(
-        path: '/praise/:id',
-        pageBuilder: (context, state) {
-          final id = state.pathParameters['id']!;
-          return _verticalSlide(state, PraiseDetailPage(id: id));
-        },
-      ),
-      GoRoute(
         path: '/prayer/:id',
         pageBuilder: (context, state) {
           final id = state.pathParameters['id']!;

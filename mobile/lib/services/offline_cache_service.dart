@@ -17,16 +17,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
-class DownloadProgress {
+class CacheDownloadProgress {
   final double progress;     // 0.0 - 1.0
   final int receivedBytes;
   final int? totalBytes;
-  const DownloadProgress({required this.progress, required this.receivedBytes, this.totalBytes});
+  const CacheDownloadProgress({required this.progress, required this.receivedBytes, this.totalBytes});
 }
 
 class OfflineCacheState {
   final Set<String> cachedSlugs;
-  final Map<String, DownloadProgress> inProgress;
+  final Map<String, CacheDownloadProgress> inProgress;
   final String? lastError;
 
   const OfflineCacheState({
@@ -37,11 +37,11 @@ class OfflineCacheState {
 
   bool isCached(String slug) => cachedSlugs.contains(slug);
   bool isDownloading(String slug) => inProgress.containsKey(slug);
-  DownloadProgress? progressFor(String slug) => inProgress[slug];
+  CacheDownloadProgress? progressFor(String slug) => inProgress[slug];
 
   OfflineCacheState copyWith({
     Set<String>? cachedSlugs,
-    Map<String, DownloadProgress>? inProgress,
+    Map<String, CacheDownloadProgress>? inProgress,
     String? lastError,
     bool clearError = false,
   }) =>
@@ -105,15 +105,15 @@ class OfflineCacheService extends StateNotifier<OfflineCacheState> {
   Future<bool> download(
     String slug,
     String url, {
-    void Function(DownloadProgress)? onProgress,
+    void Function(CacheDownloadProgress)? onProgress,
   }) async {
     if (state.isCached(slug)) return true;
     if (state.isDownloading(slug)) return false;
 
     // Mark downloading
-    final progress = <String, DownloadProgress>{
+    final progress = <String, CacheDownloadProgress>{
       ...state.inProgress,
-      slug: const DownloadProgress(progress: 0, receivedBytes: 0),
+      slug: const CacheDownloadProgress(progress: 0, receivedBytes: 0),
     };
     state = state.copyWith(inProgress: progress, clearError: true);
 
@@ -141,7 +141,7 @@ class OfflineCacheService extends StateNotifier<OfflineCacheState> {
             : (received / total).clamp(0.0, 1.0);
         final next = <String, DownloadProgress>{
           ...state.inProgress,
-          slug: DownloadProgress(progress: p, receivedBytes: received, totalBytes: total),
+          slug: CacheDownloadProgress(progress: p, receivedBytes: received, totalBytes: total),
         };
         state = state.copyWith(inProgress: next);
         onProgress?.call(next[slug]!);
@@ -158,7 +158,7 @@ class OfflineCacheService extends StateNotifier<OfflineCacheState> {
   }
 
   void _finishDownload(String slug, {required bool success, String? error}) {
-    final progress = Map<String, DownloadProgress>.from(state.inProgress)..remove(slug);
+    final progress = Map<String, CacheDownloadProgress>.from(state.inProgress)..remove(slug);
     if (success) {
       final cached = Set<String>.from(state.cachedSlugs)..add(slug);
       state = state.copyWith(cachedSlugs: cached, inProgress: progress, clearError: true);
