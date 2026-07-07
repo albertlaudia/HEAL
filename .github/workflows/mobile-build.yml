@@ -134,7 +134,7 @@ jobs:
       - name: Stage AAB artifact
         run: |
           mkdir -p _artifact
-          cp mobile/build/app/outputs/bundle/release/app-release.aab _artifact/heal.aab
+          cp build/app/outputs/bundle/release/app-release.aab _artifact/heal.aab
           ls -lh _artifact/
 
       - name: Upload AAB to GitHub
