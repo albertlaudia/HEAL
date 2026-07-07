@@ -215,6 +215,13 @@ class HomePage extends HookConsumerWidget {
               const SizedBox(height: HealTokens.s16),
 
               _PracticeGrid(palette: palette),
+              const SizedBox(height: HealTokens.s40),
+
+              // ── Bible-in-a-Year hero ───────────────────────────
+              FadeInOnMount(
+                delay: const Duration(milliseconds: 650),
+                child: _BibleYearHero(palette: palette),
+              ),
               const SizedBox(height: HealTokens.s48),
 
               // ── Footer mark ─────────────────────────────────
@@ -1139,6 +1146,159 @@ class _TodayCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+
+/// ─────────────────────────────────────────────────────────────────────
+/// BIBLE YEAR HERO — converts the Bible-in-a-Year idea into a CTA card on
+/// the home page so users who don't open the Bible tab see it daily.
+/// ─────────────────────────────────────────────────────────────────────
+class _BibleYearHero extends HookConsumerWidget {
+  final TimePalette palette;
+  const _BibleYearHero({required this.palette});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final readingsAsync  = ref.watch(allReadingsProvider);
+    final userIdAsync    = ref.watch(userIdProvider);
+    return userIdAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (userId) {
+        final progressAsync = ref.watch(userProgressProvider(userId));
+        final completedDays = progressAsync.maybeWhen(
+          data: (p) => p.map((x) => x.dayNumber).toSet(),
+          orElse: () => <int>{},
+        );
+        final today = DateTime.now();
+        final dayOfYear = today.difference(DateTime(today.year, 1, 1)).inDays + 1;
+        final planDay = dayOfYear.clamp(1, 365);
+        final completedCount = completedDays.length;
+        final isTodayDone = completedDays.contains(planDay);
+        return Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(HealTokens.r24),
+            onTap: () => context.push('/bible'),
+            child: Container(
+              padding: const EdgeInsets.all(HealTokens.s24),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: <Color>[Color(0xFF4A3A2E), Color(0xFF2E2520)],
+                ),
+                borderRadius: BorderRadius.circular(HealTokens.r24),
+                border: Border.all(color: HealTokens.brass.withValues(alpha: 0.32)),
+                boxShadow: <BoxShadow>[
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.32),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.menu_book_rounded, color: HealTokens.brassLight, size: 18),
+                      const SizedBox(width: 8),
+                      Text(
+                        'BIBLE IN A YEAR',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: HealTokens.brassLight,
+                              letterSpacing: 1.8,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
+                      const Spacer(),
+                      Icon(
+                        Icons.arrow_forward_rounded,
+                        size: 18,
+                        color: HealTokens.creamDim.withValues(alpha: 0.6),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: HealTokens.s12),
+                  Text(
+                    isTodayDone
+                      ? "Today's reading is complete"
+                      : 'Day $planDay awaits',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          color: HealTokens.cream,
+                          fontWeight: FontWeight.w400,
+                          height: 1.2,
+                        ),
+                  ),
+                  const SizedBox(height: 4),
+                  readingsAsync.maybeWhen(
+                    data: (readings) {
+                      if (readings.isEmpty) {
+                        return Text(
+                          '365 days through the Bible, one chapter at a time',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: HealTokens.creamDim),
+                        );
+                      }
+                      final r = readings.firstWhere(
+                        (x) => x.dayNumber == planDay,
+                        orElse: () => readings.first,
+                      );
+                      return Text(
+                        r.title,
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: HealTokens.creamDim,
+                              fontStyle: FontStyle.italic,
+                            ),
+                      );
+                    },
+                    orElse: () => const SizedBox.shrink(),
+                  ),
+                  const SizedBox(height: HealTokens.s16),
+                  SizedBox(
+                    height: 6,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: 365,
+                      itemBuilder: (_, i) {
+                        final day = i + 1;
+                        return Container(
+                          width: 1,
+                          margin: EdgeInsets.only(right: i % 60 == 59 ? 6 : 0),
+                          color: completedDays.contains(day)
+                              ? HealTokens.brass
+                              : HealTokens.brass.withValues(alpha: 0.1),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '$completedCount / 365 days',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(color: HealTokens.creamDim),
+                      ),
+                      Text(
+                        isTodayDone ? 'Day $planDay done' : 'Tap to read',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: HealTokens.brass,
+                              fontWeight: FontWeight.w700,
+                            ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

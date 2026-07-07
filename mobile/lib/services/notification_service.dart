@@ -160,12 +160,68 @@ class NotificationService {
     }
   }
 
+  /// ── Notification copy pool (Bible-in-a-Year variants) ──────────
+  /// Rotated deterministically by fire count so the same user sees all
+  /// variants over time without true randomness.
+  static const List<(String, String)> _morningBibleVariants = [
+    ('A chapter today',                  'Day {n} is ready when you are. Open the Word.'),
+    ('Still here. Still loved.',         'Begin Day {n} in two minutes of reading.'),
+    ('The Word is waiting, friend.',     'Day {n}. One chapter, one breath.'),
+    ('A new day, a new chapter',         'Day {n}. Press play on today’s reading.'),
+    ('Sit with the Word',                'Day {n}. Slow down. Read. Let it find you.'),
+    ('Quiet start',                      'Day {n}. A psalm, a proverb, a promise.'),
+    ('Come as you are',                  'The Bible is not a test. Day {n} is waiting.'),
+    ('A short path, a long story',       'Day {n} of 365. You’re further than you think.'),
+    ('Small steps, big book',            'Day {n}. Three chapters. Five minutes.'),
+    ('The Word, today',                  'Day {n}. Whatever you give is enough.'),
+  ];
+
+  static const List<String> _missedDayVariants = [
+    'You didn’t finish today’s reading. Tomorrow is a new day.',
+    'No guilt — just grace. Pick it up when ready.',
+    'Days are long, the Word is patient. Take up Day {n} next.',
+    'Missed days are not lost days. Continue.',
+    'A rested mind reads better. See you tomorrow.',
+  ];
+
+  static const List<String> _comebackVariants = [
+    'Welcome back. Your Day {n} is ready.',
+    'Grace covers what you missed. Begin again.',
+    'A fresh start awaits. Day {n}.',
+    'Still here. Still glad. Pick up where you left off.',
+    'The story continues. Day {n} is yours.',
+  ];
+
+  static String _bibleTitleForToday(int fireCount) =>
+      _morningBibleVariants[fireCount.abs() % _morningBibleVariants.length].$1;
+
+  static String _bibleBodyForToday(int fireCount) {
+    final tpl = _morningBibleVariants[fireCount.abs() % _morningBibleVariants.length].$2;
+    return tpl.replaceAll('{n}', 'today');
+  }
+
+  static String _missedDayCopy(int fireCount, int missedCount) {
+    final v = _missedDayVariants[fireCount.abs() % _missedDayVariants.length];
+    return missedCount > 7
+        ? '$v (You’re $missedCount days behind — we’ll catch up slowly.)'
+        : v.replaceAll('{n}', 'today');
+  }
+
+  static String _comebackCopy(int fireCount, int missedCount) {
+    final v = _comebackVariants[fireCount.abs() % _comebackVariants.length];
+    return missedCount > 30
+        ? '$v You’ve been away $missedCount days — pick up wherever feels right.'
+        : v.replaceAll('{n}', 'today');
+  }
+
   Future<void> scheduleMorningReminder() async {
     final prefs = await SharedPreferences.getInstance();
     final hour = prefs.getInt('notif_morning_hour') ?? 7;
     final minute = prefs.getInt('notif_morning_minute') ?? 0;
-    const title = 'A gentle morning awaits';
-    const body = 'Take five minutes. Begin with stillness.';
+    final fireCount = (prefs.getInt('notif_morning_fire_count') ?? 0);
+    await prefs.setInt('notif_morning_fire_count', fireCount + 1);
+    final title = _bibleTitleForToday(fireCount);
+    final body = _bibleBodyForToday(fireCount);
     await _scheduleDaily(_morningId, hour, minute, title, body);
   }
 
@@ -173,9 +229,43 @@ class NotificationService {
     final prefs = await SharedPreferences.getInstance();
     final hour = prefs.getInt('notif_evening_hour') ?? 21;
     final minute = prefs.getInt('notif_evening_minute') ?? 0;
-    const title = 'A quiet evening';
-    const body = 'Set down the day. Let the room hold you.';
-    await _scheduleDaily(_eveningId, hour, minute, title, body);
+    final missed = prefs.getInt('notif_missed_count') ?? 0;
+    final fireCount = (prefs.getInt('notif_evening_fire_count') ?? 0);
+    await prefs.setInt('notif_evening_fire_count', fireCount + 1);
+    final body = missed > 0
+        ? _missedDayCopy(fireCount, missed)
+        : 'Set down the day. Let the room hold you.';
+    await _scheduleDaily(_eveningId, hour, minute, 'A quiet evening', body);
+  }
+
+  /// Snapshot the user’s missed-Bible-day count so subsequent evening
+  /// reminders rotate the missed-day pool correctly.
+  Future<void> recordMissedBibleDays(int count) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('notif_missed_count', count);
+  }
+
+  /// Show a one-shot comeback notification when the user opens the app
+  /// after 3+ days away. Idempotent via last_comeback_shown tracking.
+  Future<void> showComebackNotification({
+    required int lastShownDays,
+    required int missedDays,
+  }) async {
+    if (missedDays < 3) return;
+    final prefs = await SharedPreferences.getInstance();
+    final last = prefs.getInt('last_comeback_shown') ?? 0;
+    if (last >= lastShownDays) return;
+    await prefs.setInt('last_comeback_shown', lastShownDays);
+    if (kIsWeb) return;
+    final fireCount = (prefs.getInt('notif_comeback_fire_count') ?? 0);
+    await prefs.setInt('notif_comeback_fire_count', fireCount + 1);
+    final body = _comebackCopy(fireCount, missedDays);
+    await _plugin.show(
+      9999,
+      'Welcome back',
+      body,
+      _details(),
+    );
   }
 
   Future<void> cancelAll() async {

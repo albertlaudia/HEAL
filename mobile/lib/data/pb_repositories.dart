@@ -10,8 +10,11 @@
 //   Use `safeSort()` below to keep the call sites readable.
 
 import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pocketbase/pocketbase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'pb_models.dart';
 
 const _cacheTtl = Duration(minutes: 5);
@@ -359,3 +362,94 @@ final reflectionsProvider = FutureProvider<List<Essay>>((ref) async {
     return [];
   }
 });
+
+
+// ── Bible-in-a-Year ──────────────────────────────────────────────────────
+class BibleRepository {
+  final PocketBase _pb;
+  BibleRepository(this._pb);
+
+  Future<List<BibleReading>> listAll() async {
+    try {
+      final records = await _pb.collection('HEAL_bible_readings').getList(
+        page: 1, perPage: 400, sort: 'day_number',
+      );
+      return records.items.map((r) => BibleReading.fromJson(r.toJson())).toList();
+    } catch (_) {
+      return <BibleReading>[];
+    }
+  }
+
+  Future<BibleReading?> get(int dayNumber) async {
+    try {
+      final r = await _pb.collection('HEAL_bible_readings').getFirstListItem('day_number=$dayNumber');
+      return BibleReading.fromJson(r.toJson());
+    } catch (_) {
+      return null;
+    }
+  }
+}
+
+class BibleProgressRepository {
+  final PocketBase _pb;
+  BibleProgressRepository(this._pb);
+
+  Future<List<BibleProgress>> forUser(String userId) async {
+    try {
+      final records = await _pb.collection('HEAL_bible_progress').getList(
+        page: 1, perPage: 400,
+        filter: "user_id='$userId'",
+        sort: '-completed_at',
+      );
+      return records.items.map((r) => BibleProgress.fromJson(r.toJson())).toList();
+    } catch (_) {
+      return <BibleProgress>[];
+    }
+  }
+
+  Future<BibleProgress> markComplete({
+    required String userId,
+    required int dayNumber,
+    String notes = '',
+    int readingSeconds = 0,
+  }) async {
+    final record = await _pb.collection('HEAL_bible_progress').create(body: {
+      'user_id': userId,
+      'day_number': dayNumber,
+      'completed_at': DateTime.now().toIso8601String(),
+      'notes': notes,
+      'reading_seconds': readingSeconds,
+    });
+    return BibleProgress.fromJson(record.toJson());
+  }
+}
+
+final bibleRepoProvider = Provider<BibleRepository>((ref) => BibleRepository(ref.watch(pocketbaseProvider)));
+final bibleProgressRepoProvider = Provider<BibleProgressRepository>((ref) => BibleProgressRepository(ref.watch(pocketbaseProvider)));
+
+final allReadingsProvider = FutureProvider<List<BibleReading>>((ref) async {
+  return ref.watch(bibleRepoProvider).listAll();
+});
+
+final userProgressProvider = FutureProvider.family<List<BibleProgress>, String>((ref, userId) async {
+  return ref.watch(bibleProgressRepoProvider).forUser(userId);
+});
+
+class UserIdService {
+  static const _key = 'heal.user_id.v1';
+  String? _cached;
+
+  Future<String> get() async {
+    if (_cached != null) return _cached!;
+    final prefs = await SharedPreferences.getInstance();
+    var id = prefs.getString(_key);
+    if (id == null) {
+      id = 'u-${DateTime.now().millisecondsSinceEpoch}-${Random().nextInt(99999)}';
+      await prefs.setString(_key, id);
+    }
+    _cached = id;
+    return id;
+  }
+}
+
+final userIdProvider = FutureProvider<String>((ref) async => UserIdService().get());

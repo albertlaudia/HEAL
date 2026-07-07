@@ -1,4 +1,6 @@
 // HEAL — PocketBase data models.
+import 'dart:convert';
+
 // Mirror the HEAL_* collections on https://pocketbase.scaleupcrm.com.
 
 class Meditation {
@@ -413,5 +415,105 @@ class WorldDay {
     if (v == null) return null;
     final s = v.toString();
     try { return DateTime.parse(s); } catch (_) { return null; }
+  }
+}
+
+
+
+/// HEALBibleReading — one day in the Bible-in-a-Year plan.
+class BibleReading {
+  final String id;
+  final int dayNumber;
+  final String title;
+  final List<BibleReadingItem> readings;
+  final String reflectionPrompt;
+
+  const BibleReading({
+    required this.id,
+    required this.dayNumber,
+    required this.title,
+    required this.readings,
+    this.reflectionPrompt = '',
+  });
+
+  factory BibleReading.fromJson(Map<String, dynamic> json) {
+    final rawReadings = json['readings'];
+    List<BibleReadingItem> parsedReadings = <BibleReadingItem>[];
+    if (rawReadings is String) {
+      try {
+        parsedReadings = (jsonDecode(rawReadings) as List)
+            .map((e) => BibleReadingItem.fromJson(e as Map<String, dynamic>))
+            .toList();
+      } catch (_) {}
+    } else if (rawReadings is List) {
+      parsedReadings = rawReadings.map((e) => BibleReadingItem.fromJson(e as Map<String, dynamic>)).toList();
+    }
+    return BibleReading(
+      id: json['id'] as String,
+      dayNumber: (json['day_number'] ?? 0) as int,
+      title: (json['title'] ?? '') as String,
+      readings: parsedReadings,
+      reflectionPrompt: (json['reflection_prompt'] ?? '') as String,
+    );
+  }
+}
+
+class BibleReadingItem {
+  final String book;
+  final int chapterStart;
+  final int chapterEnd;
+  const BibleReadingItem({
+    required this.book,
+    required this.chapterStart,
+    required this.chapterEnd,
+  });
+
+  factory BibleReadingItem.fromJson(Map<String, dynamic> json) => BibleReadingItem(
+    book: (json['book'] ?? '') as String,
+    chapterStart: (json['chapter_start'] ?? 1) as int,
+    chapterEnd: (json['chapter_end'] ?? 1) as int,
+  );
+
+  String get label {
+    if (chapterStart == chapterEnd) return '$book $chapterStart';
+    return '$book $chapterStart–$chapterEnd';
+  }
+
+  String get bibleGatewayUrl {
+    if (chapterStart == chapterEnd) {
+      return 'https://www.biblegateway.com/passage/?search=${Uri.encodeComponent(book)}+${chapterStart}&version=NIV';
+    }
+    return 'https://www.biblegateway.com/passage/?search=${Uri.encodeComponent(book)}+${chapterStart}-${chapterEnd}&version=NIV';
+  }
+}
+
+
+/// HEALBibleProgress — a single completed day.
+class BibleProgress {
+  final String id;
+  final String userId;
+  final int dayNumber;
+  final DateTime completedAt;
+  final String notes;
+  final int readingSeconds;
+
+  const BibleProgress({
+    required this.id,
+    required this.userId,
+    required this.dayNumber,
+    required this.completedAt,
+    this.notes = '',
+    this.readingSeconds = 0,
+  });
+
+  factory BibleProgress.fromJson(Map<String, dynamic> json) {
+    return BibleProgress(
+      id: json['id'] as String,
+      userId: (json['user_id'] ?? '') as String,
+      dayNumber: (json['day_number'] ?? 0) as int,
+      completedAt: DateTime.tryParse(json['completed_at'] as String? ?? '') ?? DateTime.now(),
+      notes: (json['notes'] ?? '') as String,
+      readingSeconds: (json['reading_seconds'] ?? 0) as int,
+    );
   }
 }
