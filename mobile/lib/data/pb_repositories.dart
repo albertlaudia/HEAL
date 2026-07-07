@@ -346,7 +346,7 @@ final todayPrayerProvider = FutureProvider<Prayer?>((ref) async {
 
 final praisesProvider = FutureProvider<List<PraiseSong>>((ref) async {
   try {
-    return await ref.watch(praiseRepoProvider).list(limit: 30);
+    return await ref.watch(praiseRepoProvider).list(limit: 100);
   } catch (_) {
     return [];
   }
@@ -354,7 +354,7 @@ final praisesProvider = FutureProvider<List<PraiseSong>>((ref) async {
 
 final reflectionsProvider = FutureProvider<List<Essay>>((ref) async {
   try {
-    return await ref.watch(essayRepoProvider).list(limit: 30);
+    return await ref.watch(essayRepoProvider).list(limit: 50);
   } catch (_) {
     return [];
   }

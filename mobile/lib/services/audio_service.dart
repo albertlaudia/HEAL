@@ -7,7 +7,9 @@
 //   - speed control
 //   - resume from last position
 //   - skip ±15s
-//   - lockscreen metadata (basic; full controls would need just_audio_background)
+//   - playlist queue (auto-advance next/prev)
+//   - offline-aware playback (DeviceFileSource if cached)
+//   - loading flag (true between setSource() and onPlayerStateChanged(playing))
 
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
@@ -41,18 +43,26 @@ class AudioTrack {
 class AudioState {
   final AudioTrack? track;
   final bool playing;
+  final bool loading;          // true while setSource() resolves
   final Duration position;
   final Duration duration;
   final double speed;
   final String? error;
 
+  /// Playlist context — when set, track-completion auto-advances.
+  final List<AudioTrack> queue;
+  final int queueIndex;
+
   const AudioState({
     this.track,
     this.playing = false,
+    this.loading = false,
     this.position = Duration.zero,
     this.duration = Duration.zero,
     this.speed = 1.0,
     this.error,
+    this.queue = const [],
+    this.queueIndex = -1,
   });
 
   bool get hasTrack => track != null;
@@ -64,22 +74,32 @@ class AudioState {
     return (position.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0);
   }
 
+  bool get inPlaylist => queue.isNotEmpty;
+  bool get hasNext => inPlaylist && queueIndex < queue.length - 1;
+  bool get hasPrev => inPlaylist && queueIndex > 0;
+
   AudioState copyWith({
     AudioTrack? track,
     bool? playing,
+    bool? loading,
     Duration? position,
     Duration? duration,
     double? speed,
     String? error,
+    List<AudioTrack>? queue,
+    int? queueIndex,
     bool clearError = false,
   }) {
     return AudioState(
       track: track ?? this.track,
       playing: playing ?? this.playing,
+      loading: loading ?? this.loading,
       position: position ?? this.position,
       duration: duration ?? this.duration,
       speed: speed ?? this.speed,
       error: clearError ? null : (error ?? this.error),
+      queue: queue ?? this.queue,
+      queueIndex: queueIndex ?? this.queueIndex,
     );
   }
 }
@@ -94,7 +114,6 @@ class AudioService extends StateNotifier<AudioState> {
   StreamSubscription? _completeSub;
 
   /// Hook for callers to react to track completion (e.g. record session).
-  /// Receives (track, durationSeconds) when a track completes naturally.
   void Function(AudioTrack track, int durationSeconds)? onTrackComplete;
 
   AudioPlayer get player => _player;
@@ -114,7 +133,11 @@ class AudioService extends StateNotifier<AudioState> {
 
     _stateSub = _player.onPlayerStateChanged.listen((ps) {
       if (!mounted) return;
-      state = state.copyWith(playing: ps == PlayerState.playing);
+      state = state.copyWith(
+        playing: ps == PlayerState.playing,
+        // loading clears once we know we're playing OR we've stopped (failed)
+        loading: ps == PlayerState.playing ? false : state.loading,
+      );
     });
 
     _completeSub = _player.onPlayerComplete.listen((_) {
@@ -124,47 +147,92 @@ class AudioService extends StateNotifier<AudioState> {
       state = state.copyWith(
         playing: false,
         position: state.duration,
+        loading: false,
       );
-      // Fire completion hook (set by caller via onTrackComplete)
       if (completedTrack != null && durationSec > 0) {
         onTrackComplete?.call(completedTrack, durationSec);
+      }
+      // Auto-advance playlist
+      if (state.hasNext) {
+        // Don't await — let the UI update naturally
+        // ignore: discarded_futures
+        _playIndex(state.queueIndex + 1);
       }
     });
   }
 
+  /// Play a single track (no playlist context).
   Future<void> play(AudioTrack track) async {
-    if (state.track?.id != track.id) {
-      // New track
-      state = AudioState(track: track, playing: true);
-      try {
+    await _playInternal(track, queue: const [], index: -1);
+  }
+
+  /// Play a track as part of a playlist queue. Auto-advances on completion.
+  Future<void> playPlaylist(List<AudioTrack> queue, int index) async {
+    if (index < 0 || index >= queue.length) return;
+    await _playInternal(queue[index], queue: queue, index: index);
+  }
+
+  Future<void> _playInternal(
+    AudioTrack track, {
+    required List<AudioTrack> queue,
+    required int index,
+    String? localPath,
+  }) async {
+    final isNewTrack = state.track?.id != track.id;
+    state = state.copyWith(
+      track: track,
+      loading: true,
+      position: Duration.zero,
+      duration: Duration.zero,
+      playing: false,
+      queue: queue,
+      queueIndex: index,
+      clearError: true,
+    );
+
+    try {
+      if (localPath != null) {
+        await _player.play(DeviceFileSource(localPath));
+      } else {
         await _player.play(UrlSource(track.url));
-        if (track.startAt != null) {
-          await _player.seek(track.startAt!);
-        }
-      } catch (e) {
-        if (kDebugMode) print('AudioService.play error: $e');
-        state = state.copyWith(error: e.toString(), playing: false);
       }
-    } else {
-      // Same track — resume
-      await resume();
+      if (track.startAt != null) {
+        await _player.seek(track.startAt!);
+      }
+      if (!isNewTrack) {
+        // Resumed an already-loaded track — loading should already be false
+        state = state.copyWith(loading: false);
+      }
+    } catch (e) {
+      if (kDebugMode) print('AudioService.play error: $e');
+      state = state.copyWith(error: e.toString(), playing: false, loading: false);
     }
+  }
+
+  Future<void> _playIndex(int index) async {
+    if (!state.inPlaylist) return;
+    if (index < 0 || index >= state.queue.length) return;
+    final t = state.queue[index];
+    state = state.copyWith(queueIndex: index);
+    await _playInternal(t, queue: state.queue, index: index);
+  }
+
+  Future<void> next() async {
+    if (state.hasNext) await _playIndex(state.queueIndex + 1);
+  }
+
+  Future<void> prev() async {
+    if (state.hasPrev) await _playIndex(state.queueIndex - 1);
   }
 
   Future<void> pause() async {
-    try {
-      await _player.pause();
-    } catch (e) {
-      state = state.copyWith(error: e.toString());
-    }
+    try { await _player.pause(); }
+    catch (e) { state = state.copyWith(error: e.toString()); }
   }
 
   Future<void> resume() async {
-    try {
-      await _player.resume();
-    } catch (e) {
-      state = state.copyWith(error: e.toString());
-    }
+    try { await _player.resume(); }
+    catch (e) { state = state.copyWith(error: e.toString()); }
   }
 
   Future<void> stop() async {
@@ -231,7 +299,6 @@ class AudioService extends StateNotifier<AudioState> {
 final audioServiceProvider =
     StateNotifierProvider<AudioService, AudioState>((ref) {
   final svc = AudioService();
-  // Fire-and-forget init — caller can await if needed
   // ignore: discarded_futures
   svc.init();
   return svc;

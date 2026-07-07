@@ -14,6 +14,8 @@ import '../features/home/home_page.dart';
 import '../features/now/now_page.dart';
 import '../features/prayer/prayer_page.dart';
 import '../features/praise/praise_library_page.dart';
+import '../features/praise/karaoke_lyrics.dart';
+import '../features/praise/timed_lyrics.dart';
 import '../features/meditate/meditate_detail_page.dart';
 import '../features/essays/essay_page.dart';
 import '../features/world/world_day_page.dart';
@@ -240,6 +242,17 @@ class MiniPlayer extends ConsumerWidget {
                 ],
               ),
             ),
+            if (audio.inPlaylist && audio.hasNext)
+              IconButton(
+                icon: Icon(
+                  Icons.skip_next_rounded,
+                  size: 22,
+                  color: audio.hasNext ? HealTokens.brass : HealTokens.creamDim,
+                ),
+                onPressed: audio.hasNext
+                    ? () => ref.read(audioServiceProvider.notifier).next()
+                    : null,
+              ),
             if (audio.track?.source == AudioSource.praise &&
                 (audio.track?.lyrics ?? '').isNotEmpty) ...[
               IconButton(
@@ -302,50 +315,15 @@ class _LyricsSheet extends HookConsumerWidget {
     required this.duration,
   });
 
-  /// Parse lyrics into blocks (verse/chorus/bridge) by `[Tag]` markers, then
-  /// lines. Falls back to a single block if no tags are present.
-  List<_LyricsBlock> _parse(String raw) {
-    final blocks = <_LyricsBlock>[];
-    String? currentTag;
-    final currentLines = <String>[];
-
-    void flush() {
-      if (currentLines.isNotEmpty || currentTag != null) {
-        blocks.add(_LyricsBlock(tag: currentTag, lines: List.of(currentLines)));
-      }
-      currentLines.clear();
-      currentTag = null;
-    }
-
-    for (final line in raw.split('\n')) {
-      final t = line.trim();
-      if (t.isEmpty) {
-        flush();
-        continue;
-      }
-      final tagMatch = RegExp(r'^\[(.+?)\]$').firstMatch(t);
-      if (tagMatch != null) {
-        flush();
-        currentTag = tagMatch.group(1);
-        continue;
-      }
-      currentLines.add(t);
-    }
-    flush();
-    return blocks.isEmpty ? [_LyricsBlock(tag: null, lines: raw.split('\n').where((l) => l.trim().isNotEmpty).toList())] : blocks;
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final blocks = useMemoized(() => _parse(lyrics), [lyrics]);
     final audio = ref.watch(audioServiceProvider);
-    final pos = audio.position;
-    final dur = audio.duration;
+    final timed = useMemoized(() => TimedLyricsParser.parse(lyrics), [lyrics]);
 
     return DraggableScrollableSheet(
       expand: false,
-      initialChildSize: 0.75,
-      minChildSize: 0.4,
+      initialChildSize: 0.78,
+      minChildSize: 0.5,
       maxChildSize: 0.95,
       builder: (_, controller) => Container(
         decoration: const BoxDecoration(
@@ -371,7 +349,7 @@ class _LyricsSheet extends HookConsumerWidget {
             // Header
             Padding(
               padding: const EdgeInsets.fromLTRB(
-                HealTokens.s24, HealTokens.s16, HealTokens.s24, HealTokens.s8,
+                HealTokens.s24, HealTokens.s12, HealTokens.s24, HealTokens.s8,
               ),
               child: Row(
                 children: [
@@ -409,56 +387,13 @@ class _LyricsSheet extends HookConsumerWidget {
                 ],
               ),
             ),
-            // Lyrics scroll
+            // Karaoke lyrics
             Expanded(
-              child: ListView.builder(
-                controller: controller,
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(
-                  HealTokens.s32, HealTokens.s16, HealTokens.s32, HealTokens.s96,
-                ),
-                itemCount: blocks.length,
-                itemBuilder: (_, i) {
-                  final b = blocks[i];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: HealTokens.s24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (b.tag != null) ...[
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: HealTokens.s12, vertical: HealTokens.s2),
-                            decoration: BoxDecoration(
-                              color: HealTokens.brass.withValues(alpha: 0.18),
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Text(
-                              b.tag!.toUpperCase(),
-                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: HealTokens.brassLight,
-                                    letterSpacing: 1.6,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                            ),
-                          ),
-                          const SizedBox(height: HealTokens.s12),
-                        ],
-                        ...b.lines.map((line) => Padding(
-                              padding: const EdgeInsets.only(bottom: 4),
-                              child: Text(
-                                line,
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      color: HealTokens.cream,
-                                      height: 1.5,
-                                      fontWeight: FontWeight.w300,
-                                    ),
-                              ),
-                            )),
-                      ],
-                    ),
-                  );
-                },
+              child: KaraokeLyrics(
+                timed: timed,
+                position: audio.position,
+                onSeek: (s) => ref.read(audioServiceProvider.notifier)
+                    .seek(Duration(milliseconds: (s * 1000).round())),
               ),
             ),
             // Bottom playback bar
@@ -478,52 +413,38 @@ class _LyricsSheet extends HookConsumerWidget {
               ),
               child: Column(
                 children: [
-                  // Progress bar
-                  _ProgressBarInline(pos: pos, dur: dur),
+                  _SheetProgressBar(pos: audio.position, dur: audio.duration),
                   const SizedBox(height: HealTokens.s8),
-                  // Mini controls
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
                         icon: const Icon(Icons.replay_10_rounded, size: 28),
                         color: HealTokens.cream,
-                        onPressed: () => ref
-                            .read(audioServiceProvider.notifier)
-                            .skipBack(const Duration(seconds: 10)),
+                        onPressed: () => ref.read(audioServiceProvider.notifier).skipBack(const Duration(seconds: 10)),
                       ),
-                      const SizedBox(width: HealTokens.s24),
-                      GestureDetector(
-                        onTap: () {
-                          HapticFeedback.mediumImpact();
-                          ref.read(audioServiceProvider.notifier).togglePlay();
-                        },
-                        child: Container(
-                          width: 64,
-                          height: 64,
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [HealTokens.brassLight, HealTokens.brass, HealTokens.brassDeep],
-                            ),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            audio.playing
-                                ? Icons.pause_rounded
-                                : Icons.play_arrow_rounded,
-                            color: HealTokens.rosewoodDeep,
-                            size: 36,
-                          ),
-                        ),
+                      const SizedBox(width: HealTokens.s16),
+                      _SheetPlayButton(
+                        playing: audio.playing,
+                        loading: audio.loading,
+                        onTap: () => ref.read(audioServiceProvider.notifier).togglePlay(),
                       ),
-                      const SizedBox(width: HealTokens.s24),
+                      const SizedBox(width: HealTokens.s16),
                       IconButton(
                         icon: const Icon(Icons.forward_10_rounded, size: 28),
                         color: HealTokens.cream,
-                        onPressed: () => ref
-                            .read(audioServiceProvider.notifier)
-                            .skipForward(const Duration(seconds: 10)),
+                        onPressed: () => ref.read(audioServiceProvider.notifier).skipForward(const Duration(seconds: 10)),
                       ),
+                      if (audio.inPlaylist) ...[
+                        const SizedBox(width: HealTokens.s8),
+                        IconButton(
+                          icon: Icon(Icons.skip_next_rounded, size: 24),
+                          color: audio.hasNext ? HealTokens.brass : HealTokens.creamDim.withValues(alpha: 0.3),
+                          onPressed: audio.hasNext
+                              ? () => ref.read(audioServiceProvider.notifier).next()
+                              : null,
+                        ),
+                      ],
                     ],
                   ),
                 ],
@@ -536,16 +457,43 @@ class _LyricsSheet extends HookConsumerWidget {
   }
 }
 
-class _LyricsBlock {
-  final String? tag;
-  final List<String> lines;
-  _LyricsBlock({required this.tag, required this.lines});
+class _SheetPlayButton extends StatelessWidget {
+  final bool playing;
+  final bool loading;
+  final VoidCallback onTap;
+  const _SheetPlayButton({required this.playing, required this.loading, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 60, height: 60,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [HealTokens.brassLight, HealTokens.brass, HealTokens.brassDeep],
+          ),
+          shape: BoxShape.circle,
+        ),
+        child: loading
+            ? const Padding(
+                padding: EdgeInsets.all(16),
+                child: CircularProgressIndicator(strokeWidth: 2.5, color: HealTokens.rosewoodDeep),
+              )
+            : Icon(
+                playing ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                color: HealTokens.rosewoodDeep,
+                size: 32,
+              ),
+      ),
+    );
+  }
 }
 
-class _ProgressBarInline extends StatelessWidget {
+class _SheetProgressBar extends StatelessWidget {
   final Duration pos;
   final Duration dur;
-  const _ProgressBarInline({required this.pos, required this.dur});
+  const _SheetProgressBar({required this.pos, required this.dur});
 
   @override
   Widget build(BuildContext context) {
@@ -568,11 +516,11 @@ class _ProgressBarInline extends StatelessWidget {
               alignment: Alignment.centerLeft,
               widthFactor: progress,
               child: Container(
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
                     colors: [HealTokens.brassLight, HealTokens.brass],
                   ),
-                  borderRadius: BorderRadius.circular(2),
+                  borderRadius: BorderRadius.all(Radius.circular(2)),
                 ),
               ),
             ),
