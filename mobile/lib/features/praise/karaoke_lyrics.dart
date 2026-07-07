@@ -1,3 +1,4 @@
+import 'package:flutter/rendering.dart';
 // HEAL — Karaoke-style lyrics view.
 // Renders timed lyrics with the active line highlighted, auto-scrolling
 // the current line to the vertical centre of the viewport.

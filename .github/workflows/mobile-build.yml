@@ -131,8 +131,14 @@ jobs:
       #     VERSION_CODE: ${{ steps.version.outputs.version_code }}
       #   continue-on-error: false
 
-      - name: Upload AAB artifact
+      - name: Stage AAB artifact
+        run: |
+          mkdir -p _artifact
+          cp build/app/outputs/bundle/release/app-release.aab _artifact/heal.aab
+          ls -lh _artifact/
+
+      - name: Upload AAB to GitHub
         uses: actions/upload-artifact@v4
         with:
-          name: heal-aab-${{ steps.version.outputs.version_code }}
-          path: build/app/outputs/bundle/release/app-release.aab
+          name: heal-aab-${{ steps.version.outputs.version_code || 'latest' }}
+          path: mobile/_artifact/heal.aab

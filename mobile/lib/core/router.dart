@@ -438,7 +438,7 @@ class _LyricsSheet extends HookConsumerWidget {
                       if (audio.inPlaylist) ...[
                         const SizedBox(width: HealTokens.s8),
                         IconButton(
-                          icon: const Icon(Icons.skip_next_rounded, size: 24),
+                          icon: Icon(Icons.skip_next_rounded, size: 24),
                           color: audio.hasNext ? HealTokens.brass : HealTokens.creamDim.withValues(alpha: 0.3),
                           onPressed: audio.hasNext
                               ? () => ref.read(audioServiceProvider.notifier).next()
@@ -604,10 +604,6 @@ class HealRouter {
           final id = state.pathParameters['id']!;
           return _sharedAxis(state, MeditateDetailPage(id: id));
         },
-      ),
-      GoRoute(
-        path: '/praise/:id',
-        redirect: (_, __) => '/praise',
       ),
       GoRoute(
         path: '/prayer/:id',
