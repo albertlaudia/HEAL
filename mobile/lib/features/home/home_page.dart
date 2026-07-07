@@ -965,11 +965,11 @@ class _TodayShelf extends HookConsumerWidget {
             icon: Icons.favorite_rounded,
             eyebrow: 'Prayer',
             title: prayerAsync.maybeWhen(
-              data: (p) => p?.title ?? 'A prayer',
+              data: (p) => p.title ?? 'A prayer',
               orElse: () => 'A prayer',
             ),
             subtitle: prayerAsync.maybeWhen(
-              data: (p) => p?.body?.split('\n').first ?? 'Bring it to God',
+              data: (p) => p.body?.split('\n').first ?? 'Bring it to God',
               orElse: () => 'Bring it to God',
             ),
             palette: const [Color(0xFFA66B5C), Color(0xFF6F4538)],
