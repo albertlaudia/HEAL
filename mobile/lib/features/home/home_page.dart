@@ -194,9 +194,9 @@ class HomePage extends HookConsumerWidget {
                 ),
               ),
               const SizedBox(height: HealTokens.s16),
-              FadeInOnMount(
-                delay: const Duration(milliseconds: 500),
-                child: const _TodayShelf(),
+              const FadeInOnMount(
+                delay: Duration(milliseconds: 500),
+                child: _TodayShelf(),
               ),
               const SizedBox(height: HealTokens.s40),
 
@@ -969,6 +969,7 @@ class _TodayShelf extends HookConsumerWidget {
               orElse: () => 'A prayer',
             ),
             subtitle: prayerAsync.maybeWhen(
+              // ignore: invalid_null_aware_operator
               data: (p) => p?.body?.split('\n').first ?? 'Bring it to God',
               orElse: () => 'Bring it to God',
             ),

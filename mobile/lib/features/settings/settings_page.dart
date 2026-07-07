@@ -50,7 +50,7 @@ class SettingsPage extends HookConsumerWidget {
                   subtitle: 'A gentle nudge to practice',
                   trailing: Switch(
                     value: notifsEnabled.value,
-                    activeColor: HealTokens.brass,
+                    activeThumbColor: HealTokens.brass,
                     onChanged: (v) async {
                       notifsEnabled.value = v;
                       final svc = ref.read(notificationServiceProvider);
@@ -74,7 +74,7 @@ class SettingsPage extends HookConsumerWidget {
                     subtitle: 'Around 7:00 AM',
                     trailing: Switch(
                       value: morningEnabled.value,
-                      activeColor: HealTokens.brass,
+                      activeThumbColor: HealTokens.brass,
                       onChanged: (v) async {
                         morningEnabled.value = v;
                         if (notifsEnabled.value) {
@@ -93,7 +93,7 @@ class SettingsPage extends HookConsumerWidget {
                     subtitle: 'Around 9:00 PM',
                     trailing: Switch(
                       value: eveningEnabled.value,
-                      activeColor: HealTokens.brass,
+                      activeThumbColor: HealTokens.brass,
                       onChanged: (v) async {
                         eveningEnabled.value = v;
                         if (notifsEnabled.value) {
@@ -113,7 +113,7 @@ class SettingsPage extends HookConsumerWidget {
                   subtitle: 'Gentle taps on breath transitions',
                   trailing: Switch(
                     value: hapticsEnabled.value,
-                    activeColor: HealTokens.brass,
+                    activeThumbColor: HealTokens.brass,
                     onChanged: (v) async {
                       hapticsEnabled.value = v;
                       final prefs = await SharedPreferences.getInstance();

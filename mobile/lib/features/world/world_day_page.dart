@@ -3,7 +3,6 @@
 // Used by both /world/:slug deep links and the Today card on home.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -43,18 +42,18 @@ class WorldDayPage extends HookConsumerWidget {
         loading: () => Center(
           child: CircularProgressIndicator(color: palette.primary, strokeWidth: 1.2),
         ),
-        error: (e, _) => Center(
+        error: (e, _) => const Center(
           child: Text('Could not load.', style: TextStyle(color: HealTokens.creamDim)),
         ),
         data: (world) {
           if (world == null) {
-            return Center(
+            return const Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.public_off_rounded, color: HealTokens.creamDim, size: 48),
-                  const SizedBox(height: 12),
-                  Text('No piece for $slug yet.', style: TextStyle(color: HealTokens.creamDim)),
+                  Icon(Icons.public_off_rounded, color: HealTokens.creamDim, size: 48),
+                  SizedBox(height: 12),
+                  Text('No piece for today yet.', style: TextStyle(color: HealTokens.creamDim)),
                 ],
               ),
             );
