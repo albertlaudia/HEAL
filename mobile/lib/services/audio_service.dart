@@ -22,6 +22,7 @@ class AudioTrack {
   final String title;
   final String subtitle;
   final String illustrationUrl;
+  final String? lyrics;
   final AudioSource source;
   final Duration? startAt;
 
@@ -32,6 +33,7 @@ class AudioTrack {
     required this.subtitle,
     required this.illustrationUrl,
     required this.source,
+    this.lyrics,
     this.startAt,
   });
 }
