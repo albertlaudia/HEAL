@@ -1,5 +1,6 @@
 plugins {
     id "com.android.application"
+    id "org.jetbrains.kotlin.android"
     id "dev.flutter.flutter-gradle-plugin"
 }
 
@@ -32,7 +33,7 @@ if (keyFile.exists()) {
 android {
     namespace "com.pclub.heal"
     compileSdk 36
-    ndkVersion = "26.3.11579264"  // Required by firebase/firestore/audio plugins; NDK 27 has broken CMake on runner
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -40,7 +41,9 @@ android {
         coreLibraryDesugaringEnabled true
     }
 
-
+    kotlinOptions {
+        jvmTarget = "17"
+    }
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -48,7 +51,7 @@ android {
 
     defaultConfig {
         applicationId "com.pclub.heal"
-        minSdkVersion 23  // Required by record_android (minSdk 23)
+        minSdkVersion flutter.minSdkVersion  // Required by record_android (minSdk 23)
         targetSdk 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
