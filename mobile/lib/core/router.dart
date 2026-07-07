@@ -415,7 +415,7 @@ class _LyricsSheet extends HookConsumerWidget {
                 controller: controller,
                 physics: const BouncingScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(
-                  HealTokens.s32, HealTokens.s16, HealTokens.s32, HealTokens.s120,
+                  HealTokens.s32, HealTokens.s16, HealTokens.s32, HealTokens.s96,
                 ),
                 itemCount: blocks.length,
                 itemBuilder: (_, i) {
@@ -428,7 +428,7 @@ class _LyricsSheet extends HookConsumerWidget {
                         if (b.tag != null) ...[
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: HealTokens.s10, vertical: 2),
+                                horizontal: HealTokens.s12, vertical: HealTokens.s2),
                             decoration: BoxDecoration(
                               color: HealTokens.brass.withValues(alpha: 0.18),
                               borderRadius: BorderRadius.circular(999),
