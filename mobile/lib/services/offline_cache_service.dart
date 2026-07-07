@@ -139,7 +139,7 @@ class OfflineCacheService extends StateNotifier<OfflineCacheState> {
         final p = total == null || total == 0
             ? 0.5
             : (received / total).clamp(0.0, 1.0);
-        final next = <String, DownloadProgress>{
+        final next = <String, CacheDownloadProgress>{
           ...state.inProgress,
           slug: CacheDownloadProgress(progress: p, receivedBytes: received, totalBytes: total),
         };
