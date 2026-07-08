@@ -117,7 +117,7 @@ class PraiseSong {
   });
 
   factory PraiseSong.fromJson(Map<String, dynamic> json) {
-    List<String> _toList(dynamic v) {
+    List<String> toList(dynamic v) {
       if (v is List) return v.map((e) => e.toString()).toList();
       if (v is String && v.isNotEmpty) {
         try { return (jsonDecode(v) as List).map((e) => e.toString()).toList(); }
@@ -142,9 +142,9 @@ class PraiseSong {
       category: json['category'] as String?,
       emotion: json['emotion'] as String?,
       mood: json['mood'] as String?,
-      bestFor: _toList(json['best_for']),
-      tags: _toList(json['tags']),
-      scriptureRefs: _toList(json['scripture_refs']),
+      bestFor: toList(json['best_for']),
+      tags: toList(json['tags']),
+      scriptureRefs: toList(json['scripture_refs']),
       bpm: json['bpm'] as int?,
       isPublished: (json['is_published'] ?? true) as bool,
       dayOfYear: (json['day_of_year'] ?? 0) as int,
@@ -513,9 +513,9 @@ class BibleReadingItem {
 
   String get bibleGatewayUrl {
     if (chapterStart == chapterEnd) {
-      return 'https://www.biblegateway.com/passage/?search=${Uri.encodeComponent(book)}+${chapterStart}&version=NIV';
+      return 'https://www.biblegateway.com/passage/?search=${Uri.encodeComponent(book)}+$chapterStart&version=NIV';
     }
-    return 'https://www.biblegateway.com/passage/?search=${Uri.encodeComponent(book)}+${chapterStart}-${chapterEnd}&version=NIV';
+    return 'https://www.biblegateway.com/passage/?search=${Uri.encodeComponent(book)}+$chapterStart-$chapterEnd&version=NIV';
   }
 }
 
