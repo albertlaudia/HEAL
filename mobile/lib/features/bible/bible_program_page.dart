@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/theme.dart';
 import '../../data/pb_models.dart';
+import '../../data/bible_progress_cache.dart';
 import '../../data/pb_repositories.dart';
 import '../../services/streak_service.dart';
 import '../../services/sound_service.dart';
@@ -164,17 +165,28 @@ class BibleProgramPage extends HookConsumerWidget {
           userId: userId,
           dayNumber: reading.dayNumber,
         );
-    // Also log a streak session — Bible reading counts as a daily practice
     await ref.read(streakServiceProvider.notifier).recordSession(
           SessionRecord(
             timestamp: DateTime.now(),
             type: SessionType.scripture,
-            durationSeconds: 300,  // ~5 min assumed for a daily reading
+            durationSeconds: 300,
           ),
         );
+    // P0 #3: invalidate cached progress so the next sticker eval sees the new day.
+    // (Previously this re-fetched from PB on every track end — see main.dart.)
+    await ref.read(bibleProgressCacheProvider(userId).notifier).refresh();
     // Re-evaluate stickers — Bible completion may unlock "first-bible" + Bible moment stickers
     final track = ref.read(activityTrackerProvider);
-    final progress = await ref.read(bibleProgressRepoProvider).forUser(userId);
+    // P1 #4: Bible completion overlay — show "You finished [passage]. Day N of 365."
+    // for 2 seconds with a brass-glow flash. Reverent, no confetti.
+    if (context.mounted) {
+      await showBibleCompletionOverlay(
+        context,
+        passage: '${reading.bookName} ${reading.chapter}',
+        dayNumber: reading.dayNumber,
+      );
+    }
+    final progress = await ref.read(bibleProgressCacheProvider(userId).notifier).ensure();
     final completedDays = progress.map((p) => p.dayNumber).toSet();
     final streak = ref.read(streakServiceProvider);
     final sticker = await ref.read(stickerBookProvider.notifier).evaluate(
@@ -790,5 +802,115 @@ class _BibleDayPageState extends ConsumerState<BibleDayPage> {
         ],
       ),
     );
+  }
+}
+
+
+/// ── Bible completion overlay (P1 #4) ────────────────────────────
+/// Shown when a user marks a day's reading complete. Brass-glow flash,
+/// passage name, day-of-365 progress. Dismissable by tap.
+/// 1.8-second default duration. Reverent — no confetti.
+Future<void> showBibleCompletionOverlay(
+  BuildContext context, {
+  required String passage,
+  required int dayNumber,
+  Duration duration = const Duration(milliseconds: 1800),
+}) async {
+  if (!context.mounted) return;
+  // Dismiss anything currently up (so repeated marks don't pile up).
+  Navigator.of(context, rootNavigator: true).popUntil((r) => r.isFirst);
+
+  await showGeneralDialog(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: 'Bible reading complete',
+    barrierColor: Colors.black.withValues(alpha: 0.55),
+    transitionDuration: const Duration(milliseconds: 350),
+    pageBuilder: (ctx, anim, secAnim) {
+      return Center(
+        child: FadeTransition(
+          opacity: anim,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.85, end: 1.0).animate(
+              CurvedAnimation(parent: anim, curve: Curves.easeOutCubic),
+            ),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: HealTokens.s40),
+              padding: const EdgeInsets.all(HealTokens.s24),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topLeft, end: Alignment.bottomRight,
+                  colors: [HealTokens.brass, HealTokens.bronze],
+                ),
+                borderRadius: BorderRadius.circular(HealTokens.r20),
+                boxShadow: [
+                  BoxShadow(
+                    color: HealTokens.brass.withValues(alpha: 0.6),
+                    blurRadius: 32,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.auto_stories_rounded,
+                    color: HealTokens.oxblood,
+                    size: 36,
+                  ),
+                  const SizedBox(height: HealTokens.s12),
+                  const Text(
+                    'You finished',
+                    style: TextStyle(
+                      color: HealTokens.oxblood,
+                      fontSize: 13,
+                      letterSpacing: 2,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    passage,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: HealTokens.oxblood,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                  const SizedBox(height: HealTokens.s16),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: HealTokens.s12, vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: HealTokens.oxblood.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(HealTokens.r20),
+                    ),
+                    child: Text(
+                      'Day $dayNumber of 365',
+                      style: const TextStyle(
+                        color: HealTokens.oxblood,
+                        fontSize: 12,
+                        letterSpacing: 1.5,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+    transitionBuilder: (ctx, anim, secAnim, child) => child,
+  );
+
+  await Future.delayed(duration);
+  if (context.mounted) {
+    Navigator.of(context, rootNavigator: true).popUntil((r) => r.isFirst);
   }
 }

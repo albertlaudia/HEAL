@@ -118,9 +118,49 @@ class PraiseLibraryPage extends HookConsumerWidget {
                       HealTokens.s20,
                       HealTokens.s80,
                     ),
-                    itemCount: visible.length + 1, // +1 for the header / "play all"
+                    itemCount: visible.length + 3, // +3 for today's-praise + divider + 'Library' header
                     itemBuilder: (_, i) {
                       if (i == 0) {
+                        // "Today's praise" — deterministic pick by day-of-year.
+                        // Reduces paradox of choice on a 112-song library.
+                        // Only show on the All tab.
+                        if (tab.value != _Tab.all) {
+                          return const SizedBox.shrink();
+                        }
+                        final today = _praiseOfTheDay(songs, favorites);
+                        if (today == null) return const SizedBox.shrink();
+                        return _TodaysPraiseHero(song: today, onTap: () async {
+          HapticFeedback.selectionClick();
+          await PraiseLibraryPage._playPlaylist(ref, [today], 0);
+        });
+                      }
+                      if (i == 1) {
+                        // Section divider — "MORE PRAISE"
+                        return Padding(
+                          padding: const EdgeInsets.only(top: HealTokens.s24, bottom: HealTokens.s12),
+                          child: Row(
+                            children: [
+                              Text(
+                                'MORE PRAISE',
+                                style: TextStyle(
+                                  color: HealTokens.creamDim.withValues(alpha: 0.7),
+                                  fontSize: 11,
+                                  letterSpacing: 2,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                              const SizedBox(width: HealTokens.s12),
+                              Expanded(
+                                child: Container(
+                                  height: 1,
+                                  color: HealTokens.creamDim.withValues(alpha: 0.18),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      if (i == 2) {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: HealTokens.s12),
                           child: Row(
@@ -1019,6 +1059,150 @@ class _MusicChip extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+
+/// ── Today's Praise (deterministic daily pick) ───────────────────
+/// Stable per day across devices — same song for everyone on the same day.
+/// Skips songs the user has favorited in favor of discovery rotation.
+PraiseSong? _praiseOfTheDay(List<PraiseSong> all, FavoritesService favorites) {
+  if (all.isEmpty) return null;
+  // Day-of-year — Jan 1 = 0, Dec 31 = 364
+  final now = DateTime.now();
+  final dayOfYear = now.difference(DateTime(now.year, 1, 1)).inDays;
+  // Prefer songs the user has NOT favorited yet (drive discovery),
+  // but always bias by recent listens so favorites aren't starved.
+  final unfavorited = all.where((s) => !favorites.contains(s.slug)).toList();
+  final pool = unfavorited.isNotEmpty ? unfavorited : all;
+  return pool[dayOfYear % pool.length];
+}
+
+
+/// Big-tile hero showing today's praise. Tap to play.
+class _TodaysPraiseHero extends StatelessWidget {
+  final PraiseSong song;
+  final VoidCallback onTap;
+  const _TodaysPraiseHero({required this.song, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: HealTokens.s12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(HealTokens.r20),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft, end: Alignment.bottomRight,
+          colors: [HealTokens.rosewood, HealTokens.rosewoodDeep],
+        ),
+        border: Border.all(color: HealTokens.brass.withValues(alpha: 0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: HealTokens.brass.withValues(alpha: 0.15),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(HealTokens.r20),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.all(HealTokens.s20),
+            child: Row(
+              children: [
+                // Illustration thumb
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(HealTokens.r12),
+                  child: SizedBox(
+                    width: 72, height: 72,
+                    child: song.cdnIllustration.isEmpty
+                        ? Container(color: HealTokens.rosewoodDeep)
+                        : CachedNetworkImage(
+                            imageUrl: song.cdnIllustration,
+                            fit: BoxFit.cover,
+                            errorWidget: (_, __, ___) =>
+                                Container(color: HealTokens.rosewoodDeep),
+                          ),
+                  ),
+                ),
+                const SizedBox(width: HealTokens.s16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.star_rounded,
+                            size: 12, color: HealTokens.brass,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            "TODAY'S PRAISE",
+                            style: TextStyle(
+                              color: HealTokens.brass,
+                              fontSize: 10,
+                              letterSpacing: 1.8,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        song.title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: HealTokens.cream,
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        song.subtitle.isNotEmpty ? song.subtitle : song.category ?? '',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: HealTokens.creamDim.withValues(alpha: 0.8),
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    color: HealTokens.brass,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: HealTokens.brass.withValues(alpha: 0.5),
+                        blurRadius: 12,
+                        spreadRadius: 1,
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(10),
+                  child: const Icon(
+                    Icons.play_arrow_rounded,
+                    color: HealTokens.oxblood,
+                    size: 22,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
