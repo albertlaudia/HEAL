@@ -29,7 +29,7 @@ class OnboardingPage extends HookConsumerWidget {
     final pageController = usePageController();
     final currentPage = useState<int>(0);
 
-    Future<void> _completeOnboarding() async {
+    Future<void> completeOnboarding() async {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('onboarding_complete', true);
     }
@@ -72,7 +72,7 @@ class OnboardingPage extends HookConsumerWidget {
               child: currentPage.value < pages.length - 2
                   ? TextButton(
                       onPressed: () async {
-                        await _completeOnboarding();
+                        await completeOnboarding();
                         if (context.mounted) Navigator.of(context).pop();
                       },
                       child: const Text('SKIP'),
@@ -265,7 +265,7 @@ class _FirstBreathPageState extends State<_FirstBreathPage>
       child: Column(
         children: [
           const SizedBox(height: HealTokens.s32),
-          Text(
+          const Text(
             'TRY ONE BREATH',
             style: TextStyle(
               color: HealTokens.brass,
@@ -372,8 +372,8 @@ class _FirstBreathPageState extends State<_FirstBreathPage>
               ),
             ),
           if (_started && _cycle >= 3)
-            Padding(
-              padding: const EdgeInsets.only(top: 12),
+            const Padding(
+              padding: EdgeInsets.only(top: 12),
               child: Text(
                 'Nice. That\'s the whole practice.',
                 style: TextStyle(
@@ -471,7 +471,7 @@ class _PermissionPageState extends ConsumerState<_PermissionPage> {
                 ),
           ),
           const SizedBox(height: HealTokens.s16),
-          Text(
+          const Text(
             'We can remind you at sunrise. One gentle\nnotification a day — never more. Or never.',
             textAlign: TextAlign.center,
             style: TextStyle(

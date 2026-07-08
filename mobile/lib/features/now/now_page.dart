@@ -372,7 +372,7 @@ class _StepLabels extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final activeColor = HealTokens.brass;
+    const activeColor = HealTokens.brass;
     final pastColor = HealTokens.creamDim.withValues(alpha: 0.5);
     final futureColor = HealTokens.creamDim.withValues(alpha: 0.3);
     return Row(
