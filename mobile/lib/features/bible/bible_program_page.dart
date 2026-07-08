@@ -34,12 +34,12 @@ class BibleProgramPage extends HookConsumerWidget {
       ),
       body: readingsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator(strokeWidth: 1.2)),
-        error: (e, _) => Center(
+        error: (e, _) => const Center(
           child: Text('Could not load.', style: TextStyle(color: HealTokens.creamDim)),
         ),
         data: (readings) {
           if (readings.isEmpty) {
-            return Center(
+            return const Center(
               child: Text('No readings yet.', style: TextStyle(color: HealTokens.creamDim)),
             );
           }
@@ -246,7 +246,7 @@ class _BibleProgressHero extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(HealTokens.s24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
@@ -262,7 +262,7 @@ class _BibleProgressHero extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.menu_book_rounded, color: HealTokens.brassLight, size: 18),
+              const Icon(Icons.menu_book_rounded, color: HealTokens.brassLight, size: 18),
               const SizedBox(width: 8),
               Text(
                 'YOUR JOURNEY',
@@ -677,12 +677,12 @@ class _BibleDayPageState extends ConsumerState<BibleDayPage> {
                 notes: _notesCtrl.text,
               );
               ref.invalidate(userProgressProvider(userId));
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Day complete — well done')),
-                );
-                Navigator.of(context).pop();
-              }
+              if (!mounted) return;
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Day complete — well done')),
+              );
+              if (!mounted) return;
+              Navigator.of(context).pop();
             },
           ),
         ],
