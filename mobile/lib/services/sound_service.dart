@@ -29,19 +29,16 @@ enum SoundKind {
 }
 
 class SoundService {
-  bool _enabled = true;
+  bool enabled = true;
   bool _initialized = false;
   final AudioPlayer _player = AudioPlayer(playerId: 'heal-fx');
   final math.Random _rng = math.Random();
-
-  bool get enabled => _enabled;
-  set enabled(bool v) => _enabled = v;
 
   Future<void> init() async {
     if (_initialized) return;
     _initialized = true;
     final prefs = await SharedPreferences.getInstance();
-    _enabled = prefs.getBool('heal.sound_enabled') ?? true;
+    enabled = prefs.getBool('heal.sound_enabled') ?? true;
     await _player.setReleaseMode(ReleaseMode.release);
   }
 

@@ -433,7 +433,7 @@ class _StatsCard extends StatelessWidget {
             children: [
               Icon(Icons.local_fire_department_rounded, color: HealTokens.brass, size: 20),
               SizedBox(width: 8),
-              Text(
+              const Text(
                 'STREAK',
                 style: TextStyle(
                   color: HealTokens.brass,
@@ -748,7 +748,7 @@ class _TimeChart extends StatelessWidget {
               const SizedBox(width: 8),
               const Text(
                 'BY PRACTICE',
-                style: const TextStyle(
+                style: TextStyle(
                   color: HealTokens.brass,
                   fontSize: 11,
                   letterSpacing: 2,

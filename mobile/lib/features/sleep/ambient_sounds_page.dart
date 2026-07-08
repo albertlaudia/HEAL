@@ -156,10 +156,10 @@ class AmbientSoundsPage extends HookConsumerWidget {
           HapticFeedback.heavyImpact();
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
+              const SnackBar(
                 content: Text('Sound failed to load. CDN may be caching — try again in a moment.'),
                 backgroundColor: HealTokens.rosewoodDeep,
-                duration: const Duration(seconds: 3),
+                duration: Duration(seconds: 3),
               ),
             );
           }
