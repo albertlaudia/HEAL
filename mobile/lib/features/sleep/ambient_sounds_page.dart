@@ -5,6 +5,10 @@
 // Inspired by Calm's "Scenes" but lighter — no network, no app, just
 // open the page and the sound plays.
 //
+// NOTE: ambient tracks live at /heal/sounds/ on the CDN. just_audio
+// sets a Host header so the SmarterASP IIS server returns the right
+// file. CF cache is bypassed by the unique URL pattern.
+//
 // Each track loops a pre-generated WAV file. Sounds are bundled assets.
 // (The actual audio assets are downloaded on first run from our CDN.)
 
@@ -41,7 +45,7 @@ const _tracks = [
     name: 'Soft rain',
     description: 'A slow, steady rain on a window pane.',
     icon: '🌧️',
-    url: 'https://resources.positiveness.club/heal/audio/ambient/rain-loop.mp3',
+    url: 'https://resources.positiveness.club/heal/sounds/rain-loop.mp3',
     palettes: [0xFF2A3A5A, 0xFF0F1A2F],
   ),
   AmbientTrack(
@@ -49,7 +53,7 @@ const _tracks = [
     name: 'Fireplace',
     description: 'Wood crackling low, embers popping.',
     icon: '🔥',
-    url: 'https://resources.positiveness.club/heal/audio/ambient/fire-loop.mp3',
+    url: 'https://resources.positiveness.club/heal/sounds/fire-loop.mp3',
     palettes: [0xFF5A2F1A, 0xFF2F1A0F],
   ),
   AmbientTrack(
@@ -57,7 +61,7 @@ const _tracks = [
     name: 'Mountain wind',
     description: 'A long wind through pines, high and far.',
     icon: '🌬️',
-    url: 'https://resources.positiveness.club/heal/audio/ambient/wind-loop.mp3',
+    url: 'https://resources.positiveness.club/heal/sounds/wind-loop.mp3',
     palettes: [0xFF3A5A4A, 0xFF0F2F1A],
   ),
   AmbientTrack(
@@ -65,7 +69,7 @@ const _tracks = [
     name: 'Ocean',
     description: 'Distant waves, slow and unhurried.',
     icon: '🌊',
-    url: 'https://resources.positiveness.club/heal/audio/ambient/ocean-loop.mp3',
+    url: 'https://resources.positiveness.club/heal/sounds/ocean-loop.mp3',
     palettes: [0xFF1A4A5A, 0xFF0A2A3A],
   ),
   AmbientTrack(
@@ -73,7 +77,7 @@ const _tracks = [
     name: 'Forest',
     description: 'Birds, leaves, a small creek in the distance.',
     icon: '🌲',
-    url: 'https://resources.positiveness.club/heal/audio/ambient/forest-loop.mp3',
+    url: 'https://resources.positiveness.club/heal/sounds/forest-loop.mp3',
     palettes: [0xFF2A4A2A, 0xFF1A2F1A],
   ),
   AmbientTrack(
@@ -81,7 +85,7 @@ const _tracks = [
     name: 'Night crickets',
     description: 'Soft crickets and the breath of evening.',
     icon: '🌌',
-    url: 'https://resources.positiveness.club/heal/audio/ambient/night-loop.mp3',
+    url: 'https://resources.positiveness.club/heal/sounds/night-loop.mp3',
     palettes: [0xFF2A1A4A, 0xFF0F0A2F],
   ),
 ];
@@ -148,8 +152,18 @@ class AmbientSoundsPage extends HookConsumerWidget {
           await player.setUrl(url);
           await player.setVolume(volumes.value[id] ?? 0.5);
           await player.play();
-        } catch (_) {
-          return; // network/file error
+        } catch (e) {
+          HapticFeedback.heavyImpact();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Sound failed to load. CDN may be caching — try again in a moment.'),
+                backgroundColor: HealTokens.rosewoodDeep,
+                duration: const Duration(seconds: 3),
+              ),
+            );
+          }
+          return;
         }
         map = {...map, id: player};
         players.value = map;
