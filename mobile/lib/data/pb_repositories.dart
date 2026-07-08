@@ -39,6 +39,17 @@ class _CachedList<T> {
   bool get fresh => DateTime.now().difference(fetchedAt) < _cacheTtl;
 }
 
+/// LRU-ish helper: trim a Map of cached results so it never grows past `maxSize`.
+/// Eviction order = insertion order (oldest first). Called after each write.
+void _evictCacheEntries<K, V>(Map<K, V> cache, {int maxSize = 20}) {
+  if (cache.length <= maxSize) return;
+  final overflow = cache.length - maxSize;
+  final keys = cache.keys.take(overflow).toList();
+  for (final k in keys) {
+    cache.remove(k);
+  }
+}
+
 /// ── Meditations ──────────────────────────────────────────────────
 class MeditationRepository {
   final PocketBase _pb;
@@ -62,6 +73,7 @@ class MeditationRepository {
         await _pb.collection('HEAL_meditations').getList(page: page, perPage: perPage, filter: f, sort: safeSortStr);
     final list = records.items.map((r) => Meditation.fromJson(r.toJson())).toList();
     _cache[key] = _CachedList(list);
+    _evictCacheEntries(_cache);
     return list;
   }
 
@@ -97,6 +109,7 @@ class PraiseRepository {
     );
     final list = records.items.map((r) => PraiseSong.fromJson(r.toJson())).toList();
     _cache[key] = _CachedList(list);
+    _evictCacheEntries(_cache);
     return list;
   }
 }
@@ -127,6 +140,7 @@ class PrayerRepository {
     );
     final list = records.items.map((r) => Prayer.fromJson(r.toJson())).toList();
     _cache[key] = _CachedList(list);
+    _evictCacheEntries(_cache);
     return list;
   }
 }
@@ -159,6 +173,7 @@ class ScriptureRepository {
     );
     final list = records.items.map((r) => Scripture.fromJson(r.toJson())).toList();
     _cache[key] = _CachedList(list);
+    _evictCacheEntries(_cache);
     return list;
   }
 }
@@ -189,6 +204,7 @@ class QuoteRepository {
     );
     final list = records.items.map((r) => Quote.fromJson(r.toJson())).toList();
     _cache[key] = _CachedList(list);
+    _evictCacheEntries(_cache);
     return list;
   }
 }
@@ -214,6 +230,7 @@ class BreathRepository {
     );
     final list = records.items.map((r) => BreathPattern.fromJson(r.toJson())).toList();
     _cache[key] = _CachedList(list);
+    _evictCacheEntries(_cache);
     return list;
   }
 }
@@ -240,6 +257,7 @@ class EssayRepository {
     );
     final list = records.items.map((r) => Essay.fromJson(r.toJson())).toList();
     _cache[key] = _CachedList(list);
+    _evictCacheEntries(_cache);
     return list;
   }
 }

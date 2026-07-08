@@ -781,51 +781,102 @@ class _QuickAction extends StatelessWidget {
   }
 }
 
-class _PracticeGrid extends StatelessWidget {
+class _PracticeGrid extends ConsumerWidget {
   final TimePalette palette;
   const _PracticeGrid({required this.palette});
 
   @override
-  Widget build(BuildContext context) {
-    final tiles = [
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Stage grid by session count to reduce paradox of choice on day 1.
+    // - Sessions 0:   1 tile (Breathe)
+    // - Sessions 1-3: 3 tiles (Breathe + Meditate + Pray)
+    // - Sessions 4-7: 5 tiles (+ Praise + Reflections)
+    // - Sessions 8+:  full 6-tile grid (+ Sleep + Stickers)
+    final total = ref.watch(streakServiceProvider).totalSessions;
+    final tiles = <Widget>[
       _PracticeTile(
-        title: 'Meditate',
-        subtitle: 'Guided stillness',
-        icon: Icons.self_improvement_rounded,
+        title: 'Breathe',
+        subtitle: '~1 min · Start here',
+        icon: Icons.air_rounded,
         gradient: const [HealTokens.brass, HealTokens.bronze],
-        onTap: () => context.push('/meditate'),
+        onTap: () => context.push('/breathe'),
       ),
-      _PracticeTile(
-        title: 'Praise',
-        subtitle: 'Songs & hymns',
-        icon: Icons.music_note_rounded,
-        gradient: const [HealTokens.amber, HealTokens.brassDeep],
-        onTap: () => context.push('/praise'),
-      ),
-      _PracticeTile(
-        title: 'Pray',
-        subtitle: 'Words for the hour',
-        icon: Icons.favorite_outline_rounded,
-        gradient: const [HealTokens.bronzeLight, HealTokens.bronze],
-        onTap: () => context.push('/prayer'),
-      ),
-      _PracticeTile(
-        title: 'Reflections',
-        subtitle: 'Slow reading',
-        icon: Icons.menu_book_rounded,
-        gradient: const [HealTokens.bronze, HealTokens.rosewood],
-        onTap: () => context.push('/essays'),
-      ),
-      _PracticeTile(
-        title: 'Sleep',
-        subtitle: 'Wind down',
-        icon: Icons.nightlight_round,
-        gradient: const [Color(0xFF2A1A18), Color(0xFF0F0807)],
-        onTap: () => context.push('/sleep'),
-      ),
-      _StickerBookTile(),
     ];
+    if (total >= 1) {
+      tiles.addAll([
+        _PracticeTile(
+          title: 'Meditate',
+          subtitle: '~5 min · Guided stillness',
+          icon: Icons.self_improvement_rounded,
+          gradient: const [HealTokens.brass, HealTokens.bronze],
+          onTap: () => context.push('/meditate'),
+        ),
+        _PracticeTile(
+          title: 'Pray',
+          subtitle: '~3 min · Words for the hour',
+          icon: Icons.favorite_outline_rounded,
+          gradient: const [HealTokens.bronzeLight, HealTokens.bronze],
+          onTap: () => context.push('/prayer'),
+        ),
+      ]);
+    }
+    if (total >= 4) {
+      tiles.addAll([
+        _PracticeTile(
+          title: 'Praise',
+          subtitle: '~4 min · Songs & hymns',
+          icon: Icons.music_note_rounded,
+          gradient: const [HealTokens.amber, HealTokens.brassDeep],
+          onTap: () => context.push('/praise'),
+        ),
+        _PracticeTile(
+          title: 'Reflections',
+          subtitle: '~7 min · Slow reading',
+          icon: Icons.menu_book_rounded,
+          gradient: const [HealTokens.bronze, HealTokens.rosewood],
+          onTap: () => context.push('/essays'),
+        ),
+      ]);
+    }
+    if (total >= 8) {
+      tiles.addAll([
+        _PracticeTile(
+          title: 'Sleep',
+          subtitle: '~10 min · Wind down',
+          icon: Icons.nightlight_round,
+          gradient: const [Color(0xFF2A1A18), Color(0xFF0F0807)],
+          onTap: () => context.push('/sleep'),
+        ),
+        _StickerBookTile(),
+      ]);
+    }
 
+    if (tiles.length == 6) {
+      // Full grid path (>=8 sessions): preserve original layout.
+      return _PracticeGridLayout(tiles: tiles);
+    }
+
+    // Staged path: show tiles in a wrapping row.
+    return Wrap(
+      spacing: HealTokens.s12,
+      runSpacing: HealTokens.s12,
+      children: [
+        for (final t in tiles)
+          SizedBox(
+            width: (MediaQuery.of(context).size.width - HealTokens.s20 * 2 - HealTokens.s12 * 2) / 3,
+            child: t,
+          ),
+      ],
+    );
+  }
+}
+
+class _PracticeGridLayout extends StatelessWidget {
+  final List<Widget> tiles;
+  const _PracticeGridLayout({required this.tiles});
+
+  @override
+  Widget build(BuildContext context) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -840,6 +891,8 @@ class _PracticeGrid extends StatelessWidget {
     );
   }
 }
+
+
 
 
 /// ── Sticker Book tile (5th practice card) ─────────────────────

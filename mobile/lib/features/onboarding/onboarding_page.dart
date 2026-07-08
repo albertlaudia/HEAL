@@ -34,6 +34,14 @@ class OnboardingPage extends HookConsumerWidget {
       await prefs.setBool('onboarding_complete', true);
     }
 
+    // 3-screen onboarding:
+    //   1. Value prop — "A quiet place to be still"
+    //   2. Value prop — "No tracking, no noise"
+    //   3. First Breath — user feels the product
+    //
+    // Notification permission ask happens AFTER the first completed session
+    // (see PermissionGate widget in main.dart). Asking before value leads
+    // to ~60% opt-out per Calm/Headspace benchmarks.
     final pages = [
       const _ValuePage(
         icon: Icons.spa_outlined,
@@ -48,8 +56,16 @@ class OnboardingPage extends HookConsumerWidget {
         color: HealTokens.amber,
       ),
       const _FirstBreathPage(),
-      const _PermissionPage(),
     ];
+
+    // Mark that we should ask for notification permission after the first
+    // completed session. The PermissionGate (in main.dart) reads this flag.
+    final prefs = SharedPreferences.getInstance();
+    // Fire and forget; the flag is set BEFORE onboarding completes.
+    Future.microtask(() async {
+      final p = await prefs;
+      await p.setBool('ask_notifications_after_first_session', true);
+    });
 
     return Scaffold(
       body: SafeArea(

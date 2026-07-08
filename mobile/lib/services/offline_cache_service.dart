@@ -122,9 +122,12 @@ class OfflineCacheService extends StateNotifier<OfflineCacheState> {
       final tmp = File('${f.path}.part');
       if (await tmp.exists()) await tmp.delete();
 
+      // Reuse a single persistent client to avoid socket leaks across downloads.
+      // (Previously: new http.Client() per download, never closed — leaked sockets
+      // and exhausted the connection pool on a 112-song praise library.)
+      final client = _httpClient;
       final request = http.Request('GET', Uri.parse(url));
-      // Cloudflare-friendly: ask for full content
-      final response = await http.Client().send(request);
+      final response = await client.send(request);
       if (response.statusCode != 200) {
         _finishDownload(slug, success: false, error: 'HTTP ${response.statusCode}');
         return false;
@@ -190,5 +193,9 @@ class OfflineCacheService extends StateNotifier<OfflineCacheState> {
 
 final offlineCacheProvider =
     StateNotifierProvider<OfflineCacheService, OfflineCacheState>(
-  (ref) => OfflineCacheService(),
+  (ref) {
+    final service = OfflineCacheService();
+    ref.onDispose(service.dispose);
+    return service;
+  },
 );

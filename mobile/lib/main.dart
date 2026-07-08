@@ -144,7 +144,12 @@ Future<void> main() async {
       ),
     );
   }, (error, stack) {
-    // ignore: avoid_print
-    print('Uncaught: $error\n$stack');
+    // In release: send to a crash reporter (TODO: Firebase Crashlytics).
+    // In debug: dev-friendly logging without polluting release logs.
+    assert(() {
+      // ignore: avoid_print
+      print('Uncaught: $error\n$stack');
+      return true;
+    }());
   });
 }

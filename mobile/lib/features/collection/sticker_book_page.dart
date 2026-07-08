@@ -72,20 +72,20 @@ class StickerBookPage extends HookConsumerWidget {
 
                 const SizedBox(height: HealTokens.s24),
 
-                // ── Streak family ──
-            _SectionHeader(label: 'Streaks', count: book.byFamily('streak').length),
+                // ── Daily: streak milestones ──
+            _SectionHeader(label: 'Daily', count: book.byFamily('streak').length),
             const SizedBox(height: HealTokens.s12),
             _StickerGrid(stickers: book.byFamily('streak'), book: book),
             const SizedBox(height: HealTokens.s24),
 
-            // ── Practice family ──
-            _SectionHeader(label: 'First Times', count: book.byFamily('practice').length),
+            // ── Firsts: practice milestones ──
+            _SectionHeader(label: 'Firsts', count: book.byFamily('practice').length),
             const SizedBox(height: HealTokens.s12),
             _StickerGrid(stickers: book.byFamily('practice'), book: book),
             const SizedBox(height: HealTokens.s24),
 
-            // ── Bible moments family ──
-            _SectionHeader(label: 'Bible Iconic Moments', count: book.byFamily('moment').length),
+            // ── Stories: Bible iconic moments ──
+            _SectionHeader(label: 'Stories', count: book.byFamily('moment').length),
             const SizedBox(height: HealTokens.s12),
             _StickerGrid(stickers: book.byFamily('moment'), book: book),
             const SizedBox(height: HealTokens.s24),
