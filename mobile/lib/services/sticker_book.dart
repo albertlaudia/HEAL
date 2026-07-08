@@ -185,19 +185,19 @@ class StickerBook extends StateNotifier<StickerBookState> {
   /// The Bible-in-a-Year plan day is mapped to a passage set; if any of the
   /// day's readings contain the moment's chapter, the day "covers" it.
   static final Map<String, _MomentMatch> _momentSpans = {
-    'moment-red-sea':        _MomentMatch(['Exodus'], [14], [14]),
-    'moment-burning-bush':   _MomentMatch(['Exodus'], [3], [3]),
-    'moment-david-goliath':  _MomentMatch(['1 Samuel'], [17], [17]),
-    'moment-daniel-lions':   _MomentMatch(['Daniel'], [6], [6]),
-    'moment-shadrach':       _MomentMatch(['Daniel'], [3], [3]),
-    'moment-psalm-23':       _MomentMatch(['Psalms'], [23], [23]),
-    'moment-beatitudes':     _MomentMatch(['Matthew'], [5], [7]),
-    'moment-last-supper':    _MomentMatch(['Matthew'], [26], [26]),
-    'moment-cross':          _MomentMatch(['John'], [19], [19]),
-    'moment-empty-tomb':     _MomentMatch(['Matthew'], [28], [28]),
-    'moment-road-emmaus':    _MomentMatch(['Luke'], [24], [24]),
-    'moment-ascension':      _MomentMatch(['Acts'], [1], [2]),
-    'moment-revelation':     _MomentMatch(['Revelation'], [22], [22]),
+    'moment-red-sea':        const _MomentMatch(['Exodus'], [14], [14]),
+    'moment-burning-bush':   const _MomentMatch(['Exodus'], [3], [3]),
+    'moment-david-goliath':  const _MomentMatch(['1 Samuel'], [17], [17]),
+    'moment-daniel-lions':   const _MomentMatch(['Daniel'], [6], [6]),
+    'moment-shadrach':       const _MomentMatch(['Daniel'], [3], [3]),
+    'moment-psalm-23':       const _MomentMatch(['Psalms'], [23], [23]),
+    'moment-beatitudes':     const _MomentMatch(['Matthew'], [5], [7]),
+    'moment-last-supper':    const _MomentMatch(['Matthew'], [26], [26]),
+    'moment-cross':          const _MomentMatch(['John'], [19], [19]),
+    'moment-empty-tomb':     const _MomentMatch(['Matthew'], [28], [28]),
+    'moment-road-emmaus':    const _MomentMatch(['Luke'], [24], [24]),
+    'moment-ascension':      const _MomentMatch(['Acts'], [1], [2]),
+    'moment-revelation':     const _MomentMatch(['Revelation'], [22], [22]),
   };
 
   /// Whether the user's set of completed plan days covers the moment.

@@ -195,8 +195,8 @@ class _CollapsedMini extends ConsumerWidget {
                   ),
                 ],
                 // Expand chevron (visual hint)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
+                const Padding(
+                  padding: EdgeInsets.only(right: 8),
                   child: Icon(
                     Icons.keyboard_arrow_up_rounded,
                     color: HealTokens.creamDim,
@@ -241,7 +241,7 @@ class _ExpandedPlayer extends HookConsumerWidget {
               begin: Alignment.topCenter, end: Alignment.bottomCenter,
               colors: [HealTokens.rosewoodDeep, Color(0xFF120A09)],
             ),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(HealTokens.r28)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(HealTokens.r28)),
             border: Border(
               top: BorderSide(color: HealTokens.brass.withValues(alpha: 0.5), width: 1),
             ),
@@ -555,10 +555,10 @@ class _LyricsPeek extends HookWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
-              const Icon(Icons.lyrics_rounded, color: HealTokens.brass, size: 16),
-              const SizedBox(width: 6),
+              Icon(Icons.lyrics_rounded, color: HealTokens.brass, size: 16),
+              SizedBox(width: 6),
               Text(
                 'LYRICS',
                 style: TextStyle(
@@ -602,10 +602,10 @@ class _QueuePeek extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        const Row(
           children: [
-            const Icon(Icons.queue_music_rounded, color: HealTokens.brass, size: 16),
-            const SizedBox(width: 6),
+            Icon(Icons.queue_music_rounded, color: HealTokens.brass, size: 16),
+            SizedBox(width: 6),
             Text(
               'UP NEXT',
               style: TextStyle(

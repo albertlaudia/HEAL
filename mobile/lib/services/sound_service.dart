@@ -43,13 +43,13 @@ class SoundService {
   }
 
   Future<void> setEnabled(bool v) async {
-    _enabled = v;
+    enabled = v;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('heal.sound_enabled', v);
   }
 
   Future<void> play(SoundKind kind) async {
-    if (!_enabled) return;
+    if (!enabled) return;
     if (kIsWeb) return;  // Browser autoplay policies need a user-gesture.
     try {
       final bytes = _synthesize(kind);
