@@ -88,6 +88,20 @@ class ActivityTrackerState {
   /// How many times `target` was used (slug, id, or kind).
   int countFor(String target) => byTarget[target] ?? 0;
 
+  /// Total events across all kinds.
+  int totalCount() => recent.length;
+
+  /// Count of events that happened on the same calendar day as `day`.
+  int countOnDay(DateTime day) {
+    final ymd = DateTime(day.year, day.month, day.day);
+    int c = 0;
+    for (final e in recent) {
+      final ey = DateTime(e.timestamp.year, e.timestamp.month, e.timestamp.day);
+      if (ey == ymd) c++;
+    }
+    return c;
+  }
+
   /// Top-N most-engaged target kinds (e.g. 'meditate', 'praise', 'pray').
   List<MapEntry<String, int>> topKinds({int n = 6}) {
     final entries = byKind.entries.toList();

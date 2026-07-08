@@ -21,8 +21,11 @@ import '../features/essays/essay_page.dart';
 import '../features/world/world_day_page.dart';
 import '../features/bible/bible_program_page.dart';
 import '../features/collection/sticker_book_page.dart';
+import '../features/profile/profile_page.dart';
+import '../features/sleep/sleep_stories_page.dart';
 import '../widgets/expandable_mini_player.dart';
 import '../features/collection/sticker_book_page.dart';
+import '../features/profile/profile_page.dart';
 import '../features/breathe/breath_studio_page.dart';
 import '../features/breathe/voice_calibration_page.dart';
 import '../features/scripture/sit_with_verse_page.dart';
@@ -46,7 +49,7 @@ class MainScaffold extends HookConsumerWidget {
       const NowPage(),
       const PrayerPage(),
       const PraiseLibraryPage(),
-      const SettingsPage(),
+      const ProfilePage(),
     ];
 
     return Scaffold(
@@ -74,7 +77,7 @@ class _BottomNav extends StatelessWidget {
       (Icons.spa_outlined, 'Now'),
       (Icons.favorite_outline_rounded, 'Pray'),
       (Icons.music_note_outlined, 'Praise'),
-      (Icons.settings_outlined, 'Settings'),
+      (Icons.person_outline_rounded, 'You'),
     ];
 
     return Container(
@@ -150,7 +153,7 @@ class _BottomNav extends StatelessWidget {
       case 3:
         return 'praise';
       case 4:
-        return 'settings';
+        return 'profile';
       default:
         return 'home';
     }
@@ -640,6 +643,16 @@ class HealRouter {
         path: '/stickers',
         pageBuilder: (context, state) =>
             _sharedAxis(state, const StickerBookPage()),
+      ),
+      GoRoute(
+        path: '/profile',
+        pageBuilder: (context, state) =>
+            _sharedAxis(state, const ProfilePage()),
+      ),
+      GoRoute(
+        path: '/sleep',
+        pageBuilder: (context, state) =>
+            _sharedAxis(state, const SleepStoriesPage()),
       ),
       GoRoute(
         path: '/breathe',

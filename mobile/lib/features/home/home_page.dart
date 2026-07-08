@@ -815,6 +815,13 @@ class _PracticeGrid extends StatelessWidget {
         gradient: const [HealTokens.bronze, HealTokens.rosewood],
         onTap: () => context.push('/essays'),
       ),
+      _PracticeTile(
+        title: 'Sleep',
+        subtitle: 'Wind down',
+        icon: Icons.nightlight_round,
+        gradient: const [Color(0xFF2A1A18), Color(0xFF0F0807)],
+        onTap: () => context.push('/sleep'),
+      ),
       _StickerBookTile(),
     ];
 
@@ -822,10 +829,10 @@ class _PracticeGrid extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
+        crossAxisCount: 3,
         mainAxisSpacing: HealTokens.s12,
         crossAxisSpacing: HealTokens.s12,
-        childAspectRatio: 1.05,
+        childAspectRatio: 0.85,
       ),
       itemCount: tiles.length,
       itemBuilder: (context, i) => tiles[i],
