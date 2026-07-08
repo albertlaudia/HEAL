@@ -23,6 +23,7 @@ import '../features/bible/bible_program_page.dart';
 import '../features/collection/sticker_book_page.dart';
 import '../features/profile/profile_page.dart';
 import '../features/sleep/sleep_stories_page.dart';
+import '../features/sleep/ambient_sounds_page.dart';
 import '../widgets/expandable_mini_player.dart';
 import '../features/collection/sticker_book_page.dart';
 import '../features/profile/profile_page.dart';
@@ -653,6 +654,11 @@ class HealRouter {
         path: '/sleep',
         pageBuilder: (context, state) =>
             _sharedAxis(state, const SleepStoriesPage()),
+      ),
+      GoRoute(
+        path: '/ambient',
+        pageBuilder: (context, state) =>
+            _sharedAxis(state, const AmbientSoundsPage()),
       ),
       GoRoute(
         path: '/breathe',

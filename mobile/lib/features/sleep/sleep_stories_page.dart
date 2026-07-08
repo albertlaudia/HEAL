@@ -298,30 +298,77 @@ class _SleepCard extends ConsumerWidget {
 class _FootNote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(HealTokens.s20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1A100F),
-        borderRadius: BorderRadius.circular(HealTokens.r16),
-        border: Border.all(color: const Color(0xFFD9C5A8).withValues(alpha: 0.08)),
-      ),
-      child: Row(
-        children: [
-          const Icon(Icons.tips_and_updates_outlined, color: Color(0xFFD9C5A8), size: 18),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Text(
-              'A gentle start: dim the screen, prop up your pillow, and let the words do the work. Sleep well.',
-              style: TextStyle(
-                color: HealTokens.creamDim.withValues(alpha: 0.7),
-                fontSize: 12,
-                fontStyle: FontStyle.italic,
-                height: 1.5,
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(HealTokens.s20),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1A100F),
+            borderRadius: BorderRadius.circular(HealTokens.r16),
+            border: Border.all(color: const Color(0xFFD9C5A8).withValues(alpha: 0.08)),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.tips_and_updates_outlined, color: Color(0xFFD9C5A8), size: 18),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'A gentle start: dim the screen, prop up your pillow, and let the words do the work. Sleep well.',
+                  style: TextStyle(
+                    color: HealTokens.creamDim.withValues(alpha: 0.7),
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(HealTokens.r16),
+            onTap: () => context.push('/ambient'),
+            child: Container(
+              padding: const EdgeInsets.all(HealTokens.s20),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1A100F),
+                borderRadius: BorderRadius.circular(HealTokens.r16),
+                border: Border.all(color: const Color(0xFFD9C5A8).withValues(alpha: 0.16)),
+              ),
+              child: Row(
+                children: [
+                  const Text('🎵', style: TextStyle(fontSize: 22)),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Ambient sounds',
+                          style: TextStyle(color: Color(0xFFE8DCC8), fontSize: 14, fontWeight: FontWeight.w600),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Layer rain, fire, wind, ocean. Make the room listen.',
+                          style: TextStyle(
+                            color: HealTokens.creamDim.withValues(alpha: 0.6),
+                            fontSize: 11,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.arrow_forward_rounded, color: HealTokens.creamDim.withValues(alpha: 0.6), size: 18),
+                ],
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
