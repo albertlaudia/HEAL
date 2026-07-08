@@ -176,20 +176,26 @@ class NotificationService {
     ('The Word, today',                  'Day {n}. Whatever you give is enough.'),
   ];
 
+  // ── Missed-day copy: PRACTICE-FIRST, not failure-first ──
+  // Psychology: never lead with "you missed/didn't/forgot". Lead with
+  // what's available *now*. The user knows they missed.
   static const List<String> _missedDayVariants = [
-    'You didn’t finish today’s reading. Tomorrow is a new day.',
-    'No guilt — just grace. Pick it up when ready.',
-    'Days are long, the Word is patient. Take up Day {n} next.',
-    'Missed days are not lost days. Continue.',
-    'A rested mind reads better. See you tomorrow.',
+    'Tomorrow’s reading is here. Three chapters, ten minutes.',
+    'Wherever you are, the Word is waiting — no rush.',
+    'A rested mind reads better. Day {n} is here when you are.',
+    'Today is still open. One chapter, one breath.',
+    'No score, no streak. Just the next chapter, ready for you.',
   ];
 
+  // ── Comeback copy: WARM, not shame-y ──
+  // Psychology: never mention the gap. Don't say "you've been away
+  // N days". The user knows. Just welcome them.
   static const List<String> _comebackVariants = [
-    'Welcome back. Your Day {n} is ready.',
-    'Grace covers what you missed. Begin again.',
-    'A fresh start awaits. Day {n}.',
-    'Still here. Still glad. Pick up where you left off.',
-    'The story continues. Day {n} is yours.',
+    'Welcome back. Day {n} is here.',
+    'The story continues. Pick up where you left off.',
+    'Good to see you. Day {n} is ready.',
+    'Still here. The Word waited.',
+    'A new day, a fresh start. Day {n}.',
   ];
 
   static String _bibleTitleForToday(int fireCount) =>
@@ -201,17 +207,15 @@ class NotificationService {
   }
 
   static String _missedDayCopy(int fireCount, int missedCount) {
+    // Never mention the gap number. Just rotate practice-first copy.
     final v = _missedDayVariants[fireCount.abs() % _missedDayVariants.length];
-    return missedCount > 7
-        ? '$v (You’re $missedCount days behind — we’ll catch up slowly.)'
-        : v.replaceAll('{n}', 'today');
+    return v.replaceAll('{n}', 'today');
   }
 
   static String _comebackCopy(int fireCount, int missedCount) {
+    // Never mention the gap number. Just welcome.
     final v = _comebackVariants[fireCount.abs() % _comebackVariants.length];
-    return missedCount > 30
-        ? '$v You’ve been away $missedCount days — pick up wherever feels right.'
-        : v.replaceAll('{n}', 'today');
+    return v.replaceAll('{n}', 'today');
   }
 
   Future<void> scheduleMorningReminder() async {

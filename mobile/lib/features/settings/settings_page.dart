@@ -25,7 +25,7 @@ class SettingsPage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final notifsEnabled = useState<bool>(false);
     final morningEnabled = useState<bool>(true);
-    final eveningEnabled = useState<bool>(true);
+    final eveningEnabled = useState<bool>(false);
     final hapticsEnabled = useState<bool>(true);
 
     useEffect(() {
@@ -228,7 +228,7 @@ class SettingsPage extends HookConsumerWidget {
     final prefs = await SharedPreferences.getInstance();
     notifs.value = prefs.getBool('notifications_enabled') ?? false;
     morning.value = prefs.getBool('notif_morning_enabled') ?? true;
-    evening.value = prefs.getBool('notif_evening_enabled') ?? true;
+    evening.value = prefs.getBool('notif_evening_enabled') ?? false;
     haptics.value = prefs.getBool('haptics_enabled') ?? true;
   }
 

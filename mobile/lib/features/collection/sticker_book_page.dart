@@ -57,9 +57,20 @@ class StickerBookPage extends HookConsumerWidget {
           children: [
             // ── Progress hero ──
             _ProgressHero(earned: earned.length, total: total, pct: pct),
-            const SizedBox(height: HealTokens.s24),
+                .animate().fadeIn(duration: 400.ms).slideY(begin: 0.05, end: 0),
 
-            // ── Streak family ──
+                const SizedBox(height: HealTokens.s12),
+
+                // ── Next milestones (anticipatory motivation) ──
+                if (earned.length < book.totalCount)
+                  _NextMilestones(book: book)
+                      .animate()
+                      .fadeIn(duration: 400.ms, delay: 100.ms)
+                      .slideY(begin: 0.05, end: 0),
+
+                const SizedBox(height: HealTokens.s24),
+
+                // ── Streak family ──
             _SectionHeader(label: 'Streaks', count: book.byFamily('streak').length),
             const SizedBox(height: HealTokens.s12),
             _StickerGrid(stickers: book.byFamily('streak'), book: book),
@@ -489,6 +500,115 @@ class _MotivationalFooter extends StatelessWidget {
               color: HealTokens.creamDim,
               fontStyle: FontStyle.italic,
             ),
+      ),
+    );
+  }
+}
+
+
+
+/// ── Next milestones panel ──────────────────────────────────────
+/// Shows the next 2-3 stickers the user is closest to earning.
+/// Creates anticipatory motivation — a known retention driver.
+class _NextMilestones extends StatelessWidget {
+  final StickerBookState book;
+  const _NextMilestones({required this.book});
+
+  @override
+  Widget build(BuildContext context) {
+    // Find the next 3 locked stickers (closest in milestone terms)
+    final locked = book.locked;
+    final byMilestone = <String, List<Sticker>>{
+      'next session': [],
+      'this week': [],
+      'longer arc': [],
+    };
+    for (final s in locked) {
+      if (s.family == 'practice') {
+        byMilestone['next session']!.add(s);
+      } else if (s.family == 'streak' && s.milestone <= 7) {
+        byMilestone['this week']!.add(s);
+      } else {
+        byMilestone['longer arc']!.add(s);
+      }
+    }
+    // Show the next 3
+    final next = <Sticker>[
+      ...byMilestone['next session']!.take(1),
+      ...byMilestone['this week']!.take(2),
+    ].take(3).toList();
+    if (next.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(HealTokens.s16),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft, end: Alignment.bottomRight,
+          colors: [
+            HealTokens.rosewoodLight.withValues(alpha: 0.6),
+            HealTokens.rosewood.withValues(alpha: 0.4),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(HealTokens.r16),
+        border: Border.all(color: HealTokens.brass.withValues(alpha: 0.16)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.flag_rounded, size: 14, color: HealTokens.brass.withValues(alpha: 0.9)),
+              const SizedBox(width: 6),
+              Text(
+                'NEXT MILESTONES',
+                style: TextStyle(
+                  color: HealTokens.brass.withValues(alpha: 0.9),
+                  fontSize: 10,
+                  letterSpacing: 2,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          for (final s in next)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                children: [
+                  Opacity(
+                    opacity: 0.7,
+                    child: Text(s.icon, style: const TextStyle(fontSize: 20)),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          s.name,
+                          style: const TextStyle(
+                            color: HealTokens.cream,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        Text(
+                          s.criteria,
+                          style: TextStyle(
+                            color: HealTokens.creamDim.withValues(alpha: 0.7),
+                            fontSize: 11,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.lock_outline_rounded, size: 14, color: HealTokens.creamDim.withValues(alpha: 0.4)),
+                ],
+              ),
+            ),
+        ],
       ),
     );
   }

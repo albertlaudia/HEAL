@@ -105,15 +105,26 @@ class NowPage extends HookConsumerWidget {
                           );
                         },
                       ),
-                      // Page indicator dots
+                      // Page indicator dots + step labels
                       Positioned(
                         bottom: HealTokens.s24,
                         left: 0,
                         right: 0,
                         child: Center(
-                          child: SmoothPageIndicatorDots(
-                            count: daily.cards.length,
-                            current: currentIndex.value,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Step labels — make the journey visible
+                              _StepLabels(
+                                cards: daily.cards,
+                                current: currentIndex.value,
+                              ),
+                              const SizedBox(height: 8),
+                              SmoothPageIndicatorDots(
+                                count: daily.cards.length,
+                                current: currentIndex.value,
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -348,5 +359,53 @@ class _DailyCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+
+/// Compact step labels above the page dots. Makes the journey visible —
+/// "Pause — Read — Pray" so the user knows where they are.
+class _StepLabels extends StatelessWidget {
+  final List cards;
+  final int current;
+  const _StepLabels({required this.cards, required this.current});
+
+  @override
+  Widget build(BuildContext context) {
+    final activeColor = HealTokens.brass;
+    final pastColor = HealTokens.creamDim.withValues(alpha: 0.5);
+    final futureColor = HealTokens.creamDim.withValues(alpha: 0.3);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(cards.length, (i) {
+        final isActive = i == current;
+        final isPast = i < current;
+        // Use card.kind if available, else generic
+        final label = cards[i].kind is String ? cards[i].kind : _genericLabel(i, cards.length);
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isActive ? activeColor : (isPast ? pastColor : futureColor),
+              fontSize: 10,
+              fontWeight: isActive ? FontWeight.w700 : FontWeight.w500,
+              letterSpacing: 1.5,
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  String _genericLabel(int i, int n) {
+    if (n == 4) {
+      return ['Pause', 'Read', 'Breathe', 'Pray'][i];
+    }
+    if (n == 3) {
+      return ['Read', 'Breathe', 'Pray'][i];
+    }
+    return 'Step ${i + 1}';
   }
 }

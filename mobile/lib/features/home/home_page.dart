@@ -660,9 +660,10 @@ class _HeroPracticeCard extends StatelessWidget {
                   ),
                   const SizedBox(height: HealTokens.s12),
                   Text(
-                    'Scripture · breath · prayer. Five minutes.',
+                    '5 min · a verse · a breath · a prayer',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: HealTokens.creamDim,
+                          letterSpacing: 0.3,
                         ),
                   ),
                 ],
