@@ -192,14 +192,13 @@ class _FirstBreathPageState extends State<_FirstBreathPage>
   bool _started = false;
 
   // Three breaths: each is inhale (4s) → hold (2s) → exhale (6s) = 12s
-  static const _durations = [4, 2, 6];
-  static const _labels = ['Breathe in', 'Hold gently', 'Breathe out'];
+  static const _firstDuration = 4; // breathe-in seconds (first phase)
 
   @override
   void initState() {
     super.initState();
     _breathCtrl = AnimationController(
-      duration: const Duration(seconds: _durations[0]),
+      duration: const Duration(seconds: _firstDuration),
       vsync: this,
     );
     _breathCtrl.addStatusListener(_onPhaseDone);

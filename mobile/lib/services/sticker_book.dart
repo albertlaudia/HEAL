@@ -165,7 +165,7 @@ class StickerBook extends StateNotifier<StickerBookState> {
     // referenced chapter(s). We use completedBibleDays plus a lookup of which
     // plan days contain the moment.
     for (final s in _allStickers.where((x) => x.family == 'moment')) {
-      if (_coversMoment(s.id, completedBibleDays)) unlockIfMissing(s);
+      if (await _coversMoment(s.id, completedBibleDays)) unlockIfMissing(s);
     }
 
     if (newly.isEmpty) return null;
