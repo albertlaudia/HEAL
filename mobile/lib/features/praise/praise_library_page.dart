@@ -382,27 +382,69 @@ class _PraiseTile extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(song.title,
-                          style: Theme.of(context).textTheme.titleSmall?.copyWith(color: HealTokens.cream),
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                color: HealTokens.cream,
+                                fontWeight: FontWeight.w600,
+                              ),
                           maxLines: 1, overflow: TextOverflow.ellipsis),
-                      if (song.subtitle.isNotEmpty)
+                      if (song.subtitle.isNotEmpty) ...[
+                        const SizedBox(height: 2),
                         Text(song.subtitle,
                             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                   color: HealTokens.creamDim,
                                   fontStyle: FontStyle.italic,
                                 ),
                             maxLines: 1, overflow: TextOverflow.ellipsis),
-                      const SizedBox(height: 4),
+                      ],
+                      // Lyrics preview (2 lines)
+                      if (song.lyrics.isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          _lyricsPreview(song.lyrics),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: HealTokens.creamDim.withValues(alpha: 0.7),
+                                fontSize: 11,
+                                height: 1.3,
+                              ),
+                        ),
+                      ],
+                      const SizedBox(height: 6),
                       Row(
                         children: [
-                          if (isCached)
-                            const Icon(Icons.download_done_rounded, size: 14, color: HealTokens.brass),
-                          if (isCached) const SizedBox(width: 4),
+                          if (isCached) ...[
+                            const Icon(Icons.download_done_rounded, size: 12, color: HealTokens.brass),
+                            const SizedBox(width: 4),
+                          ],
                           if (song.category != null && song.category!.isNotEmpty)
-                            Text(song.category!,
-                                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                      color: HealTokens.creamDim.withValues(alpha: 0.7),
-                                      letterSpacing: 0.5,
-                                    )),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                              decoration: BoxDecoration(
+                                color: HealTokens.brass.withValues(alpha: 0.12),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                song.category!,
+                                style: const TextStyle(
+                                  color: HealTokens.brass,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          if (song.tempoBpm != null && song.tempoBpm! > 0) ...[
+                            const SizedBox(width: 4),
+                            Text(
+                              '${song.tempoBpm} bpm',
+                              style: const TextStyle(
+                                color: HealTokens.creamDim,
+                                fontSize: 9,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ],
@@ -654,9 +696,117 @@ class PraisePlayerPage extends HookConsumerWidget {
                                 fontStyle: FontStyle.italic,
                               ),
                         ),
+                      // Music metadata chips
+                      if (song.keySignature.isNotEmpty || song.tempoBpm != null) ...[
+                        const SizedBox(height: 12),
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          spacing: 6,
+                          runSpacing: 6,
+                          children: [
+                            if (song.keySignature.isNotEmpty)
+                              _MusicChip(icon: Icons.music_note_rounded, label: song.keySignature),
+                            if (song.tempoBpm != null && song.tempoBpm! > 0)
+                              _MusicChip(icon: Icons.speed_rounded, label: '${song.tempoBpm} bpm'),
+                            if (song.meter.isNotEmpty)
+                              _MusicChip(icon: Icons.straighten_rounded, label: song.meter),
+                            if (song.mood != null && song.mood!.isNotEmpty)
+                              _MusicChip(icon: Icons.face_retouching_natural_rounded, label: song.mood!),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                 ),
+
+                // Reflection on the song (the writer's note)
+                if (song.reflection.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      HealTokens.s24, 0, HealTokens.s24, HealTokens.s16,
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.all(HealTokens.s16),
+                      decoration: BoxDecoration(
+                        color: HealTokens.rosewoodLight.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(HealTokens.r16),
+                        border: Border.all(
+                          color: HealTokens.brass.withValues(alpha: 0.24),
+                        ),
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: HealTokens.brass.withValues(alpha: 0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.menu_book_rounded,
+                              color: HealTokens.brass,
+                              size: 18,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'REFLECTION',
+                                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                                        color: HealTokens.brass,
+                                        letterSpacing: 2,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  song.reflection,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        color: HealTokens.cream,
+                                        fontStyle: FontStyle.italic,
+                                        height: 1.5,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                // Scripture refs (small chips below reflection)
+                if (song.scriptureRefs.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      HealTokens.s24, 0, HealTokens.s24, HealTokens.s16,
+                    ),
+                    child: Wrap(
+                      spacing: 6, runSpacing: 6,
+                      children: [
+                        for (final ref in song.scriptureRefs)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: HealTokens.rosewood,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: HealTokens.brass.withValues(alpha: 0.16)),
+                            ),
+                            child: Text(
+                              ref,
+                              style: const TextStyle(
+                                color: HealTokens.cream,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
 
                 // Karaoke lyrics
                 Expanded(
@@ -827,5 +977,49 @@ class _ProgressBar extends StatelessWidget {
     final m = d.inMinutes.toString().padLeft(1, '0');
     final s = (d.inSeconds % 60).toString().padLeft(2, '0');
     return '$m:$s';
+  }
+}
+
+
+/// Extract a 2-line preview from raw lyrics text.
+String _lyricsPreview(String lyrics) {
+  final lines = lyrics.split('\n')
+      .map((l) => l.trim())
+      .where((l) => l.isNotEmpty && !l.startsWith('['))
+      .take(2);
+  return lines.join('  ·  ');
+}
+
+
+class _MusicChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  const _MusicChip({required this.icon, required this.label});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: HealTokens.rosewood,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: HealTokens.brass.withValues(alpha: 0.16)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, color: HealTokens.brass, size: 11),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: const TextStyle(
+              color: HealTokens.cream,
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

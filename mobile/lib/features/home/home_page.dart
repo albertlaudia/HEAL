@@ -23,6 +23,7 @@ import '../../data/pb_models.dart';
 import '../../data/pb_repositories.dart';
 import '../../services/audio_service.dart';
 import '../../services/activity_tracker.dart';
+import '../../services/sticker_book.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -814,6 +815,7 @@ class _PracticeGrid extends StatelessWidget {
         gradient: const [HealTokens.bronze, HealTokens.rosewood],
         onTap: () => context.push('/essays'),
       ),
+      _StickerBookTile(),
     ];
 
     return GridView.builder(
@@ -827,6 +829,109 @@ class _PracticeGrid extends StatelessWidget {
       ),
       itemCount: tiles.length,
       itemBuilder: (context, i) => tiles[i],
+    );
+  }
+}
+
+
+/// ── Sticker Book tile (5th practice card) ─────────────────────
+class _StickerBookTile extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final book = ref.watch(stickerBookProvider);
+    final earned = book.unlockedCount;
+    final total = book.totalCount;
+    final pct = total == 0 ? 0.0 : earned / total;
+    return GestureDetector(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        context.push('/stickers');
+      },
+      child: Container(
+        padding: const EdgeInsets.all(HealTokens.s20),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft, end: Alignment.bottomRight,
+            colors: [HealTokens.rosewood, HealTokens.rosewoodDeep],
+          ),
+          borderRadius: BorderRadius.circular(HealTokens.r20),
+          border: Border.all(color: HealTokens.brass.withValues(alpha: 0.4)),
+          boxShadow: [
+            BoxShadow(
+              color: HealTokens.brass.withValues(alpha: 0.2),
+              blurRadius: 12, spreadRadius: -2,
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: HealTokens.brass.withValues(alpha: 0.24),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.collections_bookmark_rounded,
+                      color: HealTokens.brass, size: 20),
+                ),
+                Text(
+                  '$earned / $total',
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: HealTokens.brass,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            Text(
+              'Stickers',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: HealTokens.cream,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              pct == 1.0
+                  ? 'All earned'
+                  : pct == 0
+                      ? 'Begin the journey'
+                      : '$earned more to go',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: HealTokens.creamDim,
+                    fontStyle: FontStyle.italic,
+                    fontSize: 11,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            // Progress bar
+            Container(
+              height: 3,
+              decoration: BoxDecoration(
+                color: HealTokens.creamDim.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(2),
+              ),
+              child: FractionallySizedBox(
+                alignment: Alignment.centerLeft,
+                widthFactor: pct,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [HealTokens.brassLight, HealTokens.brass],
+                    ),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

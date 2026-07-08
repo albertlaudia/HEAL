@@ -20,6 +20,9 @@ import '../features/meditate/meditate_detail_page.dart';
 import '../features/essays/essay_page.dart';
 import '../features/world/world_day_page.dart';
 import '../features/bible/bible_program_page.dart';
+import '../features/collection/sticker_book_page.dart';
+import '../widgets/expandable_mini_player.dart';
+import '../features/collection/sticker_book_page.dart';
 import '../features/breathe/breath_studio_page.dart';
 import '../features/breathe/voice_calibration_page.dart';
 import '../features/scripture/sit_with_verse_page.dart';
@@ -52,7 +55,7 @@ class MainScaffold extends HookConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (audio.hasTrack)
-            const MiniPlayer(),
+            const ExpandableMiniPlayer(),
           _BottomNav(currentIndex: currentIndex),
         ],
       ),
@@ -632,6 +635,11 @@ class HealRouter {
         path: '/bible',
         pageBuilder: (context, state) =>
             _verticalSlide(state, const BibleProgramPage()),
+      ),
+      GoRoute(
+        path: '/stickers',
+        pageBuilder: (context, state) =>
+            _sharedAxis(state, const StickerBookPage()),
       ),
       GoRoute(
         path: '/breathe',

@@ -72,7 +72,13 @@ class PraiseSong {
   final String slug;
   final String title;
   final String subtitle;
+  final String description;
   final String lyrics;
+  final String reflection;
+  final String chords;
+  final String keySignature;
+  final String meter;
+  final int? tempoBpm;
   final String audioUrl;
   final String illustrationUrl;
   final String? category;
@@ -80,8 +86,10 @@ class PraiseSong {
   final String? mood;
   final List<String> bestFor;
   final List<String> tags;
+  final List<String> scriptureRefs;
   final int? bpm;
   final bool isPublished;
+  final int dayOfYear;
 
   const PraiseSong({
     required this.id,
@@ -101,21 +109,37 @@ class PraiseSong {
   });
 
   factory PraiseSong.fromJson(Map<String, dynamic> json) {
+    List<String> _toList(dynamic v) {
+      if (v is List) return v.map((e) => e.toString()).toList();
+      if (v is String && v.isNotEmpty) {
+        try { return (jsonDecode(v) as List).map((e) => e.toString()).toList(); }
+        catch (_) { return v.split(',').map((e) => e.trim()).toList(); }
+      }
+      return const [];
+    }
     return PraiseSong(
       id: json['id'] as String,
       slug: (json['slug'] ?? '') as String,
       title: (json['title'] ?? '') as String,
       subtitle: (json['subtitle'] ?? '') as String,
+      description: (json['description'] ?? '') as String,
       lyrics: (json['lyrics'] ?? '') as String,
+      reflection: (json['reflection'] ?? '') as String,
+      chords: (json['chords'] ?? '') as String,
+      keySignature: (json['key_signature'] ?? '') as String,
+      meter: (json['meter'] ?? '') as String,
+      tempoBpm: (json['tempo_bpm'] ?? json['bpm']) as int?,
       audioUrl: (json['audio_url'] ?? '') as String,
       illustrationUrl: (json['illustration_url'] ?? '') as String,
       category: json['category'] as String?,
       emotion: json['emotion'] as String?,
       mood: json['mood'] as String?,
-      bestFor: (json['best_for'] as List?)?.cast<String>() ?? const [],
-      tags: (json['tags'] as List?)?.cast<String>() ?? const [],
+      bestFor: _toList(json['best_for']),
+      tags: _toList(json['tags']),
+      scriptureRefs: _toList(json['scripture_refs']),
       bpm: json['bpm'] as int?,
       isPublished: (json['is_published'] ?? true) as bool,
+      dayOfYear: (json['day_of_year'] ?? 0) as int,
     );
   }
 

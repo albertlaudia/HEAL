@@ -17,6 +17,10 @@ import 'services/notification_service.dart';
 import 'services/streak_service.dart';
 import 'services/audio_service.dart';
 import 'services/activity_tracker.dart';
+import 'data/pb_models.dart';
+import 'data/pb_repositories.dart';
+import 'services/sticker_book.dart';
+import 'services/sound_service.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 Future<void> main() async {
@@ -55,6 +59,9 @@ Future<void> main() async {
     // Load activity tracker (shows "what's your pattern")
     await container.read(activityTrackerProvider.notifier).hydrate();
 
+    // Load sticker book (so the very first session can immediately evaluate)
+    await container.read(stickerBookProvider.notifier).hydrate();
+
     // Log this session
     unawaited(container
         .read(activityTrackerProvider.notifier)
@@ -86,7 +93,39 @@ Future<void> main() async {
                 type: sessionType,
                 durationSeconds: durationSeconds,
               ),
-            );
+        );
+
+        // Evaluate stickers
+        final streak = container.read(streakServiceProvider);
+        final track = container.read(activityTrackerProvider);
+        final userId = await UserIdService.get();
+        final progress = await container
+            .read(bibleProgressRepoProvider)
+            .forUser(userId)
+            .catchError((_) => <BibleProgress>[]);
+        final completedDays = progress
+            .map((p) => p.dayNumber)
+            .toSet();
+        final sticker = await container.read(stickerBookProvider.notifier).evaluate(
+          currentStreak: streak.currentStreak,
+          totalSessions: streak.totalSessions,
+          hasBreathed:     track.countFor('open_breath') > 0 || sessionType == SessionType.breath,
+          hasMeditated:    track.countFor('open_meditation') > 0 || sessionType == SessionType.meditate,
+          hasPrayed:       track.countFor('today_play_prayer') > 0 || sessionType == SessionType.prayer,
+          hasPraised:      track.countFor('today_play_praise') > 0 || sessionType == SessionType.praise,
+          hasReadBible:    track.countFor('open_bible') > 0 || completedDays.isNotEmpty,
+          hasFavorited:    track.countFor('favorite_added') > 0,
+          hasShared:       track.countFor('reflection_shared') > 0,
+          completedBibleDays: completedDays,
+        );
+        if (sticker != null) {
+          // Play unlock chime
+          await container.read(soundServiceProvider).play(
+            sticker.family == 'moment' ? SoundKind.stickerBible
+            : sticker.family == 'streak' ? SoundKind.stickerStreak
+            : SoundKind.stickerPractice,
+          );
+        }
       }
     };
 

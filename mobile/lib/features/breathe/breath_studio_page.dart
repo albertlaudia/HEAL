@@ -22,6 +22,7 @@ import '../../core/time_palette.dart';
 import '../../core/widgets/breath_ring.dart';
 import '../../services/streak_service.dart';
 import '../../services/voice_calibration_service.dart';
+import '../../services/sound_service.dart';
 
 class BreathPattern {
   final String id;
@@ -165,6 +166,7 @@ class BreathStudioPage extends HookConsumerWidget {
         sessionStart.value = null;
       }
       HapticFeedback.heavyImpact();
+      ref.read(soundServiceProvider).play(SoundKind.bell);
     }
 
     return Scaffold(
@@ -319,12 +321,23 @@ class _BreathRunner extends HookConsumerWidget {
 
       // In-pocket mode uses selectionClick (more subtle)
       // Standard mode uses lightImpact (more present)
-      if (next == BreathPhase.inhale || next == BreathPhase.exhale) {
+      if (next == BreathPhase.inhale) {
         if (isPocketMode.value) {
           await HapticFeedback.selectionClick();
         } else {
           await HapticFeedback.lightImpact();
         }
+        ref.read(soundServiceProvider).play(SoundKind.inhaleStart);
+      } else if (next == BreathPhase.exhale) {
+        if (isPocketMode.value) {
+          await HapticFeedback.selectionClick();
+        } else {
+          await HapticFeedback.lightImpact();
+        }
+        ref.read(soundServiceProvider).play(SoundKind.exhaleStart);
+      } else if (next == BreathPhase.holdIn || next == BreathPhase.holdOut) {
+        await HapticFeedback.selectionClick();
+        ref.read(soundServiceProvider).play(SoundKind.hold);
       }
 
       if (seconds == 0) return;
