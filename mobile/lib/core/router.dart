@@ -41,7 +41,12 @@ class MainScaffold extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final audio = ref.watch(audioServiceProvider);
+    // Selector: only rebuild when hasTrack actually flips, NOT on every
+    // 200ms position tick. (Previously: full AudioState watch = rebuild
+    // storm on every position update.)
+    final hasTrack = ref.watch(
+      audioServiceProvider.select((s) => s.track != null),
+    );
 
     final pages = [
       const HomePage(),
@@ -56,7 +61,7 @@ class MainScaffold extends HookConsumerWidget {
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (audio.hasTrack)
+          if (hasTrack)
             const ExpandableMiniPlayer(),
           _BottomNav(currentIndex: currentIndex),
         ],

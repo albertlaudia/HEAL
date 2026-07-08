@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/router.dart';
+import 'features/onboarding/permission_gate.dart';
 import 'core/theme.dart';
 import 'features/onboarding/onboarding_page.dart';
 import 'features/home/splash_page.dart';
@@ -54,16 +55,19 @@ class _HealAppState extends ConsumerState<HealApp> {
       themeMode: ThemeMode.dark,
       routerConfig: HealRouter.router,
       builder: (context, child) {
-        // Wrap with overlay for splash + onboarding
-        return Stack(
-          children: [
-            child ?? const SizedBox(),
-            if (_showSplash)
-              const Material(
-                color: Colors.transparent,
-                child: SplashPage(),
-              ),
-          ],
+        // Wrap with PermissionGate (asks for notifications after first session)
+        // + overlay for splash + onboarding
+        return PermissionGate(
+          child: Stack(
+            children: [
+              child ?? const SizedBox(),
+              if (_showSplash)
+                const Material(
+                  color: Colors.transparent,
+                  child: SplashPage(),
+                ),
+            ],
+          ),
         );
       },
     );

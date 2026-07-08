@@ -116,7 +116,6 @@ class AudioService extends StateNotifier<AudioState> {
   AudioService() : super(const AudioState());
 
   final AudioPlayer _player = AudioPlayer(playerId: 'heal_main');
-  StreamSubscription? _posSub;
   StreamSubscription? _durSub;
   StreamSubscription? _stateSub;
   StreamSubscription? _completeSub;
@@ -130,9 +129,27 @@ class AudioService extends StateNotifier<AudioState> {
   Future<void> init() async {
     await _player.setReleaseMode(ReleaseMode.stop);
 
-    _posSub = _player.onPositionChanged.listen((p) {
+    // Single position listener: updates state.position AND drives fade-out.
+    // (Previously had two listeners on onPositionChanged, which double-updated
+    // state every 200ms and wasted frames.)
+    _positionSub = _player.onPositionChanged.listen((pos) {
       if (!mounted) return;
-      state = state.copyWith(position: p);
+      final dur = state.duration;
+      state = state.copyWith(position: pos);
+      if (dur <= Duration.zero) return;
+
+      final remaining = dur - pos;
+      const fadeWindow = Duration(seconds: 4);
+      if (remaining > Duration.zero && remaining <= fadeWindow) {
+        // Inside fade window: ease volume down toward 0 with cubic curve.
+        final ratio = remaining.inMilliseconds / fadeWindow.inMilliseconds;
+        final eased = ratio * ratio * ratio;
+        _player.setVolume(eased.clamp(0.0, 1.0));
+      } else if (remaining > fadeWindow && !_volumeWasFaded) {
+        // Outside fade window: restore full volume ONCE per fade-cycle.
+        _player.setVolume(1.0);
+        _volumeWasFaded = false;
+      }
     });
 
     _durSub = _player.onDurationChanged.listen((d) {
@@ -144,42 +161,15 @@ class AudioService extends StateNotifier<AudioState> {
       if (!mounted) return;
       state = state.copyWith(
         playing: ps == PlayerState.playing,
-        // loading clears once we know we're playing OR we've stopped (failed)
         loading: ps == PlayerState.playing ? false : state.loading,
       );
-    });
-
-    // Track-end fade-out: 4 seconds of gradual volume reduction for a
-    // gentle transition. We poll the position stream every 200ms and ease
-    // the volume down to 0 as we approach the end.
-    _positionSub = _player.onPositionChanged.listen((pos) {
-      if (!mounted) return;
-      final dur = state.duration;
-      if (dur <= Duration.zero) {
-        state = state.copyWith(position: pos);
-        return;
-      }
-      final remaining = dur - pos;
-      state = state.copyWith(position: pos);
-      // Apply fade only in the last 4 seconds; only if not already 0
-      const fadeWindow = Duration(seconds: 4);
-      if (remaining > Duration.zero && remaining <= fadeWindow) {
-        final ratio = remaining.inMilliseconds / fadeWindow.inMilliseconds;
-        // Cubic ease for smoother feel
-        final eased = ratio * ratio * ratio;
-        _player.setVolume(eased.clamp(0.0, 1.0));
-      } else if (remaining > fadeWindow && _volumeAtFull) {
-        // Restore full volume when we're outside the fade window
-        _player.setVolume(1.0);
-        _volumeAtFull = false;
-      }
     });
 
     _completeSub = _player.onPlayerComplete.listen((_) {
       if (!mounted) return;
       // Restore volume for the next track
       _player.setVolume(1.0);
-      _volumeAtFull = true;
+      _volumeWasFaded = false;
       final completedTrack = state.track;
       final durationSec = state.duration.inSeconds;
       state = state.copyWith(
@@ -192,14 +182,13 @@ class AudioService extends StateNotifier<AudioState> {
       }
       // Auto-advance playlist
       if (state.hasNext) {
-        // Don't await — let the UI update naturally
         // ignore: discarded_futures
         _playIndex(state.queueIndex + 1);
       }
     });
   }
 
-  bool _volumeAtFull = true;
+  bool _volumeWasFaded = false;
 
   /// Play a single track (no playlist context).
   Future<void> play(AudioTrack track) async {
@@ -351,7 +340,7 @@ class AudioService extends StateNotifier<AudioState> {
 
   @override
   void dispose() {
-    _posSub?.cancel();
+    // _posSub consolidated into _positionSub
     _durSub?.cancel();
     _stateSub?.cancel();
     _completeSub?.cancel();
