@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { Menu, X } from 'lucide-react';
 import { AuthMenu } from '@/components/auth/AuthMenu';
+import HeaderSearch from '@/components/HeaderSearch';
 
 const links = [
   { href: '/', label: 'Today' },
@@ -72,7 +73,10 @@ export function Nav() {
         >
           {open ? <X size={22} /> : <Menu size={22} />}
         </button>
-        <div className="hidden md:block"><AuthMenu /></div>
+        <div className="hidden md:flex items-center gap-2">
+          <HeaderSearch />
+          <AuthMenu />
+        </div>
       </div>
 
       {/* Mobile drawer */}

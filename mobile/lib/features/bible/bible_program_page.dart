@@ -9,6 +9,10 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme.dart';
 import '../../data/pb_models.dart';
 import '../../data/pb_repositories.dart';
+import '../../services/streak_service.dart';
+import '../../services/sound_service.dart';
+import '../../services/sticker_book.dart';
+import '../../services/activity_tracker.dart';
 
 class BibleProgramPage extends HookConsumerWidget {
   const BibleProgramPage({super.key});
@@ -160,6 +164,52 @@ class BibleProgramPage extends HookConsumerWidget {
           userId: userId,
           dayNumber: reading.dayNumber,
         );
+    // Also log a streak session — Bible reading counts as a daily practice
+    await ref.read(streakServiceProvider.notifier).recordSession(
+          SessionRecord(
+            timestamp: DateTime.now(),
+            type: SessionType.scripture,
+            durationSeconds: 300,  // ~5 min assumed for a daily reading
+          ),
+        );
+    // Re-evaluate stickers — Bible completion may unlock "first-bible" + Bible moment stickers
+    final track = ref.read(activityTrackerProvider);
+    final progress = await ref.read(bibleProgressRepoProvider).forUser(userId);
+    final completedDays = progress.map((p) => p.dayNumber).toSet();
+    final streak = ref.read(streakServiceProvider);
+    final sticker = await ref.read(stickerBookProvider.notifier).evaluate(
+      currentStreak: streak.currentStreak,
+      totalSessions: streak.totalSessions,
+      hasBreathed:     track.countFor('open_breath') > 0,
+      hasMeditated:    track.countFor('open_meditation') > 0,
+      hasPrayed:       track.countFor('today_play_prayer') > 0,
+      hasPraised:      track.countFor('today_play_praise') > 0,
+      hasReadBible:    true,  // just marked complete
+      hasFavorited:    track.countFor('favorite_added') > 0,
+      hasShared:       track.countFor('reflection_shared') > 0,
+      completedBibleDays: completedDays,
+    );
+    if (sticker != null) {
+      HapticFeedback.heavyImpact();
+      ref.read(soundServiceProvider).play(
+        sticker.family == 'moment' ? SoundKind.stickerBible
+        : sticker.family == 'streak' ? SoundKind.stickerStreak
+        : SoundKind.stickerPractice,
+      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(children: [
+              Text(sticker.icon, style: const TextStyle(fontSize: 20)),
+              const SizedBox(width: 8),
+              Expanded(child: Text('Sticker earned: ${sticker.name}')),
+            ]),
+            duration: const Duration(seconds: 3),
+            backgroundColor: HealTokens.rosewood,
+          ),
+        );
+      }
+    }
     ref.invalidate(userProgressProvider(userId));
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(

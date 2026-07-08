@@ -37,7 +37,11 @@ export function ScriptureList({ scriptures }: { scriptures: Scripture[] }) {
         {filtered.map(s => {
           const isOpen = open === s.id;
           return (
-            <div key={s.id} className="card-quiet overflow-hidden">
+            <div
+              key={s.id}
+              id={s.id}
+              className="card-quiet overflow-hidden scroll-mt-20"
+            >
               <button
                 onClick={() => setOpen(isOpen ? null : s.id)}
                 className="w-full text-left p-6 md:p-8 flex items-center justify-between gap-4 hover:bg-ink/[0.02] transition-colors"

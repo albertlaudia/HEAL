@@ -120,6 +120,7 @@ class AudioService extends StateNotifier<AudioState> {
   StreamSubscription? _durSub;
   StreamSubscription? _stateSub;
   StreamSubscription? _completeSub;
+  StreamSubscription? _positionSub;
 
   /// Hook for callers to react to track completion (e.g. record session).
   void Function(AudioTrack track, int durationSeconds)? onTrackComplete;
@@ -148,8 +149,37 @@ class AudioService extends StateNotifier<AudioState> {
       );
     });
 
+    // Track-end fade-out: 4 seconds of gradual volume reduction for a
+    // gentle transition. We poll the position stream every 200ms and ease
+    // the volume down to 0 as we approach the end.
+    _positionSub = _player.onPositionChanged.listen((pos) {
+      if (!mounted) return;
+      final dur = state.duration;
+      if (dur <= Duration.zero) {
+        state = state.copyWith(position: pos);
+        return;
+      }
+      final remaining = dur - pos;
+      state = state.copyWith(position: pos);
+      // Apply fade only in the last 4 seconds; only if not already 0
+      const fadeWindow = Duration(seconds: 4);
+      if (remaining > Duration.zero && remaining <= fadeWindow) {
+        final ratio = remaining.inMilliseconds / fadeWindow.inMilliseconds;
+        // Cubic ease for smoother feel
+        final eased = ratio * ratio * ratio;
+        _player.setVolume(eased.clamp(0.0, 1.0));
+      } else if (remaining > fadeWindow && _volumeAtFull) {
+        // Restore full volume when we're outside the fade window
+        _player.setVolume(1.0);
+        _volumeAtFull = false;
+      }
+    });
+
     _completeSub = _player.onPlayerComplete.listen((_) {
       if (!mounted) return;
+      // Restore volume for the next track
+      _player.setVolume(1.0);
+      _volumeAtFull = true;
       final completedTrack = state.track;
       final durationSec = state.duration.inSeconds;
       state = state.copyWith(
@@ -168,6 +198,8 @@ class AudioService extends StateNotifier<AudioState> {
       }
     });
   }
+
+  bool _volumeAtFull = true;
 
   /// Play a single track (no playlist context).
   Future<void> play(AudioTrack track) async {
@@ -323,6 +355,7 @@ class AudioService extends StateNotifier<AudioState> {
     _durSub?.cancel();
     _stateSub?.cancel();
     _completeSub?.cancel();
+    _positionSub?.cancel();
     _player.dispose();
     super.dispose();
   }
