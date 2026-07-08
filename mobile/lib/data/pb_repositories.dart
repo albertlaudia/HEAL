@@ -257,6 +257,24 @@ final prayerRepoProvider =
     Provider<PrayerRepository>((ref) => PrayerRepository(ref.watch(pocketbaseProvider)));
 final scriptureRepoProvider =
     Provider<ScriptureRepository>((ref) => ScriptureRepository(ref.watch(pocketbaseProvider)));
+
+/// List all prayers (used by today shelf rotation).
+final prayersProvider = FutureProvider<List<Prayer>>((ref) async {
+  try {
+    return await ref.watch(prayerRepoProvider).list(limit: 80);
+  } catch (_) {
+    return <Prayer>[];
+  }
+});
+
+/// List all scriptures (used by today shelf rotation).
+final allScripturesProvider = FutureProvider<List<Scripture>>((ref) async {
+  try {
+    return await ref.watch(scriptureRepoProvider).list(limit: 80);
+  } catch (_) {
+    return <Scripture>[];
+  }
+});
 final quoteRepoProvider =
     Provider<QuoteRepository>((ref) => QuoteRepository(ref.watch(pocketbaseProvider)));
 final breathRepoProvider =

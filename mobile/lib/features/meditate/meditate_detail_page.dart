@@ -14,6 +14,7 @@ import '../../core/widgets/brass_widgets.dart';
 import '../../data/pb_repositories.dart';
 import '../../data/pb_models.dart';
 import '../../services/audio_service.dart';
+import '../../services/activity_tracker.dart';
 
 class MeditateListPage extends HookConsumerWidget {
   const MeditateListPage({super.key});
@@ -145,111 +146,149 @@ class _MeditationCard extends StatelessWidget {
 
 // ── Detail page ───────────────────────────────────────────────────
 
-class MeditateDetailPage extends HookConsumerWidget {
+class MeditateDetailPage extends ConsumerStatefulWidget {
   final String id;
   const MeditateDetailPage({super.key, required this.id});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final audio = ref.watch(audioServiceProvider);
+  ConsumerState<MeditateDetailPage> createState() => _MeditateDetailPageState();
+}
 
-    return FutureBuilder<Meditation?>(
-      future: ref.read(meditationRepoProvider).get(id),
-      builder: (context, snap) {
-        if (!snap.hasData) {
-          return Scaffold(
-            appBar: AppBar(),
-            body: const Center(child: CircularProgressIndicator()),
-          );
+class _MeditateDetailPageState extends ConsumerState<MeditateDetailPage> {
+  Meditation? _meditation;
+  bool _autoPlayed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _load());
+  }
+
+  Future<void> _load() async {
+    if (!mounted) return;
+    final m = await ref.read(meditationRepoProvider).get(widget.id);
+    if (!mounted) return;
+    setState(() => _meditation = m);
+
+    // Auto-play ONCE on first load. If a different track is currently
+    // playing, respect the user's existing session.
+    if (m != null && !_autoPlayed) {
+      _autoPlayed = true;
+      final state = ref.read(audioServiceProvider);
+      final isCurrent = state.track?.id == m.id;
+      if (!isCurrent && !state.playing) {
+        await ref.read(audioServiceProvider.notifier).play(AudioTrack(
+              id: m.id,
+              url: m.cdnAudio,
+              title: m.title,
+              subtitle: m.subtitle,
+              illustrationUrl: m.cdnIllustration,
+              source: AudioSource.meditation,
+            ));
+        HapticFeedback.lightImpact();
+        if (mounted) {
+          ref.read(activityTrackerProvider.notifier)
+              .log('open_meditation', target: m.slug, meta: {'auto_play': true});
         }
-        final m = snap.data!;
-        final isThisTrack = audio.track?.id == m.id;
-        return Scaffold(
-          body: CustomScrollView(
-            physics: const BouncingScrollPhysics(),
-            slivers: [
-              SliverAppBar(
-                pinned: true,
-                expandedHeight: 320,
-                backgroundColor: HealTokens.rosewoodDeep,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back_rounded),
-                  onPressed: () => context.pop(),
-                ),
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Stack(
-                    fit: StackFit.expand,
-                    children: [
-                      CachedNetworkImage(
-                        imageUrl: m.cdnIllustration,
-                        fit: BoxFit.cover,
-                        placeholder: (_, __) => Container(color: HealTokens.rosewoodLight),
-                        errorWidget: (_, __, ___) => Container(
-                          color: HealTokens.rosewoodLight,
-                          child: const Icon(Icons.spa_outlined, color: HealTokens.brass, size: 64),
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              HealTokens.rosewoodDeep.withValues(alpha: 0.4),
-                              HealTokens.rosewoodDeep,
-                            ],
-                            stops: const [0.4, 1.0],
-                          ),
-                        ),
-                      ),
-                    ],
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final audio = ref.watch(audioServiceProvider);
+    final m = _meditation;
+    if (m == null) {
+      return Scaffold(
+        appBar: AppBar(),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+    final isThisTrack = audio.track?.id == m.id;
+    return Scaffold(
+      body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
+        slivers: [
+          SliverAppBar(
+            pinned: true,
+            expandedHeight: 320,
+            backgroundColor: HealTokens.rosewoodDeep,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back_rounded),
+              onPressed: () => context.pop(),
+            ),
+            flexibleSpace: FlexibleSpaceBar(
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CachedNetworkImage(
+                    imageUrl: m.cdnIllustration,
+                    fit: BoxFit.cover,
+                    placeholder: (_, __) => Container(color: HealTokens.rosewoodLight),
+                    errorWidget: (_, __, ___) => Container(
+                      color: HealTokens.rosewoodLight,
+                      child: const Icon(Icons.spa_outlined, color: HealTokens.brass, size: 64),
+                    ),
                   ),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(HealTokens.s24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        m.title,
-                        style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                              color: HealTokens.cream,
-                            ),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          HealTokens.rosewoodDeep.withValues(alpha: 0.4),
+                          HealTokens.rosewoodDeep,
+                        ],
+                        stops: const [0.4, 1.0],
                       ),
-                      const SizedBox(height: HealTokens.s8),
-                      if (m.subtitle.isNotEmpty)
-                        Text(
-                          m.subtitle,
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: HealTokens.creamDim,
-                                fontStyle: FontStyle.italic,
-                              ),
-                        ),
-                      const SizedBox(height: HealTokens.s24),
-                      if (m.body.isNotEmpty)
-                        Text(
-                          m.body,
-                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: HealTokens.cream,
-                                height: 1.7,
-                              ),
-                        ),
-                      const SizedBox(height: HealTokens.s32),
-                      _PlayerControls(
-                        meditation: m,
-                        audio: audio,
-                        isThisTrack: isThisTrack,
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        );
-      },
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(HealTokens.s24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    m.title,
+                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                          color: HealTokens.cream,
+                        ),
+                  ),
+                  const SizedBox(height: HealTokens.s8),
+                  if (m.subtitle.isNotEmpty)
+                    Text(
+                      m.subtitle,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: HealTokens.creamDim,
+                            fontStyle: FontStyle.italic,
+                          ),
+                    ),
+                  const SizedBox(height: HealTokens.s24),
+                  if (m.body.isNotEmpty)
+                    Text(
+                      m.body,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: HealTokens.cream,
+                            height: 1.7,
+                          ),
+                    ),
+                  const SizedBox(height: HealTokens.s32),
+                  _PlayerControls(
+                    meditation: m,
+                    audio: audio,
+                    isThisTrack: isThisTrack,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

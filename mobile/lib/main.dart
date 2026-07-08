@@ -16,6 +16,7 @@ import 'data/pb_repositories.dart';
 import 'services/notification_service.dart';
 import 'services/streak_service.dart';
 import 'services/audio_service.dart';
+import 'services/activity_tracker.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 Future<void> main() async {
@@ -50,6 +51,14 @@ Future<void> main() async {
 
     // Load streak state from local storage
     await container.read(streakServiceProvider.notifier).load();
+
+    // Load activity tracker (shows "what's your pattern")
+    await container.read(activityTrackerProvider.notifier).hydrate();
+
+    // Log this session
+    unawaited(container
+        .read(activityTrackerProvider.notifier)
+        .log('session', meta: {'platform': 'flutter'}));
 
     // Wire audio completion → streak session
     final audio = container.read(audioServiceProvider.notifier);

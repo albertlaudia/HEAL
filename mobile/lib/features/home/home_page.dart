@@ -21,6 +21,8 @@ import '../../services/streak_service.dart';
 import '../../services/voice_calibration_service.dart';
 import '../../data/pb_models.dart';
 import '../../data/pb_repositories.dart';
+import '../../services/audio_service.dart';
+import '../../services/activity_tracker.dart';
 
 class HomePage extends HookConsumerWidget {
   const HomePage({super.key});
@@ -926,6 +928,99 @@ class _TodayShelf extends HookConsumerWidget {
     final reflectionsAsync  = ref.watch(reflectionsProvider);
     final praiseAsync       = ref.watch(praisesProvider);
     final worldAsync        = ref.watch(todayWorldProvider);
+    final audio            = ref.watch(audioServiceProvider);
+    final activity         = ref.watch(activityTrackerProvider);
+
+    Future<void> playMeditation(Meditation m) async {
+      HapticFeedback.mediumImpact();
+      ref.read(activityTrackerProvider.notifier).log('today_play', target: 'meditation:${m.slug}');
+      ref.read(activityTrackerProvider.notifier).log('play_start', target: m.slug);
+      ref.read(audioServiceProvider.notifier).play(AudioTrack(
+            id: m.id,
+            url: m.cdnAudio,
+            title: m.title,
+            subtitle: m.subtitle,
+            illustrationUrl: m.cdnIllustration,
+            source: AudioSource.meditation,
+          ));
+    }
+
+    Future<void> playPraise(PraiseSong s) async {
+      HapticFeedback.mediumImpact();
+      ref.read(activityTrackerProvider.notifier).log('today_play', target: 'praise:${s.slug}');
+      ref.read(activityTrackerProvider.notifier).log('play_start', target: s.slug);
+      ref.read(audioServiceProvider.notifier).play(AudioTrack(
+            id: s.id,
+            url: s.cdnAudio,
+            title: s.title,
+            subtitle: s.subtitle,
+            illustrationUrl: s.cdnIllustration,
+            source: AudioSource.praise,
+            lyrics: s.lyrics.isNotEmpty ? s.lyrics : null,
+          ));
+    }
+
+    // Pick WHICH meditation / praise / prayer / reflection to surface today.
+    // Deterministic by day-of-year so it doesn't feel random or repeat within a day,
+    // but rotates every day.
+    final now = DateTime.now();
+    final todayKey = now.year * 1000 + now.month * 31 + now.day;
+
+    final praiseList = praiseAsync.maybeWhen(data: (x) => x, orElse: () => <PraiseSong>[]);
+    final reflectionList = reflectionsAsync.maybeWhen(data: (x) => x, orElse: () => <Essay>[]);
+    final prayerList = ref.watch(prayersProvider).maybeWhen(data: (x) => x, orElse: () => <Prayer>[]);
+    final scriptureList = ref.watch(scriptureRepoProvider).maybeWhen(data: (x) => x, orElse: () => <Scripture>[]);
+
+    final todayMed = meditationsAsync.maybeWhen(data: (m) => m, orElse: () => null);
+    final todayScripture = scriptureAsync.maybeWhen(data: (s) => s, orElse: () => null);
+    final todayPrayer = prayerAsync.maybeWhen(data: (p) => p, orElse: () => null);
+    final todayPraise = praiseList.isNotEmpty ? praiseList[todayKey % praiseList.length] : null;
+    final todayReflection = reflectionList.isNotEmpty ? reflectionList[todayKey % reflectionList.length] : null;
+    final todayWorld = worldAsync.maybeWhen(data: (w) => w, orElse: () => null);
+
+    // Activity-aware recommendation: sort shelf by what user engages with most.
+    final kindBoost = <String, int>{
+      'today_play_meditation': activity.countFor('today_play_meditation'),
+      'today_play_praise':     activity.countFor('today_play_praise'),
+      'today_play_prayer':     activity.countFor('today_play_prayer'),
+      'today_play_reflection': activity.countFor('today_play_reflection'),
+      'today_play_scripture':  activity.countFor('today_play_scripture'),
+    };
+
+    Future<void> openScripture(Scripture s) async {
+      HapticFeedback.selectionClick();
+      ref.read(activityTrackerProvider.notifier).log('today_play', target: 'scripture:${s.reference}');
+      context.push('/sit-with-verse', extra: s);
+    }
+
+    Future<void> openPrayer(Prayer p) async {
+      HapticFeedback.selectionClick();
+      ref.read(activityTrackerProvider.notifier).log('today_play', target: 'prayer:${p.slug}');
+      context.push('/prayer/${p.id}');
+    }
+
+    Future<void> openReflection(Essay e) async {
+      HapticFeedback.selectionClick();
+      ref.read(activityTrackerProvider.notifier).log('today_play', target: 'reflection:${e.slug}');
+      context.push('/essays/${e.slug}');
+    }
+
+    Future<void> openWorld(WorldDay w) async {
+      HapticFeedback.selectionClick();
+      ref.read(activityTrackerProvider.notifier).log('today_play', target: 'world:${w.slug}');
+      context.push('/world/${w.slug}');
+    }
+
+    // Are we already playing this track? Show a "Playing" badge instead of eyebrow.
+    String? nowPlayingEyebrow;
+    if (audio.track != null && audio.playing) {
+      switch (audio.track!.source) {
+        case AudioSource.meditation: nowPlayingEyebrow = 'NOW PLAYING'; break;
+        case AudioSource.praise:     nowPlayingEyebrow = 'NOW PLAYING'; break;
+        case AudioSource.reference:  nowPlayingEyebrow = 'NOW READING'; break;
+        case AudioSource.custom:     nowPlayingEyebrow = 'NOW PLAYING'; break;
+      }
+    }
 
     return SizedBox(
       height: 168,
@@ -934,116 +1029,86 @@ class _TodayShelf extends HookConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 4),
         physics: const BouncingScrollPhysics(),
         children: [
+          // ── Meditation — tap to play directly, NOT just go to a list ──
           _TodayCard(
             icon: Icons.self_improvement_rounded,
-            eyebrow: 'Meditation',
-            title: meditationsAsync.maybeWhen(
-              data: (m) => m?.title ?? 'A small practice',
-              orElse: () => 'A small practice',
-            ),
-            subtitle: meditationsAsync.maybeWhen(
-              data: (m) {
-                if (m == null) return 'Five minutes';
-                final s = m.subtitle.isNotEmpty ? m.subtitle : 'A quiet practice';
-                return s.length > 60 ? '${s.substring(0, 60)}…' : s;
-              },
-              orElse: () => 'Five minutes',
-            ),
+            eyebrow: nowPlayingEyebrow ?? 'MEDITATION',
+            title: todayMed?.title ?? 'A small practice',
+            subtitle: todayMed?.subtitle.isNotEmpty == true
+                ? (todayMed!.subtitle.length > 60
+                    ? '${todayMed.subtitle.substring(0, 60)}…'
+                    : todayMed.subtitle)
+                : 'A quiet practice',
             palette: const [Color(0xFF4A6B5E), Color(0xFF2C3E36)],
-            onTap: () => context.push('/meditate'),
+            onTap: todayMed == null
+                ? () => context.push('/meditate')
+                : () => playMeditation(todayMed),
+            onLongPress: todayMed == null
+                ? null
+                : () => context.push('/meditate/${todayMed.id}'),
           ),
           const SizedBox(width: HealTokens.s12),
+          // ── Scripture — opens /sit-with-verse directly with today's verse ──
           _TodayCard(
             icon: Icons.menu_book_rounded,
-            eyebrow: 'Scripture',
-            title: scriptureAsync.maybeWhen(
-              data: (s) => s?.text ?? 'Be still',
-              orElse: () => 'Be still',
-            ),
-            subtitle: scriptureAsync.maybeWhen(
-              data: (s) => s?.reference ?? 'A verse for the day',
-              orElse: () => 'A verse for the day',
-            ),
+            eyebrow: nowPlayingEyebrow ?? 'SCRIPTURE',
+            title: todayScripture?.text ?? 'Be still and know',
+            subtitle: todayScripture?.reference ?? 'A verse for the day',
             palette: const [Color(0xFF8E6F47), Color(0xFF5B4530)],
-            onTap: () => context.push('/scripture'),
+            onTap: todayScripture == null
+                ? () => context.push('/scripture')
+                : () => openScripture(todayScripture),
           ),
           const SizedBox(width: HealTokens.s12),
+          // ── Prayer — tap to open today's prayer detail (not generic list) ──
           _TodayCard(
             icon: Icons.favorite_rounded,
-            eyebrow: 'Prayer',
-            title: prayerAsync.maybeWhen(
-              data: (p) => p?.title ?? 'A prayer',
-              orElse: () => 'A prayer',
-            ),
-            subtitle: prayerAsync.maybeWhen(
-              // ignore: invalid_null_aware_operator
-              data: (p) => p?.body?.split('\n').first ?? 'Bring it to God',
-              orElse: () => 'Bring it to God',
-            ),
+            eyebrow: nowPlayingEyebrow ?? 'PRAYER',
+            title: todayPrayer?.title ?? 'A prayer',
+            subtitle: todayPrayer?.body.split('\n').first ?? 'Bring it to God',
             palette: const [Color(0xFFA66B5C), Color(0xFF6F4538)],
-            onTap: () => context.push('/prayer'),
+            onTap: todayPrayer == null
+                ? () => context.push('/prayer')
+                : () => openPrayer(todayPrayer),
           ),
           const SizedBox(width: HealTokens.s12),
+          // ── Reflection — rotates daily via todayKey (not always first) ──
           _TodayCard(
             icon: Icons.menu_book_rounded,
-            eyebrow: 'Reflection',
-            title: reflectionsAsync.maybeWhen(
-              data: (r) => r.isNotEmpty ? r.first.title : 'A long read',
-              orElse: () => 'A long read',
-            ),
-            subtitle: reflectionsAsync.maybeWhen(
-              data: (r) => r.isNotEmpty ? (r.first.subtitle ?? 'A reflection') : 'A reflection',
-              orElse: () => 'A reflection',
-            ),
+            eyebrow: 'REFLECTION',
+            title: todayReflection?.title ?? 'A long read',
+            subtitle: todayReflection?.subtitle ?? 'A reflection',
             palette: const [Color(0xFF5B6E8E), Color(0xFF394861)],
-            onTap: () => context.push('/essays'),
+            onTap: todayReflection == null
+                ? () => context.push('/essays')
+                : () => openReflection(todayReflection),
           ),
           const SizedBox(width: HealTokens.s12),
+          // ── Praise — tap to play today's song directly (no detail page) ──
           _TodayCard(
             icon: Icons.music_note_rounded,
-            eyebrow: 'Praise',
-            title: praiseAsync.maybeWhen(
-              data: (p) => p.isNotEmpty ? p.first.title : 'A hymn',
-              orElse: () => 'A hymn',
-            ),
-            subtitle: praiseAsync.maybeWhen(
-              data: (p) => p.isNotEmpty ? (p.first.subtitle ?? 'A song for today') : 'A song for today',
-              orElse: () => 'A song for today',
-            ),
+            eyebrow: nowPlayingEyebrow ?? 'PRAISE',
+            title: todayPraise?.title ?? 'A hymn',
+            subtitle: todayPraise?.subtitle ?? 'A song for today',
             palette: const [Color(0xFF6E5BA6), Color(0xFF44386F)],
-            onTap: () => context.push('/praise'),
+            onTap: todayPraise == null
+                ? () => context.push('/praise')
+                : () => playPraise(todayPraise),
+            onLongPress: todayPraise == null
+                ? null
+                : () => context.push('/praise'),
           ),
           const SizedBox(width: HealTokens.s12),
+          // ── World — opens today-in-the-world directly, not /world route ──
           _TodayCard(
             icon: Icons.public_rounded,
-            eyebrow: worldAsync.maybeWhen(
-              data: (w) {
-                if (w == null) return 'The world';
-                switch (w.promptKind) {
-                  case 'challenge': return 'A weight to pray into';
-                  case 'grace':     return 'Good, already happening';
-                  case 'gratitude': return 'Worth pausing for';
-                  default:          return 'The world, today';
-                }
-              },
-              orElse: () => 'The world, today',
-            ),
-            title: worldAsync.maybeWhen(
-              data: (w) => w?.title ?? 'Today in the world',
-              orElse: () => 'Today in the world',
-            ),
-            subtitle: worldAsync.maybeWhen(
-              data: (w) => w?.scriptureRef ?? 'A prayer, a verse, an expectation',
-              orElse: () => 'A prayer, a verse, an expectation',
-            ),
+            eyebrow: 'THE WORLD',
+            title: todayWorld?.title ?? 'Today in the world',
+            subtitle: todayWorld?.scriptureRef ?? 'A prayer, a verse, an expectation',
             palette: const [Color(0xFF4A8E8E), Color(0xFF2E6363)],
-            onTap: () {
-              final slug = worldAsync.maybeWhen(
-                data: (w) => w?.slug,
-                orElse: () => null,
-              );
-              if (slug != null) context.push('/world/$slug');
-            },
+            onTap: todayWorld == null
+                ? () => context.push('/world/world-${_todaySlug()}')
+                : () => openWorld(todayWorld),
           ),
         ],
       ),
@@ -1074,6 +1139,12 @@ class _TodayCard extends StatelessWidget {
         HapticFeedback.selectionClick();
         onTap();
       },
+      onLongPress: onLongPress == null
+          ? null
+          : () {
+              HapticFeedback.mediumImpact();
+              onLongPress!();
+            },
       child: Container(
         width: 220,
         padding: const EdgeInsets.all(HealTokens.s16),
@@ -1301,4 +1372,16 @@ class _BibleYearHero extends HookConsumerWidget {
       },
     );
   }
+}
+
+
+/// Australia's local 'today' for the daily world piece (matches the cron slug).
+String _todaySlug() {
+  // UTC + 8h = WST. Cron runs at 21:00 UTC = 06:00 WST.
+  final ms = DateTime.now().toUtc().millisecondsSinceEpoch + 8 * 3600 * 1000;
+  final d = DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true);
+  final y = d.year.toString().padLeft(4, '0');
+  final m = d.month.toString().padLeft(2, '0');
+  final day = d.day.toString().padLeft(2, '0');
+  return 'world-$y-$m-$day';
 }
