@@ -969,7 +969,7 @@ class _TodayShelf extends HookConsumerWidget {
     final praiseList = praiseAsync.maybeWhen(data: (x) => x, orElse: () => <PraiseSong>[]);
     final reflectionList = reflectionsAsync.maybeWhen(data: (x) => x, orElse: () => <Essay>[]);
     final prayerList = ref.watch(prayersProvider).maybeWhen(data: (x) => x, orElse: () => <Prayer>[]);
-    final scriptureList = ref.watch(scriptureRepoProvider).maybeWhen(data: (x) => x, orElse: () => <Scripture>[]);
+    final scriptureList = ref.watch(allScripturesProvider).maybeWhen(data: (x) => x, orElse: () => <Scripture>[]);
 
     final todayMed = meditationsAsync.maybeWhen(data: (m) => m, orElse: () => null);
     final todayScripture = scriptureAsync.maybeWhen(data: (s) => s, orElse: () => null);
@@ -1123,6 +1123,7 @@ class _TodayCard extends StatelessWidget {
   final String subtitle;
   final List<Color> palette;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
   const _TodayCard({
     required this.icon,
     required this.eyebrow,
@@ -1130,6 +1131,7 @@ class _TodayCard extends StatelessWidget {
     required this.subtitle,
     required this.palette,
     required this.onTap,
+    this.onLongPress,
   });
 
   @override

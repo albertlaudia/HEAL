@@ -85,6 +85,16 @@ class ActivityTrackerState {
         byTarget: byTarget ?? this.byTarget,
       );
 
+  /// How many times `target` was used (slug, id, or kind).
+  int countFor(String target) => byTarget[target] ?? 0;
+
+  /// Top-N most-engaged target kinds (e.g. 'meditate', 'praise', 'pray').
+  List<MapEntry<String, int>> topKinds({int n = 6}) {
+    final entries = byKind.entries.toList();
+    entries.sort((a, b) => b.value.compareTo(a.value));
+    return entries.take(n).toList();
+  }
+
   /// Whether the user engaged in the last `window` (default 14 days).
   bool get isActive {
     if (lastActiveAt == null) return false;
