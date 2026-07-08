@@ -18,7 +18,6 @@ import 'services/streak_service.dart';
 import 'services/audio_service.dart';
 import 'services/activity_tracker.dart';
 import 'data/pb_models.dart';
-import 'data/pb_repositories.dart';
 import 'services/sticker_book.dart';
 import 'services/sound_service.dart';
 import 'package:pocketbase/pocketbase.dart';
@@ -69,7 +68,7 @@ Future<void> main() async {
 
     // Wire audio completion → streak session
     final audio = container.read(audioServiceProvider.notifier);
-    audio.onTrackComplete = (track, durationSeconds) {
+    audio.onTrackComplete = (track, durationSeconds) async {
       // Map AudioSource to SessionType
       SessionType? sessionType;
       switch (track.source) {
@@ -98,7 +97,7 @@ Future<void> main() async {
         // Evaluate stickers
         final streak = container.read(streakServiceProvider);
         final track = container.read(activityTrackerProvider);
-        final userId = await UserIdService.get();
+        final userId = await UserIdService().get();
         final progress = await container
             .read(bibleProgressRepoProvider)
             .forUser(userId)

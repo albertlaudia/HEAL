@@ -96,7 +96,7 @@ class ActivityTrackerState {
     final ymd = DateTime(day.year, day.month, day.day);
     int c = 0;
     for (final e in recent) {
-      final ey = DateTime(e.timestamp.year, e.timestamp.month, e.timestamp.day);
+      final ey = DateTime(e.at.year, e.at.month, e.at.day);
       if (ey == ymd) c++;
     }
     return c;

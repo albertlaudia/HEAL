@@ -99,13 +99,21 @@ class PraiseSong {
     required this.lyrics,
     required this.audioUrl,
     required this.illustrationUrl,
+    this.description = '',
+    this.reflection = '',
+    this.chords = '',
+    this.keySignature = '',
+    this.meter = '',
+    this.tempoBpm,
     this.category,
     this.emotion,
     this.mood,
     this.bestFor = const [],
     this.tags = const [],
+    this.scriptureRefs = const [],
     this.bpm,
     this.isPublished = true,
+    this.dayOfYear = 0,
   });
 
   factory PraiseSong.fromJson(Map<String, dynamic> json) {

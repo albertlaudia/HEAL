@@ -452,7 +452,7 @@ class _StatsCard extends StatelessWidget {
               _StatTile(label: 'Sessions', value: '${streak.totalSessions}', unit: 'total'),
             ],
           ),
-          if (streak.streakSessions.isNotEmpty) ...[
+          if (streak.recentSessions.isNotEmpty) ...[
             const SizedBox(height: HealTokens.s16),
             Container(
               height: 1,
@@ -475,7 +475,7 @@ class _StatsCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  _formatRelative(streak.streakSessions.last.timestamp),
+                  _formatRelative(streak.recentSessions.last.timestamp),
                   style: const TextStyle(color: HealTokens.cream, fontSize: 12, fontWeight: FontWeight.w600),
                 ),
               ],

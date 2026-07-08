@@ -34,6 +34,7 @@ dependencies:
   # ── Local storage ──────────────────────────────────────────────
   drift: ^2.31.0  # was 2.20.3 — minor upgrade (within 2.x, backwards compat)
   http: ^1.2.2  # for downloading MP3s to offline cache
+  just_audio: ^0.9.40  # ambient soundscape mixer
   drift_flutter: ^0.2.8  # was 0.2.2 — minor upgrade (matches drift)
   path_provider: ^2.1.4
   shared_preferences: ^2.3.2

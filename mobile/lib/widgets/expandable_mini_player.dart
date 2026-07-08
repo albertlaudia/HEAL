@@ -159,7 +159,7 @@ class _CollapsedMini extends ConsumerWidget {
                       color: audio.hasPrev ? HealTokens.brass : HealTokens.creamDim.withValues(alpha: 0.4),
                     ),
                     onPressed: audio.hasPrev
-                        ? () => ref.read(audioServiceProvider.notifier).previous()
+                        ? () => ref.read(audioServiceProvider.notifier).prev()
                         : null,
                   ),
                 ],
@@ -241,7 +241,7 @@ class _ExpandedPlayer extends HookConsumerWidget {
               begin: Alignment.topCenter, end: Alignment.bottomCenter,
               colors: [HealTokens.rosewoodDeep, Color(0xFF120A09)],
             ),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(HealTokens.r28)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(HealTokens.r28)),
             border: Border(
               top: BorderSide(color: HealTokens.brass.withValues(alpha: 0.5), width: 1),
             ),
@@ -497,7 +497,7 @@ class _ExpandedControls extends StatelessWidget {
             onPressed: audio.hasPrev
                 ? () {
                     HapticFeedback.selectionClick();
-                    ref.read(audioServiceProvider.notifier).previous();
+                    ref.read(audioServiceProvider.notifier).prev();
                   }
                 : null,
           )

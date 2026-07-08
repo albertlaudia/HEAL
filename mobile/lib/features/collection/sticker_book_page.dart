@@ -56,10 +56,12 @@ class StickerBookPage extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Progress hero ──
-            _ProgressHero(earned: earned.length, total: total, pct: pct),
-                .animate().fadeIn(duration: 400.ms).slideY(begin: 0.05, end: 0),
+            _ProgressHero(earned: earned.length, total: total, pct: pct)
+                .animate()
+                .fadeIn(duration: 400.ms)
+                .slideY(begin: 0.05, end: 0),
 
-                const SizedBox(height: HealTokens.s12),
+            const SizedBox(height: HealTokens.s12),
 
                 // ── Next milestones (anticipatory motivation) ──
                 if (earned.length < book.totalCount)

@@ -25,8 +25,6 @@ import '../features/profile/profile_page.dart';
 import '../features/sleep/sleep_stories_page.dart';
 import '../features/sleep/ambient_sounds_page.dart';
 import '../widgets/expandable_mini_player.dart';
-import '../features/collection/sticker_book_page.dart';
-import '../features/profile/profile_page.dart';
 import '../features/breathe/breath_studio_page.dart';
 import '../features/breathe/voice_calibration_page.dart';
 import '../features/scripture/sit_with_verse_page.dart';

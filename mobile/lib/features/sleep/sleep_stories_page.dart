@@ -30,7 +30,7 @@ class SleepStoriesPage extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final meditations = useState<List<PraiseSong>>([]); // we'll use meditation model
+    final meditations = useState<List<Meditation>>([]);
     final loading = useState<bool>(true);
 
     useEffect(() {

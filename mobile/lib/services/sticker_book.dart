@@ -207,7 +207,7 @@ class StickerBook extends StateNotifier<StickerBookState> {
   /// plan JSON.
   static Map<int, Set<_ChapterRef>>? _planIndex;  // lazy-loaded
 
-  bool _coversMoment(String stickerId, Set<int> completedDays) async {
+  Future<bool> _coversMoment(String stickerId, Set<int> completedDays) async {
     final moment = _momentSpans[stickerId];
     if (moment == null) return false;
     final index = await _loadPlanIndex();

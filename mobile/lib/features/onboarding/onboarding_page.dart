@@ -59,9 +59,11 @@ class OnboardingPage extends HookConsumerWidget {
               controller: pageController,
               itemCount: pages.length,
               onPageChanged: (i) => currentPage.value = i,
+              // Disable swipe on the first-breath page (index 2) so user doesn't skip it
+              physics: currentPage.value == 2
+                  ? const NeverScrollableScrollPhysics()
+                  : const BouncingScrollPhysics(),
               itemBuilder: (context, i) => pages[i],
-              // Disable swipe on the first-breath page so user doesn't skip it
-              physics: i == 2 ? const NeverScrollableScrollPhysics() : null,
             ),
             // Skip button — visible only on first two pages
             Positioned(

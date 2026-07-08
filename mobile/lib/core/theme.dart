@@ -76,6 +76,8 @@ abstract class HealTokens {
   static const double s64 = 64;
   static const double s80 = 80;
   static const double s96 = 96;
+  static const double s120 = 120;
+  static const double s160 = 160;
 
   // ── Radius ─────────────────────────────────────────────────────
   static const double r4 = 4;
@@ -84,7 +86,9 @@ abstract class HealTokens {
   static const double r16 = 16;
   static const double r20 = 20;
   static const double r24 = 24;
+  static const double r28 = 28;
   static const double r32 = 32;
+  static const double r40 = 40;
 
   // ── Durations ──────────────────────────────────────────────────
   static const Duration d100 = Duration(milliseconds: 100);
