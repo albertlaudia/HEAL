@@ -187,7 +187,7 @@ class ProfilePage extends HookConsumerWidget {
                 const SizedBox(height: HealTokens.s24),
 
                 // Activity heatmap
-                _SectionLabel(label: 'Last 90 days'),
+                const _SectionLabel(label: 'Last 90 days'),
                 const SizedBox(height: HealTokens.s12),
                 _ActivityHeatmap(activity: track)
                     .animate().fadeIn(duration: 400.ms, delay: 200.ms)
@@ -196,7 +196,7 @@ class ProfilePage extends HookConsumerWidget {
                 const SizedBox(height: HealTokens.s24),
 
                 // Time spent
-                _SectionLabel(label: 'Time in practice'),
+                const _SectionLabel(label: 'Time in practice'),
                 const SizedBox(height: HealTokens.s12),
                 _TimeChart(activity: track)
                     .animate().fadeIn(duration: 400.ms, delay: 300.ms)
@@ -205,7 +205,7 @@ class ProfilePage extends HookConsumerWidget {
                 const SizedBox(height: HealTokens.s24),
 
                 // Recent stickers
-                _SectionLabel(label: 'Recently earned'),
+                const _SectionLabel(label: 'Recently earned'),
                 const SizedBox(height: HealTokens.s12),
                 _RecentStickers(book: book),
 
@@ -429,10 +429,10 @@ class _StatsCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
-              const Icon(Icons.local_fire_department_rounded, color: HealTokens.brass, size: 20),
-              const SizedBox(width: 8),
+              Icon(Icons.local_fire_department_rounded, color: HealTokens.brass, size: 20),
+              SizedBox(width: 8),
               Text(
                 'STREAK',
                 style: TextStyle(
@@ -746,7 +746,7 @@ class _TimeChart extends StatelessWidget {
             children: [
               const Icon(Icons.bar_chart_rounded, color: HealTokens.brass, size: 20),
               const SizedBox(width: 8),
-              Text(
+              const Text(
                 'BY PRACTICE',
                 style: TextStyle(
                   color: HealTokens.brass,
@@ -971,8 +971,8 @@ class _SectionLabel extends StatelessWidget {
   const _SectionLabel({required this.label});
   @override
   Widget build(BuildContext context) {
-    return Text(
-      label.toUpperCase(),
+    return const Text(
+      '',
       style: TextStyle(
         color: HealTokens.brass,
         fontSize: 11,
