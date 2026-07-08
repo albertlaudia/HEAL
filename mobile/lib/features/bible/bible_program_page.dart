@@ -678,10 +678,12 @@ class _BibleDayPageState extends ConsumerState<BibleDayPage> {
               );
               ref.invalidate(userProgressProvider(userId));
               if (!mounted) return;
+              // ignore: use_build_context_synchronously
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Day complete — well done')),
               );
               if (!mounted) return;
+              // ignore: use_build_context_synchronously
               Navigator.of(context).pop();
             },
           ),
