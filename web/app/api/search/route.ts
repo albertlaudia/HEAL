@@ -27,8 +27,8 @@ const COLLECTIONS: Array<{
 }> = [
   {
     name: 'HEAL_meditations',
-    titleFields: ['title', 'subtitle'],
-    bodyFields: ['description', 'scripture_refs', 'tags', 'best_for', 'theme'],
+    titleFields: ['title', 'scripture_ref'],
+    bodyFields: ['body', 'reflection', 'prayer', 'tags', 'theme', 'season'],
     type: 'meditation',
     urlBase: '/meditate',
     illustrationField: 'illustration_url',
@@ -50,8 +50,8 @@ const COLLECTIONS: Array<{
   },
   {
     name: 'HEAL_scriptures',
-    titleFields: ['reference', 'passage', 'verse_text'],
-    bodyFields: ['reflection', 'tags', 'book'],
+    titleFields: ['reference', 'verse_text', 'scripture_text'],
+    bodyFields: ['reflection', 'tags', 'theme'],
     type: 'scripture',
     urlBase: '/scripture',  // linked to parent + hash (#{slug}) for deep-link
   },
@@ -64,7 +64,7 @@ const COLLECTIONS: Array<{
   },
   {
     name: 'HEAL_breathwork',
-    titleFields: ['name', 'description'],
+    titleFields: ['name'],
     bodyFields: ['description', 'benefits', 'tags'],
     type: 'breathwork',
     urlBase: '/breathe',
@@ -190,12 +190,13 @@ export async function GET(req: NextRequest) {
   // catches everything except bible readings)
   const collectionPromises = COLLECTIONS.map(async (conf) => {
     try {
+      const escQ = q.replace(/"/g, '\\"');
+      const conditions = conf.titleFields.concat(conf.bodyFields).map((f) => `${f} ~ "${escQ}"`);
+      const filter = conditions.length === 1
+        ? conditions[0]
+        : conditions.map((c) => `(${c})`).join(' || ');
       const records = await pb.collection(conf.name).getList(1, 200, {
-        filter: pb.filter(
-          conf.titleFields.concat(conf.bodyFields).map((f) =>
-            `${f} ~ "${q.replace(/"/g, '\\"')}"`
-          ).join(' || ')
-        ),
+        filter,
         sort: '-created',
       });
 
