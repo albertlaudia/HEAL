@@ -748,7 +748,7 @@ class _TimeChart extends StatelessWidget {
               const SizedBox(width: 8),
               const Text(
                 'BY PRACTICE',
-                style: TextStyle(
+                style: const TextStyle(
                   color: HealTokens.brass,
                   fontSize: 11,
                   letterSpacing: 2,
@@ -971,9 +971,9 @@ class _SectionLabel extends StatelessWidget {
   const _SectionLabel({required this.label});
   @override
   Widget build(BuildContext context) {
-    return const Text(
-      '',
-      style: TextStyle(
+    return Text(
+      label.toUpperCase(),
+      style: const TextStyle(
         color: HealTokens.brass,
         fontSize: 11,
         letterSpacing: 2.5,
