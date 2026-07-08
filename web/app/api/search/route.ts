@@ -199,6 +199,8 @@ export async function GET(req: NextRequest) {
         filter,
         sort: '-created',
       });
+      // Debug log to stderr (always)
+      console.log(`[search] ${conf.name} filter=${filter} got=${records.items.length} totalItems=${records.totalItems}`);
 
       for (const rec of records.items) {
         const s = scoreRecord(rec, q, conf);
@@ -232,8 +234,8 @@ export async function GET(req: NextRequest) {
           });
         }
       }
-    } catch (e) {
-      // Skip collection on error (likely bad filter syntax)
+    } catch (e: any) {
+      console.error(`[search] ${conf.name} ERROR:`, e?.message || e, '| status:', e?.status);
     }
   });
 
