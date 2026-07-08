@@ -195,12 +195,9 @@ export async function GET(req: NextRequest) {
       const filter = conditions.length === 1
         ? conditions[0]
         : conditions.map((c) => `(${c})`).join(' || ');
-      const records = await pb.collection(conf.name).getList(1, 200, {
-        filter,
-        sort: '-created',
-      });
-      // Debug log to stderr (always)
-      console.log(`[search] ${conf.name} filter=${filter} got=${records.items.length} totalItems=${records.totalItems}`);
+      // Skip sort — most collections don't have a sortable `created` field
+      // and PB returns 400 if we specify an unknown sort column.
+      const records = await pb.collection(conf.name).getList(1, 200, { filter });
 
       for (const rec of records.items) {
         const s = scoreRecord(rec, q, conf);
@@ -234,8 +231,8 @@ export async function GET(req: NextRequest) {
           });
         }
       }
-    } catch (e: any) {
-      console.error(`[search] ${conf.name} ERROR:`, e?.message || e, '| status:', e?.status);
+    } catch (e) {
+      // Skip collection on error (likely bad filter syntax)
     }
   });
 
