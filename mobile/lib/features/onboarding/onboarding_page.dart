@@ -193,6 +193,8 @@ class _FirstBreathPageState extends State<_FirstBreathPage>
 
   // Three breaths: each is inhale (4s) → hold (2s) → exhale (6s) = 12s
   static const _firstDuration = 4; // breathe-in seconds (first phase)
+  static const _durations = [4, 2, 6];
+  static const _labels = ['Inhale', 'Hold', 'Exhale'];
 
   @override
   void initState() {
