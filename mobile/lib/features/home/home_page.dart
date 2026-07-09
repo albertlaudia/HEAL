@@ -17,6 +17,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme.dart';
 import '../../core/time_palette.dart';
 import '../../core/widgets/brass_widgets.dart';
+import '../../design/copy.dart';
+import '../../design/lumen.dart';
 import '../../services/streak_service.dart';
 import '../../services/voice_calibration_service.dart';
 import '../../data/pb_models.dart';
@@ -51,26 +53,37 @@ class HomePage extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Greeting + Streak ─────────────────────────────
+              // ── Greeting + Lumen (the daily companion) ─────────
               FadeInOnMount(
                 delay: const Duration(milliseconds: 100),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    // Lumen — quiet presence in the corner.
+                    // Emotion reflects what the user is about to do.
+                    LumenSlot(
+                      emotion: streak.shouldShowWelcomeBack
+                          ? LumenEmotion.weary
+                          : LumenEmotion.resting,
+                      size: 56,
+                    ),
+                    const SizedBox(width: HealTokens.s12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            timeOfDay.value,
+                            Copy.greetingForHour(DateTime.now().hour),
                             style: Theme.of(context).textTheme.displaySmall?.copyWith(
                                   color: HealTokens.cream,
                                   fontWeight: FontWeight.w300,
+                                  height: 1.05,
                                 ),
                           ),
-                          const SizedBox(height: HealTokens.s4),
+                          const SizedBox(height: 6),
+                          // Lumen's voice — first-person, no streak-shame.
                           Text(
-                            'A quiet practice awaits.',
+                            Copy.lumenGreeting(streak.currentStreak),
                             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                   color: HealTokens.creamDim,
                                   fontStyle: FontStyle.italic,
@@ -79,10 +92,15 @@ class HomePage extends HookConsumerWidget {
                         ],
                       ),
                     ),
-                    _StreakFlame(streak: streak),
                   ],
                 ),
               ),
+
+              // ── Streak chip (compact, never proud/shameful) ────
+              const SizedBox(height: HealTokens.s8),
+              if (streak.currentStreak > 0)
+                _StreakChip(currentStreak: streak.currentStreak,
+                            longestStreak: streak.longestStreak),
               const SizedBox(height: HealTokens.s24),
 
               // ── Streak message ──────────────────────────────
@@ -276,66 +294,48 @@ class HomePage extends HookConsumerWidget {
 }
 
 // ── Streak flame ─────────────────────────────────────────────────
-class _StreakFlame extends StatelessWidget {
-  final StreakState streak;
-  const _StreakFlame({required this.streak});
+class _StreakChip extends StatelessWidget {
+  final int currentStreak;
+  final int longestStreak;
+  const _StreakChip({required this.currentStreak, required this.longestStreak});
 
   @override
   Widget build(BuildContext context) {
-    if (streak.currentStreak == 0 && streak.totalSessions == 0) {
-      return const SizedBox.shrink();
-    }
-    final isLit = streak.currentStreak > 0;
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        showModalBottomSheet(
-          context: context,
-          backgroundColor: HealTokens.rosewood,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(HealTokens.r24)),
-          ),
-          builder: (_) => _StreakDetailsSheet(streak: streak),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: HealTokens.s12,
-          vertical: HealTokens.s8,
-        ),
-        decoration: BoxDecoration(
-          color: HealTokens.rosewoodLight,
-          borderRadius: BorderRadius.circular(999),
-          border: Border.all(
-            color: isLit
-                ? HealTokens.brass.withValues(alpha: 0.5)
-                : HealTokens.creamDim.withValues(alpha: 0.16),
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              isLit ? Icons.local_fire_department_rounded : Icons.fireplace_outlined,
-              color: isLit ? HealTokens.brass : HealTokens.creamDim,
-              size: 18,
+    final isLit = currentStreak > 0;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: HealTokens.s4),
+      child: Row(
+        children: [
+          // Small ember dot — never a flame emoji (cluttery)
+          Container(
+            width: 8, height: 8,
+            decoration: BoxDecoration(
+              color: isLit ? HealTokens.ember : HealTokens.creamDim.withValues(alpha: 0.3),
+              shape: BoxShape.circle,
+              boxShadow: isLit ? [
+                BoxShadow(color: HealTokens.ember.withValues(alpha: 0.6),
+                         blurRadius: 6, spreadRadius: 0)
+              ] : null,
             ),
-            const SizedBox(width: 4),
-            Text(
-              streak.currentStreak > 0
-                  ? '${streak.currentStreak}'
-                  : 'start',
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: isLit ? HealTokens.cream : HealTokens.creamDim,
-                    fontWeight: FontWeight.w700,
-                  ),
+          ),
+          const SizedBox(width: HealTokens.s8),
+          Text(
+            isLit
+                ? '$currentStreak day${currentStreak == 1 ? '' : 's'} together'
+                : 'Start a streak today',
+            style: TextStyle(
+              color: HealTokens.creamDim,
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              letterSpacing: 0.2,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
+
 
 class _StreakDetailsSheet extends StatelessWidget {
   final StreakState streak;
@@ -441,6 +441,14 @@ class _StreakStat extends StatelessWidget {
 }
 
 // ── Welcome back card (warm, no guilt) ──────────────────────────
+  String _heroTitle() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'A morning\nritual';
+    if (hour >= 21) return 'Wind down\nfor the night';
+    return 'A quiet\npractice';
+  }
+}
+
 class _WelcomeBackCard extends StatelessWidget {
   final int daysAway;
   final VoidCallback onDismiss;
@@ -651,7 +659,7 @@ class _HeroPracticeCard extends StatelessWidget {
                   ),
                   const SizedBox(height: HealTokens.s16),
                   Text(
-                    'A daily\npractice',
+                    _heroTitle(),
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
                           color: HealTokens.cream,
                           height: 1.1,
@@ -660,7 +668,7 @@ class _HeroPracticeCard extends StatelessWidget {
                   ),
                   const SizedBox(height: HealTokens.s12),
                   Text(
-                    '5 min · a verse · a breath · a prayer',
+                    Copy.heroPreviewLine,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: HealTokens.creamDim,
                           letterSpacing: 0.3,
