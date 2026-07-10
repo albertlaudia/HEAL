@@ -435,7 +435,7 @@ class _StatsCard extends StatelessWidget {
               SizedBox(width: 8),
               Text(
                 'STREAK',
-                style: const TextStyle(
+                style: TextStyle(
                   color: HealTokens.brass,
                   fontSize: 11,
                   letterSpacing: 2,

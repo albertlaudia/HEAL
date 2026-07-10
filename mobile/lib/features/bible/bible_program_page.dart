@@ -389,8 +389,8 @@ class _TodayReadingCard extends StatelessWidget {
                 children: [
                   Container(
                     width: 40, height: 40,
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
                         colors: [HealTokens.brassLight, HealTokens.brass],
                       ),
                       shape: BoxShape.circle,
@@ -854,7 +854,7 @@ Future<void> showBibleCompletionOverlay(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.auto_stories_rounded,
                     color: HealTokens.oxblood,
                     size: 36,
