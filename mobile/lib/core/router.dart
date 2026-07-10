@@ -588,19 +588,19 @@ class HealRouter {
           ),
           GoRoute(
             path: '/now',
-            pageBuilder: (context, state) => _fadeThrough(state, const SizedBox()),
+            pageBuilder: (context, state) => _sharedAxis(state, const NowPage()),
           ),
           GoRoute(
             path: '/prayer',
-            pageBuilder: (context, state) => _fadeThrough(state, const SizedBox()),
+            pageBuilder: (context, state) => _sharedAxis(state, const PrayerPage()),
           ),
           GoRoute(
             path: '/praise',
-            pageBuilder: (context, state) => _fadeThrough(state, const SizedBox()),
+            pageBuilder: (context, state) => _sharedAxis(state, const PraiseLibraryPage()),
           ),
           GoRoute(
             path: '/settings',
-            pageBuilder: (context, state) => _fadeThrough(state, const SizedBox()),
+            pageBuilder: (context, state) => _sharedAxis(state, const SettingsPage()),
           ),
         ],
       ),
