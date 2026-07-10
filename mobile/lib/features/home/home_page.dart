@@ -410,13 +410,13 @@ class _StreakDetailsSheet extends StatelessWidget {
     if (diff.inHours < 24) return '${diff.inHours}h ago';
     return '${diff.inDays}d ago';
   }
+}
 
-  String _heroTitle() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'A morning\nritual';
-    if (hour >= 21) return 'Wind down\nfor the night';
-    return 'A quiet\npractice';
-  }
+String _heroTitle() {
+  final hour = DateTime.now().hour;
+  if (hour < 12) return 'A morning\nritual';
+  if (hour >= 21) return 'Wind down\nfor the night';
+  return 'A quiet\npractice';
 }
 
 class _StreakStat extends StatelessWidget {

@@ -1068,7 +1068,7 @@ class _MusicChip extends StatelessWidget {
 /// ── Today's Praise (deterministic daily pick) ───────────────────
 /// Stable per day across devices — same song for everyone on the same day.
 /// Skips songs the user has favorited in favor of discovery rotation.
-PraiseSong? _praiseOfTheDay(List<PraiseSong> all, FavoritesService favorites) {
+PraiseSong? _praiseOfTheDay(List<PraiseSong> all, FavoritesState favorites) {
   if (all.isEmpty) return null;
   // Day-of-year — Jan 1 = 0, Dec 31 = 364
   final now = DateTime.now();
@@ -1136,13 +1136,13 @@ class _TodaysPraiseHero extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Row(
+                      const Row(
                         children: [
                           Icon(
                             Icons.star_rounded,
                             size: 12, color: HealTokens.brass,
                           ),
-                          const SizedBox(width: 4),
+                          SizedBox(width: 4),
                           Text(
                             "TODAY'S PRAISE",
                             style: TextStyle(

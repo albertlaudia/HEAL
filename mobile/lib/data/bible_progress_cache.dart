@@ -34,7 +34,7 @@ class BibleProgressCacheState {
   Set<int> get completedDayNumbers =>
       progress.map((p) => p.dayNumber).toSet();
   bool get isStale =>
-      DateTime.now().difference(fetchedAt) > Duration(minutes: 5);
+      DateTime.now().difference(fetchedAt) > const Duration(minutes: 5);
 }
 
 class BibleProgressCacheNotifier extends StateNotifier<BibleProgressCacheState> {
