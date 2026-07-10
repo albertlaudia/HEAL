@@ -488,6 +488,16 @@ class BibleReading {
       reflectionPrompt: (json['reflection_prompt'] ?? '') as String,
     );
   }
+
+  /// First reading's book name (for overlay short-form passage).
+  String get bookName => readings.isNotEmpty ? readings.first.book : '';
+
+  /// First reading's chapter range (e.g. "1" or "1-3").
+  String get chapter => readings.isNotEmpty
+      ? (readings.first.chapterStart == readings.first.chapterEnd
+          ? '${readings.first.chapterStart}'
+          : '${readings.first.chapterStart}–${readings.first.chapterEnd}')
+      : '';
 }
 
 class BibleReadingItem {

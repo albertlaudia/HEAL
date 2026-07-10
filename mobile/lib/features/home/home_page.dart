@@ -323,7 +323,7 @@ class _StreakChip extends StatelessWidget {
             isLit
                 ? '$currentStreak day${currentStreak == 1 ? '' : 's'} together'
                 : 'Start a streak today',
-            style: TextStyle(
+            style: const TextStyle(
               color: HealTokens.creamDim,
               fontSize: 13,
               fontWeight: FontWeight.w500,
@@ -410,6 +410,13 @@ class _StreakDetailsSheet extends StatelessWidget {
     if (diff.inHours < 24) return '${diff.inHours}h ago';
     return '${diff.inDays}d ago';
   }
+
+  String _heroTitle() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'A morning\nritual';
+    if (hour >= 21) return 'Wind down\nfor the night';
+    return 'A quiet\npractice';
+  }
 }
 
 class _StreakStat extends StatelessWidget {
@@ -441,14 +448,6 @@ class _StreakStat extends StatelessWidget {
 }
 
 // ── Welcome back card (warm, no guilt) ──────────────────────────
-  String _heroTitle() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) return 'A morning\nritual';
-    if (hour >= 21) return 'Wind down\nfor the night';
-    return 'A quiet\npractice';
-  }
-}
-
 class _WelcomeBackCard extends StatelessWidget {
   final int daysAway;
   final VoidCallback onDismiss;

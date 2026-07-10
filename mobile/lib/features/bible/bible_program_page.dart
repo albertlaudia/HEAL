@@ -854,7 +854,7 @@ Future<void> showBibleCompletionOverlay(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.auto_stories_rounded,
                     color: HealTokens.oxblood,
                     size: 36,
