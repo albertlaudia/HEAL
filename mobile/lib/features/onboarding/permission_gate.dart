@@ -145,7 +145,9 @@ class _PermissionGateState extends State<PermissionGate> {
     );
     if (result == true) {
       // User opted in — request OS permission
-      await NotificationService.requestPermission();
+      final service = NotificationService();
+      await service.init();
+      await service.requestPermission();
     }
   }
 

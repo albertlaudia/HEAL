@@ -51,7 +51,7 @@ class BibleProgressCacheNotifier extends StateNotifier<BibleProgressCacheState> 
   /// Trigger an initial fetch if cache is empty or stale.
   /// Returns the in-memory list (refetching only when needed).
   Future<List<BibleProgress>> ensure() async {
-    if (isStale && !_inflight) {
+    if (state.isStale && !_inflight) {
       await refresh();
     }
     return state.progress;

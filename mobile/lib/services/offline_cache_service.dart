@@ -53,9 +53,18 @@ class OfflineCacheState {
 }
 
 class OfflineCacheService extends StateNotifier<OfflineCacheState> {
+  http.Client? _httpClient;
+
   OfflineCacheService()
       : super(const OfflineCacheState(cachedSlugs: {}, inProgress: {})) {
     _scanExisting();
+  }
+
+  @override
+  void dispose() {
+    _httpClient?.close();
+    _httpClient = null;
+    super.dispose();
   }
 
   /// On startup, scan the disk to find what's already downloaded.
@@ -125,7 +134,7 @@ class OfflineCacheService extends StateNotifier<OfflineCacheState> {
       // Reuse a single persistent client to avoid socket leaks across downloads.
       // (Previously: new http.Client() per download, never closed — leaked sockets
       // and exhausted the connection pool on a 112-song praise library.)
-      final client = _httpClient;
+      final client = _httpClient ??= http.Client();
       final request = http.Request('GET', Uri.parse(url));
       final response = await client.send(request);
       if (response.statusCode != 200) {
@@ -141,7 +150,7 @@ class OfflineCacheService extends StateNotifier<OfflineCacheState> {
         received += chunk.length;
         final p = total == null || total == 0
             ? 0.5
-            : (received / total).clamp(0.0, 1.0);
+            : (received / total).clamp(0.0, 1.0).toDouble();
         final next = <String, CacheDownloadProgress>{
           ...state.inProgress,
           slug: CacheDownloadProgress(progress: p, receivedBytes: received, totalBytes: total),

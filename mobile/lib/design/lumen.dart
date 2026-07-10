@@ -124,7 +124,6 @@ class _LumenPainter extends CustomPainter {
       case LumenEmotion.weary:
         return const Color(0xFF8B8074); // weary
       case LumenEmotion.resting:
-      default:
         return HealTokens.brass;
     }
   }

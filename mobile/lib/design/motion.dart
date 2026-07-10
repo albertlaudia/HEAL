@@ -11,6 +11,7 @@
 // ============================================================================
 
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 
 abstract class HealMotion {
   // ── Spring presets (use SpringSimulation directly with these values) ──

@@ -35,6 +35,9 @@ abstract class HealTokens {
   static const Color cream = Color(0xFFEDE3D2);
   static const Color creamDim = Color(0xFFC8B8A0);
 
+  /// Deep oxblood red — used for high-contrast accents and completion overlays.
+  static const Color oxblood = Color(0xFF8B2C2C);
+
   // ── Emotion tints (used in Prayer reader + ring glow) ───────────
   static const Map<String, Color> emotionGlow = {
     'joy': Color(0xFFE8C26E),
