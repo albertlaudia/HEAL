@@ -83,7 +83,7 @@ class _MilestoneOverlayState extends State<MilestoneOverlay>
             children: [
               ScaleTransition(
                 scale: Tween<double>(begin: 0.6, end: 1.0).animate(_lumenIn),
-                child: Lumen(
+                child: const Lumen(
                   emotion: LumenEmotion.celebrating,
                   size: 96,
                   celebration: 1.0,
@@ -99,7 +99,7 @@ class _MilestoneOverlayState extends State<MilestoneOverlay>
                       if (widget.subtitle != null) ...[
                         Text(
                           widget.subtitle!.toUpperCase(),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: HealTokens.brass,
                             fontSize: 11,
                             letterSpacing: 2.5,

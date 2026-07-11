@@ -9,9 +9,11 @@
 // ============================================================================
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/theme.dart';
 import 'lumen.dart';
+import 'lumen_state.dart';
 
 class EmotionPalette {
   /// Page background — slight gradient, dark, never pitch-black.
@@ -122,11 +124,6 @@ class EmotionPalette {
 // + time-based palette (which captures time-of-day).
 //
 // Usage: final palette = ref.watch(emotionPaletteProvider(timePalette));
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import 'emotion_palette.dart';
-import 'lumen_state.dart';
 
 EmotionPalette _resolveEmotionPalette(Ref ref) {
   final lumen = ref.watch(lumenProvider);

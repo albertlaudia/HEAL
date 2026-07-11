@@ -37,8 +37,7 @@ class HomePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final timeOfDay = useState<String>(_timeOfDay());
-    final timeBased = ref.watch(timePaletteProvider);
-    final palette = ref.watch(emotionPaletteProvider(timeBased));
+    final palette = ref.watch(timePaletteProvider);
     final streak = ref.watch(streakServiceProvider);
     final hasVoiceProfile = ref.watch(voiceCalibrationServiceProvider.select(
       (s) => s.hasProfile,
@@ -52,18 +51,20 @@ class HomePage extends HookConsumerWidget {
 
     return Scaffold(
       backgroundColor: palette.background,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(
-            HealTokens.s20,
-            HealTokens.s24,
-            HealTokens.s20,
-            HealTokens.s32,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+      body: Stack(
+        children: [
+          SafeArea(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(
+                HealTokens.s20,
+                HealTokens.s24,
+                HealTokens.s20,
+                HealTokens.s32,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
               // ── Greeting + Lumen (the daily companion) ─────────
               FadeInOnMount(
                 delay: const Duration(milliseconds: 100),
@@ -290,14 +291,14 @@ class HomePage extends HookConsumerWidget {
           ),
         ),
       ),
-            // EdgeGlow — sits on top of everything, follows emotion state
-            Positioned(
-              top: 0, left: 0, right: 0,
-              child: EdgeGlow(palette: palette),
-            ),
-          ],
-        ),
-    );
+      // EdgeGlow — sits on top of everything, follows emotion state
+      Positioned(
+        top: 0, left: 0, right: 0,
+        child: EdgeGlow(palette: palette),
+      ),
+    ],
+  ),
+);
   }
 
   String _timeOfDay() {
@@ -726,7 +727,7 @@ class _HeroPracticeCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      )),
     );
   }
 }

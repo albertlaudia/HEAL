@@ -131,7 +131,6 @@ class _LumenPainter extends CustomPainter {
       case LumenEmotion.encouraging:
         return const Color(0xFFD9764E); // ember
       case LumenEmotion.resting:
-      default:
         return HealTokens.brass;
     }
   }
@@ -269,7 +268,7 @@ class _LumenPainter extends CustomPainter {
 
     // ── 6. Celebration particles (when celebration > 0) ─────────
     if (celebration > 0) {
-      final particleCount = 8;
+      const particleCount = 8;
       for (var i = 0; i < particleCount; i++) {
         final angle = (i / particleCount) * 2 * math.pi + breathT * 2 * math.pi;
         final dist = baseRadius + 22 + (math.sin(breathT * 4 * math.pi + i) * 6);
