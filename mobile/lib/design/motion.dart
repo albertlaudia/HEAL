@@ -43,6 +43,11 @@ abstract class HealMotion {
   static const Duration slideMedium = Duration(milliseconds: 380);
   static const Duration slideLong   = Duration(milliseconds: 540);
 
+  // Splash + boot timing
+  static const Duration splashMin = Duration(milliseconds: 2200);
+  static const Duration celebrationHold = Duration(milliseconds: 2200);
+  static const Duration bibleCompletionHold = Duration(milliseconds: 1800);
+
   // ── Curves ─────────────────────────────────────────────────────
   static const Curve standardEasing = Cubic(0.2, 0, 0, 1); // "ease-out-quint"
   static const Curve decelerate     = Cubic(0, 0, 0.2, 1);

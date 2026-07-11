@@ -780,12 +780,12 @@ class _TimeChart extends StatelessWidget {
 
   Color _kindColor(String kind) {
     switch (kind) {
-      case 'breath':     return const Color(0xFF5B8FA8); // cyan
+      case 'breath':     return HealTokens.practiceMeditateFrom; // cyan
       case 'meditation': return HealTokens.brass;
-      case 'prayer':     return const Color(0xFFD08E8E); // rose
-      case 'praise':     return const Color(0xFFA56B6B); // warm brown
+      case 'prayer':     return HealTokens.lumenOffering; // rose
+      case 'praise':     return HealTokens.dawnSecondary; // warm brown
       case 'scripture':  return HealTokens.brassLight;
-      case 'reflection': return const Color(0xFF8B6A36); // bronze
+      case 'reflection': return HealTokens.brassDeep; // bronze
       default:           return HealTokens.brass;
     }
   }

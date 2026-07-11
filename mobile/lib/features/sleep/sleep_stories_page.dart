@@ -50,13 +50,13 @@ class SleepStoriesPage extends HookConsumerWidget {
     }, []);
 
     return Scaffold(
-      backgroundColor: const Color(0xFF120A09),
+      backgroundColor: const HealTokens.midnightBg,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
             pinned: true,
-            backgroundColor: const Color(0xFF1A100F),
+            backgroundColor: const HealTokens.midnightSurface,
             iconTheme: const IconThemeData(color: HealTokens.cream),
             title: const Text('Sleep Stories', style: TextStyle(color: HealTokens.cream, fontSize: 18, fontWeight: FontWeight.w500)),
             leading: IconButton(
@@ -109,10 +109,10 @@ class _Hero extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFF2A1A18),
+                color: const HealTokens.practiceSleepFrom,
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Icon(Icons.nightlight_round, color: Color(0xFFD9C5A8), size: 18),
+              child: const Icon(Icons.nightlight_round, color: HealTokens.creamSleep, size: 18),
             ),
             const SizedBox(width: 8),
             Text(
@@ -171,11 +171,11 @@ class _SleepCard extends ConsumerWidget {
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               begin: Alignment.topLeft, end: Alignment.bottomRight,
-              colors: [Color(0xFF1A100F), Color(0xFF120A09)],
+              colors: [HealTokens.midnightSurface, HealTokens.midnightBg],
             ),
             borderRadius: BorderRadius.circular(HealTokens.r20),
             border: Border.all(
-              color: const Color(0xFFD9C5A8).withValues(alpha: 0.12),
+              color: const Color.alphaBlend(HealTokens.white12, HealTokens.creamSleep),
             ),
           ),
           child: Row(
@@ -196,13 +196,13 @@ class _SleepCard extends ConsumerWidget {
                   gradient: (meditation.illustrationUrl as String).isEmpty
                       ? const LinearGradient(
                           begin: Alignment.topLeft, end: Alignment.bottomRight,
-                          colors: [Color(0xFF2A1A18), Color(0xFF0F0807)],
+                          colors: [HealTokens.practiceSleepFrom, HealTokens.practiceSleepTo],
                         )
                       : null,
                 ),
                 child: (meditation.illustrationUrl as String).isEmpty
                     ? const Center(
-                        child: Icon(Icons.nightlight_round, color: Color(0xFFD9C5A8), size: 32),
+                        child: Icon(Icons.nightlight_round, color: HealTokens.creamSleep, size: 32),
                       )
                     : null,
               ),
@@ -251,14 +251,14 @@ class _SleepCard extends ConsumerWidget {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF2A1A18),
+                              color: const HealTokens.practiceSleepFrom,
                               borderRadius: BorderRadius.circular(4),
-                              border: Border.all(color: const Color(0xFFD9C5A8).withValues(alpha: 0.2)),
+                              border: Border.all(color: const HealTokens.creamSleep20),
                             ),
                             child: Text(
                               'BEDTIME',
                               style: TextStyle(
-                                color: const Color(0xFFD9C5A8).withValues(alpha: 0.9),
+                                color: const HealTokens.creamSleep.withValues(alpha: 0.9),
                                 fontSize: 9,
                                 letterSpacing: 1.5,
                                 fontWeight: FontWeight.w700,
@@ -277,12 +277,12 @@ class _SleepCard extends ConsumerWidget {
                 child: Container(
                   width: 40, height: 40,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFD9C5A8).withValues(alpha: 0.16),
+                    color: const HealTokens.creamSleep.withValues(alpha: 0.16),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.play_arrow_rounded,
-                    color: Color(0xFFD9C5A8),
+                    color: HealTokens.creamSleep,
                     size: 22,
                   ),
                 ),
@@ -303,13 +303,13 @@ class _FootNote extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(HealTokens.s20),
           decoration: BoxDecoration(
-            color: const Color(0xFF1A100F),
+            color: const HealTokens.midnightSurface,
             borderRadius: BorderRadius.circular(HealTokens.r16),
-            border: Border.all(color: const Color(0xFFD9C5A8).withValues(alpha: 0.08)),
+            border: Border.all(color: const HealTokens.creamSleep.withValues(alpha: 0.08)),
           ),
           child: Row(
             children: [
-              const Icon(Icons.tips_and_updates_outlined, color: Color(0xFFD9C5A8), size: 18),
+              const Icon(Icons.tips_and_updates_outlined, color: HealTokens.creamSleep, size: 18),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
@@ -334,9 +334,9 @@ class _FootNote extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(HealTokens.s20),
               decoration: BoxDecoration(
-                color: const Color(0xFF1A100F),
+                color: const HealTokens.midnightSurface,
                 borderRadius: BorderRadius.circular(HealTokens.r16),
-                border: Border.all(color: const Color(0xFFD9C5A8).withValues(alpha: 0.16)),
+                border: Border.all(color: const HealTokens.creamSleep.withValues(alpha: 0.16)),
               ),
               child: Row(
                 children: [
@@ -348,7 +348,7 @@ class _FootNote extends StatelessWidget {
                       children: [
                         const Text(
                           'Ambient sounds',
-                          style: TextStyle(color: Color(0xFFE8DCC8), fontSize: 14, fontWeight: FontWeight.w600),
+                          style: TextStyle(color: HealTokens.creamWarm, fontSize: 14, fontWeight: FontWeight.w600),
                         ),
                         const SizedBox(height: 2),
                         Text(

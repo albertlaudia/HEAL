@@ -76,7 +76,7 @@ class _MilestoneOverlayState extends State<MilestoneOverlay>
     return FadeTransition(
       opacity: _fade,
       child: Container(
-        color: Colors.black.withValues(alpha: 0.6),
+        color: HealTokens.scrim,
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,

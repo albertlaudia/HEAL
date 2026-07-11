@@ -33,10 +33,162 @@ abstract class HealTokens {
   static const Color ember = Color(0xFFD9764E);
 
   static const Color cream = Color(0xFFEDE3D2);
+  // Cream-family variants used in Sleep + ambient pages
+  static const Color creamSleep  = Color(0xFFD9C5A8);  // sleepier, dimmer cream
+  static const Color creamWarm   = Color(0xFFE8DCC8);  // warmer cream
+  static const Color creamDusk   = Color(0xFFB8A88F);  // dusk cream
+  // Pre-baked alpha tokens for the sleep palette
+  static const Color creamSleep08 = Color(0x14D9C5A8);  // 8%
+  static const Color creamSleep20 = Color(0x33D9C5A8);  // 20%
+  static const Color creamSleep40 = Color(0x66D9C5A8);  // 40%
+  static const Color creamSleep50 = Color(0x80D9C5A8);  // 50%
   static const Color creamDim = Color(0xFFC8B8A0);
 
   /// Deep oxblood red — used for high-contrast accents and completion overlays.
   static const Color oxblood = Color(0xFF8B2C2C);
+
+  // ── Emotion state tokens (drive Lumen + palette + edge glow) ──
+  // Lumen's body color when in each emotion state.
+  static const Color lumenResting     = Color(0xFFB08C4F);  // = brass
+  static const Color lumenBreathing   = Color(0xFFB5A8C5);  // = wonder
+  static const Color lumenAttentive   = Color(0xFFC5A572);  // = hope
+  static const Color lumenListening   = Color(0xFFD4B26A);  // = gratitude
+  static const Color lumenOffering    = Color(0xFFD08E8E);  // = love
+  static const Color lumenWeary       = Color(0xFF8B8074);  // = weary
+  static const Color lumenCelebrating = Color(0xFFE8C26E);  // = amber
+  static const Color lumenEncouraging = Color(0xFFD9764E);  // = ember
+
+  // ── Mood backdrop tints (per emotion) ──────────────────────────
+  // Slightly darker than Lumen's body so the character reads against bg.
+  static const Color backdropResting     = Color(0xFF1A1110);  // = rosewoodDeep
+  static const Color backdropPracticing  = Color(0xFF1F1310);  // active practice
+  static const Color backdropPracticingDeep = Color(0xFF150A09);
+  static const Color backdropPracticingGlow = Color(0xFF4A2C26);
+  static const Color backdropEvening     = Color(0xFF160D17);  // evening, indigo
+  static const Color backdropEveningDeep = Color(0xFF0A0610);
+  static const Color backdropEveningSurface = Color(0xFF221830);
+  static const Color backdropEveningGlow = Color(0xFF2E1F40);
+  static const Color backdropEveningPrimary = Color(0xFF8FA8B0);  // = peace
+  static const Color backdropEveningPrimarySoft = Color(0xFFA5BCC4);
+  static const Color backdropEveningOnPrimary = Color(0xFF0A0610);
+  static const Color backdropEveningSuccess = Color(0xFFB5C5B5);
+  static const Color backdropEveningWarning = Color(0xFFB08C7A);
+  static const Color backdropCelebrating = Color(0xFF1A1308);
+  static const Color backdropCelebratingDeep = Color(0xFF0F0B05);
+  static const Color backdropCelebratingSurface = Color(0xFF3A2810);
+  static const Color backdropCelebratingGlow = Color(0xFF5A3C1A);
+
+  // ── Time-of-day palette tokens (used by TimePalette) ───────────
+  // Pre-dawn: deep blue-black, cool silver-blue brass
+  static const Color predawnBg     = Color(0xFF0F1419);
+  static const Color predawnSurface = Color(0xFF1A1F25);
+  static const Color predawnPrimary = Color(0xFF8FA8B0);
+  static const Color predawnSecondary = Color(0xFF5A6F7E);
+  static const Color predawnAccent = Color(0xFFB08C4F);
+  static const Color predawnGlow   = Color(0xFF4A6B7A);
+
+  // Dawn: warming rosewood, bright brass dawn
+  static const Color dawnBg        = Color(0xFF2A1F1C);
+  static const Color dawnSurface   = Color(0xFF3A2A24);
+  static const Color dawnPrimary   = Color(0xFFD4B26A);
+  static const Color dawnSecondary = Color(0xFFA56B6B);
+  static const Color dawnAccent    = Color(0xFFE8C26E);
+  static const Color dawnGlow      = Color(0xFFD9764E);
+
+  // Noon: standard rosewood, true brass
+  static const Color noonBg        = Color(0xFF2A1815);
+  static const Color noonSurface   = Color(0xFF3A201C);
+  static const Color noonPrimary   = Color(0xFFB08C4F);
+  static const Color noonSecondary = Color(0xFF7C4A4A);
+  static const Color noonAccent    = Color(0xFFE8C26E);
+  static const Color noonGlow      = Color(0xFFE8C26E);
+
+  // Dusk: darker rosewood, ember-copper
+  static const Color duskBg        = Color(0xFF1F1410);
+  static const Color duskSurface   = Color(0xFF2E1B17);
+  static const Color duskPrimary   = Color(0xFFD9764E);
+  static const Color duskSecondary = Color(0xFFA56B6B);
+  static const Color duskAccent    = Color(0xFFE8C26E);
+  static const Color duskGlow      = Color(0xFFD9764E);
+
+  // Night: deep night, muted brass
+  static const Color nightBg       = Color(0xFF120808);
+  static const Color nightSurface  = Color(0xFF1F1410);
+  static const Color nightPrimary  = Color(0xFFA88B5E);
+  static const Color nightSecondary = Color(0xFF7C4A4A);
+  static const Color nightAccent   = Color(0xFFD9764E);
+  static const Color nightGlow     = Color(0xFF6B4A36);
+
+  // Midnight: near-black with violet
+  static const Color midnightBg    = Color(0xFF080608);
+  static const Color midnightSurface = Color(0xFF15101A);
+  static const Color midnightPrimary = Color(0xFF8B7B9B);
+  static const Color midnightSecondary = Color(0xFF5A4A6B);
+  static const Color midnightAccent = Color(0xFFB08C4F);  // brass undertone
+  static const Color midnightGlow = Color(0xFF4A3A5B);
+
+  // Mini-player gradient end (used by router for the slide-up sheet)
+  static const Color miniPlayerGradientEnd = Color(0xFF1A1010);
+
+  // ── Per-practice palette tokens (used by _TodayCard) ─────────
+  // Meditate — sage green
+  static const Color practiceMeditateFrom = Color(0xFF4A6B5E);
+  static const Color practiceMeditateTo   = Color(0xFF2C3E36);
+  // Scripture — warm bronze
+  static const Color practiceScriptureFrom = Color(0xFF8E6F47);
+  static const Color practiceScriptureTo   = Color(0xFF5B4530);
+  // Prayer — coral rose
+  static const Color practicePrayerFrom   = Color(0xFFA66B5C);
+  static const Color practicePrayerTo     = Color(0xFF6F4538);
+  // Reflection — slate blue
+  static const Color practiceReflectionFrom = Color(0xFF5B6E8E);
+  static const Color practiceReflectionTo   = Color(0xFF394861);
+  // Praise — amethyst
+  static const Color practicePraiseFrom   = Color(0xFF6E5BA6);
+  static const Color practicePraiseTo     = Color(0xFF44386F);
+  // World — teal
+  static const Color practiceWorldFrom    = Color(0xFF4A8E8E);
+  static const Color practiceWorldTo      = Color(0xFF2E6363);
+  // Sleep — midnight brown (used in practice grid sleep tile)
+  static const Color practiceSleepFrom    = Color(0xFF2A1A18);
+  static const Color practiceSleepTo      = Color(0xFF0F0807);
+  // Sticker tile gradient
+  static const Color practiceStickerFrom  = Color(0xFF4A3A2E);
+  static const Color practiceStickerTo    = Color(0xFF2E2520);
+  // Brass widget gradient (used in modal sheets)
+  static const Color brassSheetFrom       = Color(0xFF3A201C);
+  static const Color brassSheetTo         = Color(0xFF2A1815);
+
+  // ── World day emotion colors (per emotional content type) ────
+  static const Color worldChallenge = Color(0xFF1F3A40);  // deep teal-blue
+  static const Color worldGrace     = Color(0xFF1F3328);  // deep sage
+  static const Color worldGratitude = Color(0xFF3D2E1A);  // deep amber
+  static const Color worldDefault   = Color(0xFF2A2A2A);
+  // Mini-player sheet scrim
+  static const Color miniPlayerScrim = Color(0xFF120A09);
+
+  // ── Overlays & scrims ─────────────────────────────────────────
+  // 55% black — used for general modal scrims (lighter than the
+  // 60% milestone scrim so the user feels the page is still there).
+  static const Color scrimSoft = Color(0x8C000000);  // ~55% black
+
+  // Pre-baked alpha tokens for white (used on dark backgrounds)
+  static const Color white04 = Color(0x0AFFFFFF);  // 4% (subtle borders)
+  static const Color white05 = Color(0x0DFFFFFF);  // 5% (pressed highlight)
+  static const Color white06 = Color(0x0FFFFFFF);  // 6% (hairline)
+  static const Color white12 = Color(0x1FFFFFFF);  // 12% (border)
+  static const Color white18 = Color(0x2EFFFFFF);  // 18% (icon backgrounds)
+  static const Color white70 = Color(0xB3FFFFFF);  // 70% (muted text)
+  static const Color white80 = Color(0xCCFFFFFF);  // 80% (medium text)
+  static const Color white85 = Color(0xD9FFFFFF);  // 85% (bright text)
+  static const Color black32 = Color(0x52000000);  // 32% (pressed overlay)
+  static const Color black40 = Color(0x66000000);  // 40% (mini player sheet scrim)
+
+  // ── Misc design tokens used across the system ─────────────────
+  static const Color scrim = Color(0x99000000);  // 60% black overlay
+  static const Color whiteAlpha04 = Color(0x0AFFFFFF);  // 4% white (pressed)
+  static const Color whiteAlpha05 = Color(0x0DFFFFFF);  // 5% white
+  static const Color whiteAlpha22 = Color(0x38FFFFFF);  // 22% white (Lumen highlight)
 
   // ── Emotion tints (used in Prayer reader + ring glow) ───────────
   static const Map<String, Color> emotionGlow = {

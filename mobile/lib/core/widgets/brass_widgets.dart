@@ -33,8 +33,8 @@ class GlassCard extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color(0xFF3A201C),
-            Color(0xFF2A1815),
+            HealTokens.brassSheetFrom,
+            HealTokens.brassSheetTo,
           ],
         ),
         border: Border.all(

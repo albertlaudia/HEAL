@@ -212,7 +212,7 @@ class _FirstBreathPageState extends State<_FirstBreathPage>
   // Three breaths: each is inhale (4s) → hold (2s) → exhale (6s) = 12s
   static const _firstDuration = 4; // breathe-in seconds (first phase)
   static const _durations = [4, 2, 6];
-  static const _labels = ['Inhale', 'Hold', 'Exhale'];
+  static const _labels = [Copy.breathInhaleShort, Copy.breathHold, Copy.breathExhaleShort];
 
   @override
   void initState() {
@@ -352,7 +352,7 @@ class _FirstBreathPageState extends State<_FirstBreathPage>
                       child: AnimatedSwitcher(
                         duration: const Duration(milliseconds: 240),
                         child: Text(
-                          _started ? _labels[_phaseIdx] : 'Tap to begin',
+                          _started ? _labels[_phaseIdx] : Copy.breathTapToBegin,
                           key: ValueKey(_started ? _phaseIdx : 'tap'),
                           style: TextStyle(
                             color: HealTokens.cream.withValues(alpha: _started ? 1.0 : 0.7),

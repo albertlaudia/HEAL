@@ -72,10 +72,10 @@ class _WorldBody extends StatelessWidget {
 
   Color _kindBg() {
     switch (world.promptKind) {
-      case 'challenge': return const Color(0xFF1F3A40);  // deep teal-blue
-      case 'grace':     return const Color(0xFF1F3328);  // deep sage
-      case 'gratitude': return const Color(0xFF3D2E1A);  // deep amber
-      default:          return const Color(0xFF2A2A2A);
+      case 'challenge': return const HealTokens.worldChallenge;  // deep teal-blue
+      case 'grace':     return const HealTokens.worldGrace;  // deep sage
+      case 'gratitude': return const HealTokens.worldGratitude;  // deep amber
+      default:          return const HealTokens.worldDefault;
     }
   }
 
@@ -99,12 +99,12 @@ class _WorldBody extends StatelessWidget {
               decoration: BoxDecoration(
                 color: _kindBg(),
                 borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+                border: Border.all(color: HealTokens.white12),
               ),
               child: Text(
                 (world.promptKind ?? 'today').toUpperCase(),
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Colors.white.withValues(alpha: 0.85),
+                      color: HealTokens.white85,
                       letterSpacing: 1.6,
                       fontWeight: FontWeight.w700,
                     ),
@@ -202,7 +202,7 @@ class _WorldBody extends StatelessWidget {
               decoration: BoxDecoration(
                 color: palette.surface.withValues(alpha: 0.6),
                 borderRadius: BorderRadius.circular(HealTokens.r16),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
+                border: Border.all(color: HealTokens.white06),
               ),
               child: Text(
                 world.prayer,

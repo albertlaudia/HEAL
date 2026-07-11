@@ -144,6 +144,19 @@ abstract class Copy {
   }
 
   // ── Calendar / time-of-day helpers ───────────────────────────
+  // Breath phase labels (used in breath ring, voice calibration, onboarding)
+  static const breathInhale = 'Breathe in';
+  static const breathHold   = 'Hold';
+  static const breathExhale = 'Breathe out';
+  // Onboarding variant
+  static const breathInhaleShort = 'Inhale';
+  static const breathExhaleShort = 'Exhale';
+  static const breathTapToBegin  = 'Tap to begin';
+
+  // Modal chrome
+  static const modalClose = 'Close';
+  static const modalDismiss = 'Dismiss';
+
   static String greetingForHour(int hour) {
     if (hour < 5)  return 'Still up?';
     if (hour < 12) return 'Good morning';

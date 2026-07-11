@@ -75,7 +75,7 @@ class _PressableState extends State<Pressable> {
           decoration: BoxDecoration(
             borderRadius: radius,
             color: _pressed
-                ? (widget.pressedOverlay ?? Colors.white.withValues(alpha: 0.04))
+                ? (widget.pressedOverlay ?? HealTokens.whiteAlpha04)
                 : Colors.transparent,
           ),
           child: ClipRRect(

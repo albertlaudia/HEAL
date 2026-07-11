@@ -1,3 +1,4 @@
+import '../../design/copy.dart';
 // HEAL — Breath ring CustomPainter.
 // Renders a smooth, glowing ring that expands/contracts with breath phase.
 // Color shifts based on phase: amber (inhale) → brass (hold) → ember (exhale).
@@ -14,11 +15,11 @@ extension BreathPhaseLabel on BreathPhase {
       case BreathPhase.ready:
         return 'When you are ready';
       case BreathPhase.inhale:
-        return 'Breathe in';
+        return Copy.breathInhale;
       case BreathPhase.holdIn:
-        return 'Hold';
+        return Copy.breathHold;
       case BreathPhase.exhale:
-        return 'Breathe out';
+        return Copy.breathExhale;
       case BreathPhase.holdOut:
         return 'Rest';
     }

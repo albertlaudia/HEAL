@@ -341,7 +341,7 @@ class _LyricsSheet extends HookConsumerWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [HealTokens.rosewoodDeep, Color(0xFF1A1010)],
+            colors: [HealTokens.rosewoodDeep, HealTokens.miniPlayerGradientEnd],
           ),
           borderRadius: BorderRadius.vertical(top: Radius.circular(HealTokens.r24)),
         ),

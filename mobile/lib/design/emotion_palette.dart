@@ -60,10 +60,10 @@ class EmotionPalette {
 
   /// Active practice — slightly brighter, more saturated.
   static const EmotionPalette practicing = EmotionPalette(
-    background: Color(0xFF1F1310),
-    backgroundDeep: Color(0xFF150A09),
+    background: HealTokens.backdropPracticing,
+    backgroundDeep: HealTokens.backdropPracticingDeep,
     surface: HealTokens.rosewoodLight,
-    surfaceGlow: Color(0xFF4A2C26),
+    surfaceGlow: HealTokens.backdropPracticingGlow,
     primary: HealTokens.amber,
     primarySoft: HealTokens.brassLight,
     onPrimary: HealTokens.oxblood,
@@ -75,25 +75,25 @@ class EmotionPalette {
 
   /// Evening — warmer, dimmer, more indigo.
   static const EmotionPalette evening = EmotionPalette(
-    background: Color(0xFF160D17),
-    backgroundDeep: Color(0xFF0A0610),
-    surface: Color(0xFF221830),
-    surfaceGlow: Color(0xFF2E1F40),
-    primary: Color(0xFF8FA8B0),
-    primarySoft: Color(0xFFA5BCC4),
-    onPrimary: Color(0xFF0A0610),
+    background: HealTokens.backdropEvening,
+    backgroundDeep: HealTokens.backdropEveningDeep,
+    surface: HealTokens.backdropEveningSurface,
+    surfaceGlow: HealTokens.backdropEveningGlow,
+    primary: HealTokens.backdropEveningPrimary,
+    primarySoft: HealTokens.backdropEveningPrimarySoft,
+    onPrimary: HealTokens.backdropEveningOnPrimary,
     text: HealTokens.cream,
     textMuted: HealTokens.creamDim,
-    success: Color(0xFFB5C5B5),
-    warning: Color(0xFFB08C7A),
+    success: HealTokens.backdropEveningSuccess,
+    warning: HealTokens.backdropEveningWarning,
   );
 
   /// Celebration — warm, bright, full of light.
   static const EmotionPalette celebrating = EmotionPalette(
-    background: Color(0xFF1A1308),
-    backgroundDeep: Color(0xFF0F0B05),
-    surface: Color(0xFF3A2810),
-    surfaceGlow: Color(0xFF5A3C1A),
+    background: HealTokens.backdropCelebrating,
+    backgroundDeep: HealTokens.backdropCelebratingDeep,
+    surface: HealTokens.backdropCelebratingSurface,
+    surfaceGlow: HealTokens.backdropCelebratingGlow,
     primary: HealTokens.amber,
     primarySoft: HealTokens.brassLight,
     onPrimary: HealTokens.oxblood,

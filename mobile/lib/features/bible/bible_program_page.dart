@@ -11,6 +11,7 @@ import '../../data/pb_models.dart';
 import '../../data/bible_progress_cache.dart';
 import '../../design/lumen_state.dart';
 import '../../design/milestone_overlay.dart';
+import '../../design/copy.dart';
 
 import '../../data/pb_repositories.dart';
 import '../../services/streak_service.dart';
@@ -818,7 +819,7 @@ class _BibleDayPageState extends ConsumerState<BibleDayPage> {
         title: const Text('Open in Bible Gateway'),
         content: SelectableText(url, style: const TextStyle(color: HealTokens.creamDim, fontSize: 12)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Close')),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text(Copy.modalClose)),
         ],
       ),
     );
@@ -834,7 +835,7 @@ Future<void> showBibleCompletionOverlay(
   BuildContext context, {
   required String passage,
   required int dayNumber,
-  Duration duration = const Duration(milliseconds: 1800),
+  Duration duration = const HealMotion.bibleCompletionHold,
 }) async {
   if (!context.mounted) return;
   // Dismiss anything currently up (so repeated marks don't pile up).
@@ -844,7 +845,7 @@ Future<void> showBibleCompletionOverlay(
     context: context,
     barrierDismissible: true,
     barrierLabel: 'Bible reading complete',
-    barrierColor: Colors.black.withValues(alpha: 0.55),
+    barrierColor: HealTokens.scrimSoft,
     transitionDuration: const Duration(milliseconds: 350),
     pageBuilder: (ctx, anim, secAnim) {
       return Center(

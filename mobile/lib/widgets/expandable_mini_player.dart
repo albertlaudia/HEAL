@@ -89,7 +89,7 @@ class _CollapsedMini extends ConsumerWidget {
               border: Border.all(color: HealTokens.brass.withValues(alpha: 0.32)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.4),
+                  color: HealTokens.black40,
                   blurRadius: 12, offset: const Offset(0, 4),
                 ),
               ],
@@ -239,7 +239,7 @@ class _ExpandedPlayer extends HookConsumerWidget {
           decoration: BoxDecoration(
             gradient: const LinearGradient(
               begin: Alignment.topCenter, end: Alignment.bottomCenter,
-              colors: [HealTokens.rosewoodDeep, Color(0xFF120A09)],
+              colors: [HealTokens.rosewoodDeep, HealTokens.miniPlayerScrim],
             ),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(HealTokens.r28)),
             border: Border(

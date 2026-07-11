@@ -39,57 +39,57 @@ class TimePalette {
 const _palettes = <String, TimePalette>{
   'predawn': TimePalette(
     period: 'Pre-dawn',
-    background: Color(0xFF0F1419),    // deep blue-black
-    surface: Color(0xFF1A1F25),
-    primary: Color(0xFF8FA8B0),        // cool silver-blue brass
-    secondary: Color(0xFF5A6F7E),
-    accent: Color(0xFFB08C4F),         // brass undertone
-    glow: Color(0xFF4A6B7A),
+    background: HealTokens.predawnBg,
+    surface: HealTokens.predawnSurface,
+    primary: HealTokens.predawnPrimary,
+    secondary: HealTokens.predawnSecondary,
+    accent: HealTokens.predawnAccent,
+    glow: HealTokens.predawnGlow,
   ),
   'dawn': TimePalette(
     period: 'Dawn',
-    background: Color(0xFF2A1F1C),    // warming rosewood
-    surface: Color(0xFF3A2A24),
-    primary: Color(0xFFD4B26A),        // bright brass dawn
-    secondary: Color(0xFFA56B6B),
-    accent: Color(0xFFE8C26E),         // warm amber
-    glow: Color(0xFFD9764E),
+    background: HealTokens.dawnBg,
+    surface: HealTokens.dawnSurface,
+    primary: HealTokens.dawnPrimary,
+    secondary: HealTokens.dawnSecondary,
+    accent: HealTokens.dawnAccent,
+    glow: HealTokens.dawnGlow,
   ),
   'noon': TimePalette(
     period: 'Noon',
-    background: Color(0xFF2A1815),    // standard rosewood
-    surface: Color(0xFF3A201C),
-    primary: Color(0xFFB08C4F),        // true brass
-    secondary: Color(0xFF7C4A4A),
-    accent: Color(0xFFE8C26E),
-    glow: Color(0xFFE8C26E),
+    background: HealTokens.noonBg,
+    surface: HealTokens.noonSurface,
+    primary: HealTokens.noonPrimary,
+    secondary: HealTokens.noonSecondary,
+    accent: HealTokens.noonAccent,
+    glow: HealTokens.noonGlow,
   ),
   'dusk': TimePalette(
     period: 'Dusk',
-    background: Color(0xFF1F1410),    // darker rosewood
-    surface: Color(0xFF2E1B17),
-    primary: Color(0xFFD9764E),        // ember-copper
-    secondary: Color(0xFFA56B6B),
-    accent: Color(0xFFE8C26E),
-    glow: Color(0xFFD9764E),
+    background: HealTokens.duskBg,
+    surface: HealTokens.duskSurface,
+    primary: HealTokens.duskPrimary,
+    secondary: HealTokens.dawnSecondary,
+    accent: HealTokens.noonAccent,
+    glow: HealTokens.dawnGlow,
   ),
   'night': TimePalette(
     period: 'Night',
-    background: Color(0xFF120808),    // deep night
-    surface: Color(0xFF1F1410),
-    primary: Color(0xFFA88B5E),        // muted brass
-    secondary: Color(0xFF7C4A4A),
-    accent: Color(0xFFD9764E),         // ember
-    glow: Color(0xFF6B4A36),
+    background: HealTokens.nightBg,
+    surface: HealTokens.nightSurface,
+    primary: HealTokens.nightPrimary,
+    secondary: HealTokens.noonSecondary,
+    accent: HealTokens.nightAccent,
+    glow: HealTokens.nightGlow,
   ),
   'midnight': TimePalette(
     period: 'Midnight',
-    background: Color(0xFF080608),    // near-black with violet
-    surface: Color(0xFF15101A),
-    primary: Color(0xFF8B7B9B),        // muted violet-brass
-    secondary: Color(0xFF5A4A6B),
-    accent: Color(0xFFB08C4F),
-    glow: Color(0xFF4A3A5B),
+    background: HealTokens.midnightBg,
+    surface: HealTokens.midnightSurface,
+    primary: HealTokens.midnightPrimary,
+    secondary: HealTokens.midnightSecondary,
+    accent: HealTokens.midnightAccent,
+    glow: HealTokens.midnightGlow,
   ),
 };
 

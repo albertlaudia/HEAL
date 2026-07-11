@@ -180,13 +180,13 @@ class AmbientSoundsPage extends HookConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0F0A09),
+      backgroundColor: const HealTokens.midnightBg,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
           SliverAppBar(
             pinned: true,
-            backgroundColor: const Color(0xFF1A100F),
+            backgroundColor: const HealTokens.midnightSurface,
             iconTheme: const IconThemeData(color: HealTokens.cream),
             title: const Text('Ambient', style: TextStyle(color: HealTokens.cream, fontSize: 18, fontWeight: FontWeight.w500)),
             leading: IconButton(
@@ -196,7 +196,7 @@ class AmbientSoundsPage extends HookConsumerWidget {
             actions: [
               if (anyPlaying.value)
                 IconButton(
-                  icon: const Icon(Icons.stop_circle_outlined, color: Color(0xFFD9C5A8)),
+                  icon: const Icon(Icons.stop_circle_outlined, color: HealTokens.creamSleep),
                   tooltip: 'Stop all',
                   onPressed: stopAll,
                 ),
@@ -307,13 +307,13 @@ class _AmbientCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(HealTokens.r20),
         border: Border.all(
           color: isPlaying
-              ? const Color(0xFFD9C5A8).withValues(alpha: 0.4)
-              : const Color(0xFFD9C5A8).withValues(alpha: 0.08),
+              ? const HealTokens.creamSleep40
+              : const HealTokens.creamSleep08,
         ),
         boxShadow: isPlaying
             ? [
                 BoxShadow(
-                  color: const Color(0xFFD9C5A8).withValues(alpha: 0.2),
+                  color: const HealTokens.creamSleep20,
                   blurRadius: 16,
                 ),
               ]
@@ -337,10 +337,10 @@ class _AmbientCard extends StatelessWidget {
                       duration: const Duration(milliseconds: 200),
                       width: 12, height: 12,
                       decoration: BoxDecoration(
-                        color: isPlaying ? const Color(0xFFD9C5A8) : Colors.transparent,
+                        color: isPlaying ? const HealTokens.creamSleep : Colors.transparent,
                         shape: BoxShape.circle,
                         border: Border.all(
-                          color: const Color(0xFFD9C5A8).withValues(alpha: 0.5),
+                          color: const HealTokens.creamSleep50,
                           width: 1.5,
                         ),
                       ),
@@ -351,7 +351,7 @@ class _AmbientCard extends StatelessWidget {
                 Text(
                   track.name,
                   style: const TextStyle(
-                    color: Color(0xFFE8DCC8),
+                    color: HealTokens.creamWarm,
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -362,7 +362,7 @@ class _AmbientCard extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    color: Color(0xFFB8A88F),
+                    color: HealTokens.creamDusk,
                     fontSize: 10,
                     height: 1.3,
                   ),
@@ -379,8 +379,8 @@ class _AmbientCard extends StatelessWidget {
                     value: volume.clamp(0.0, 1.0),
                     min: 0,
                     max: 1,
-                    activeColor: const Color(0xFFD9C5A8),
-                    inactiveColor: const Color(0xFFD9C5A8).withValues(alpha: 0.2),
+                    activeColor: const HealTokens.creamSleep,
+                    inactiveColor: const HealTokens.creamSleep20,
                     onChanged: onVolume,
                   ),
                 ),
@@ -418,7 +418,7 @@ class _PresetBar extends StatelessWidget {
         Text(
           'PRESETS',
           style: TextStyle(
-            color: const Color(0xFFD9C5A8).withValues(alpha: 0.7),
+            color: const HealTokens.creamSleep.withValues(alpha: 0.7),
             fontSize: 11,
             letterSpacing: 2.5,
             fontWeight: FontWeight.w700,
@@ -442,17 +442,17 @@ class _PresetBar extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1A100F),
+                      color: const HealTokens.midnightSurface,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: const Color(0xFFD9C5A8).withValues(alpha: 0.24),
+                        color: const HealTokens.creamSleep.withValues(alpha: 0.24),
                       ),
                     ),
                     child: Center(
                       child: Text(
                         p.name,
                         style: const TextStyle(
-                          color: Color(0xFFE8DCC8),
+                          color: HealTokens.creamWarm,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1,

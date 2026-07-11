@@ -1,3 +1,4 @@
+import '../../design/copy.dart';
 // HEAL — Voice calibration page.
 //
 // UI for the breath-voice calibration flow. Shows:
@@ -305,7 +306,7 @@ class _ActiveCalibrationView extends StatelessWidget {
       case CalibrationPhase.countIn:
         return 'Get ready';
       case CalibrationPhase.inhale:
-        return 'Breathe in';
+        return Copy.breathInhale;
       case CalibrationPhase.exhale:
         return 'Breathe out';
       case CalibrationPhase.done:

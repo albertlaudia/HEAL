@@ -390,23 +390,23 @@ class _StreakDetailsSheet extends StatelessWidget {
           ),
           const SizedBox(height: HealTokens.s24),
           _StreakStat(
-            label: 'Longest streak',
+            label: Copy.statLongestStreak,
             value: '${streak.longestStreak} days',
           ),
           const SizedBox(height: HealTokens.s12),
           _StreakStat(
-            label: 'Total sessions',
+            label: Copy.statTotalSessions,
             value: '${streak.totalSessions}',
           ),
           const SizedBox(height: HealTokens.s12),
           _StreakStat(
-            label: 'Total minutes',
+            label: Copy.statTotalMinutes,
             value: '${streak.totalMinutes}',
           ),
           if (streak.lastSession != null) ...[
             const SizedBox(height: HealTokens.s12),
             _StreakStat(
-              label: 'Last session',
+              label: Copy.statLastSession,
               value: _relativeTime(streak.lastSession!),
             ),
           ],
@@ -626,7 +626,7 @@ class _HeroPracticeCard extends StatelessWidget {
         onTap();
       },
       pressedScale: 0.97,
-      pressedOverlay: Colors.white.withValues(alpha: 0.05),
+      pressedOverlay: HealTokens.white05,
       borderRadius: BorderRadius.circular(HealTokens.r24),
       child: GestureDetector(
         behavior: HitTestBehavior.translucent,
@@ -879,7 +879,7 @@ class _PracticeGrid extends ConsumerWidget {
           title: 'Sleep',
           subtitle: '~10 min · Wind down',
           icon: Icons.nightlight_round,
-          gradient: const [Color(0xFF2A1A18), Color(0xFF0F0807)],
+          gradient: const [HealTokens.practiceSleepFrom, HealTokens.practiceSleepTo],
           onTap: () => context.push('/sleep'),
         ),
         _StickerBookTile(),
@@ -1250,7 +1250,7 @@ class _TodayShelf extends HookConsumerWidget {
                     ? '${todayMed.subtitle.substring(0, 60)}…'
                     : todayMed.subtitle)
                 : 'A quiet practice',
-            palette: const [Color(0xFF4A6B5E), Color(0xFF2C3E36)],
+            palette: const [HealTokens.practiceMeditateFrom, HealTokens.practiceMeditateTo],
             onTap: todayMed == null
                 ? () => context.push('/meditate')
                 : () => playMeditation(todayMed),
@@ -1265,7 +1265,7 @@ class _TodayShelf extends HookConsumerWidget {
             eyebrow: nowPlayingEyebrow ?? 'SCRIPTURE',
             title: todayScripture?.text ?? 'Be still and know',
             subtitle: todayScripture?.reference ?? 'A verse for the day',
-            palette: const [Color(0xFF8E6F47), Color(0xFF5B4530)],
+            palette: const [HealTokens.practiceScriptureFrom, HealTokens.practiceScriptureTo],
             onTap: todayScripture == null
                 ? () => context.push('/scripture')
                 : () => openScripture(todayScripture),
@@ -1277,7 +1277,7 @@ class _TodayShelf extends HookConsumerWidget {
             eyebrow: nowPlayingEyebrow ?? 'PRAYER',
             title: todayPrayer?.title ?? 'A prayer',
             subtitle: todayPrayer?.body.split('\n').first ?? 'Bring it to God',
-            palette: const [Color(0xFFA66B5C), Color(0xFF6F4538)],
+            palette: const [HealTokens.practicePrayerFrom, HealTokens.practicePrayerTo],
             onTap: todayPrayer == null
                 ? () => context.push('/prayer')
                 : () => openPrayer(todayPrayer),
@@ -1289,7 +1289,7 @@ class _TodayShelf extends HookConsumerWidget {
             eyebrow: 'REFLECTION',
             title: todayReflection?.title ?? 'A long read',
             subtitle: todayReflection?.subtitle ?? 'A reflection',
-            palette: const [Color(0xFF5B6E8E), Color(0xFF394861)],
+            palette: const [HealTokens.practiceReflectionFrom, HealTokens.practiceReflectionTo],
             onTap: todayReflection == null
                 ? () => context.push('/essays')
                 : () => openReflection(todayReflection),
@@ -1301,7 +1301,7 @@ class _TodayShelf extends HookConsumerWidget {
             eyebrow: nowPlayingEyebrow ?? 'PRAISE',
             title: todayPraise?.title ?? 'A hymn',
             subtitle: todayPraise?.subtitle ?? 'A song for today',
-            palette: const [Color(0xFF6E5BA6), Color(0xFF44386F)],
+            palette: const [HealTokens.practicePraiseFrom, HealTokens.practicePraiseTo],
             onTap: todayPraise == null
                 ? () => context.push('/praise')
                 : () => playPraise(todayPraise),
@@ -1316,7 +1316,7 @@ class _TodayShelf extends HookConsumerWidget {
             eyebrow: 'THE WORLD',
             title: todayWorld?.title ?? 'Today in the world',
             subtitle: todayWorld?.scriptureRef ?? 'A prayer, a verse, an expectation',
-            palette: const [Color(0xFF4A8E8E), Color(0xFF2E6363)],
+            palette: const [HealTokens.practiceWorldFrom, HealTokens.practiceWorldTo],
             onTap: todayWorld == null
                 ? () => context.push('/world/world-${_todaySlug()}')
                 : () => openWorld(todayWorld),
@@ -1387,7 +1387,7 @@ class _TodayCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.18),
+                    color: HealTokens.white18,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(icon, color: Colors.white, size: 16),
@@ -1397,7 +1397,7 @@ class _TodayCard extends StatelessWidget {
                   child: Text(
                     eyebrow.toUpperCase(),
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.8),
+                          color: HealTokens.white80,
                           letterSpacing: 1.5,
                           fontWeight: FontWeight.w700,
                         ),
@@ -1421,7 +1421,7 @@ class _TodayCard extends StatelessWidget {
             Text(
               subtitle,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: HealTokens.white70,
                     fontStyle: FontStyle.italic,
                   ),
               maxLines: 1,
@@ -1472,13 +1472,13 @@ class _BibleYearHero extends HookConsumerWidget {
                 gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: <Color>[Color(0xFF4A3A2E), Color(0xFF2E2520)],
+                  colors: const [HealTokens.practiceStickerFrom, HealTokens.practiceStickerTo],
                 ),
                 borderRadius: BorderRadius.circular(HealTokens.r24),
                 border: Border.all(color: HealTokens.brass.withValues(alpha: 0.32)),
                 boxShadow: <BoxShadow>[
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.32),
+                    color: HealTokens.black32,
                     blurRadius: 20,
                     offset: const Offset(0, 8),
                   ),

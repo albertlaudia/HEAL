@@ -70,7 +70,7 @@ class SettingsPage extends HookConsumerWidget {
                   ),
                 ),
                 if (notifsEnabled.value) ...[
-                  const Divider(height: 1, color: Color(0xFF3A201C)),
+                  const Divider(height: 1, color: HealTokens.rosewoodLight),
                   _SettingTile(
                     icon: Icons.wb_sunny_outlined,
                     title: 'Morning reminder',
@@ -92,7 +92,7 @@ class SettingsPage extends HookConsumerWidget {
                       },
                     ),
                   ),
-                  const Divider(height: 1, color: Color(0xFF3A201C)),
+                  const Divider(height: 1, color: HealTokens.rosewoodLight),
                   _SettingTile(
                     icon: Icons.nights_stay_outlined,
                     title: 'Evening reminder',
@@ -115,7 +115,7 @@ class SettingsPage extends HookConsumerWidget {
                     ),
                   ),
                 ],
-                const Divider(height: 1, color: Color(0xFF3A201C)),
+                const Divider(height: 1, color: HealTokens.rosewoodLight),
                 _SettingTile(
                   icon: Icons.vibration_rounded,
                   title: 'Haptic feedback',
@@ -193,7 +193,7 @@ class SettingsPage extends HookConsumerWidget {
                   subtitle: 'A quiet Christian mindfulness practice',
                   onTap: () => _showAbout(context),
                 ),
-                const Divider(height: 1, color: Color(0xFF3A201C)),
+                const Divider(height: 1, color: HealTokens.rosewoodLight),
                 _SettingTile(
                   icon: Icons.privacy_tip_outlined,
                   title: 'Privacy',

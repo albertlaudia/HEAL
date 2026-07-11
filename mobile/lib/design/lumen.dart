@@ -117,19 +117,19 @@ class _LumenPainter extends CustomPainter {
   Color get _emotionColor {
     switch (emotion) {
       case LumenEmotion.breathing:
-        return const Color(0xFFB5A8C5); // wonder
+        return HealTokens.lumenBreathing;  // wonder
       case LumenEmotion.attentive:
-        return const Color(0xFFC5A572); // hope
+        return HealTokens.lumenAttentive;  // hope
       case LumenEmotion.listening:
-        return const Color(0xFFD4B26A); // gratitude
+        return HealTokens.lumenListening;  // gratitude
       case LumenEmotion.offering:
-        return const Color(0xFFD08E8E); // love
+        return HealTokens.lumenOffering;   // love
       case LumenEmotion.weary:
-        return const Color(0xFF8B8074); // weary
+        return HealTokens.lumenWeary;      // weary
       case LumenEmotion.celebrating:
-        return const Color(0xFFE8C26E); // bright amber
+        return HealTokens.lumenCelebrating; // amber
       case LumenEmotion.encouraging:
-        return const Color(0xFFD9764E); // ember
+        return HealTokens.lumenEncouraging; // ember
       case LumenEmotion.resting:
         return HealTokens.brass;
     }
@@ -245,7 +245,7 @@ class _LumenPainter extends CustomPainter {
       width: baseRadius * 0.6, height: baseRadius * 0.3,
     );
     final highlightPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.22);
+      ..color = HealTokens.whiteAlpha22;
     canvas.drawRRect(
       RRect.fromRectAndRadius(highlightRect, const Radius.circular(60)),
       highlightPaint,
