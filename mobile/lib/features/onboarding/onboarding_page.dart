@@ -17,6 +17,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../design/lumen.dart';
+
 import '../../core/theme.dart';
 import '../../services/notification_service.dart';
 import '../../services/sound_service.dart' show SoundService, SoundKind;
@@ -299,56 +301,65 @@ class _FirstBreathPageState extends State<_FirstBreathPage>
                 ),
           ),
           const Spacer(),
-          // Animated breath circle
+          // Animated Lumen — the user's future companion, breathing
+          // in real time with them. 220px tall, so it dominates the
+          // screen as a presence, not a sticker. Tap Lumen to begin.
+          GestureDetector(
+            onTap: _started ? null : _start,
+            behavior: HitTestBehavior.opaque,
+            child:
           AnimatedBuilder(
             animation: _breathCtrl,
             builder: (ctx, _) {
+              // Map controller value to breath phase 0..1 for Lumen.
               double t = _started ? _breathCtrl.value : 0;
-              // Phase-aware scale: inhale expands, exhale contracts
-              double scale;
-              if (_phaseIdx == 0) {
-                // inhale 0 → 1
-                scale = 0.6 + 0.4 * Curves.easeInOut.transform(t);
-              } else if (_phaseIdx == 1) {
-                scale = 1.0;
-              } else {
-                // exhale 1 → 0
-                scale = 1.0 - 0.4 * Curves.easeInOut.transform(t);
-              }
-              return Container(
-                width: 220 * scale,
-                height: 220 * scale,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      HealTokens.brass.withValues(alpha: 0.4),
-                      HealTokens.brass.withValues(alpha: 0.04),
-                    ],
-                  ),
-                  border: Border.all(
-                    color: HealTokens.brass.withValues(alpha: 0.4),
-                    width: 1,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: HealTokens.brass.withValues(alpha: 0.2 * scale),
-                      blurRadius: 32,
-                      spreadRadius: 4,
+              double phase;
+              if (!_started) phase = 0.5;
+              else if (_phaseIdx == 0) phase = Curves.easeInOut.transform(t);     // inhale 0→1
+              else if (_phaseIdx == 1) phase = 1.0;                                // hold
+              else phase = 1.0 - Curves.easeInOut.transform(t);                    // exhale 1→0
+              return SizedBox(
+                width: 240, height: 240,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // Outer breath ring — visualizes the breath cycle
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 120),
+                      width: 220,
+                      height: 220,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: HealTokens.brass.withValues(alpha: 0.16 + 0.2 * phase),
+                          width: 1.0,
+                        ),
+                      ),
+                    ),
+                    Lumen(
+                      emotion: LumenEmotion.breathing,
+                      size: 180,
+                      breathPhase: phase,
+                    ),
+                    // Phase label below Lumen
+                    Positioned(
+                      bottom: 0,
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 240),
+                        child: Text(
+                          _started ? _labels[_phaseIdx] : 'Tap to begin',
+                          key: ValueKey(_started ? _phaseIdx : 'tap'),
+                          style: TextStyle(
+                            color: HealTokens.cream.withValues(alpha: _started ? 1.0 : 0.7),
+                            fontSize: _started ? 16 : 14,
+                            fontStyle: _started ? FontStyle.normal : FontStyle.italic,
+                            letterSpacing: _started ? 0 : 0.5,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
                     ),
                   ],
-                ),
-                child: Center(
-                  child: Text(
-                    _started ? _labels[_phaseIdx] : 'Tap to begin',
-                    style: TextStyle(
-                      color: HealTokens.cream.withValues(alpha: _started ? 1.0 : 0.7),
-                      fontSize: _started ? 16 : 14,
-                      fontStyle: _started ? FontStyle.normal : FontStyle.italic,
-                      letterSpacing: _started ? 0 : 0.5,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
                 ),
               );
             },

@@ -9,6 +9,9 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme.dart';
 import '../../data/pb_models.dart';
 import '../../data/bible_progress_cache.dart';
+import '../../design/lumen_state.dart';
+import '../../design/milestone_overlay.dart';
+
 import '../../data/pb_repositories.dart';
 import '../../services/streak_service.dart';
 import '../../services/sound_service.dart';
@@ -175,6 +178,8 @@ class BibleProgramPage extends HookConsumerWidget {
     // P0 #3: invalidate cached progress so the next sticker eval sees the new day.
     // (Previously this re-fetched from PB on every track end — see main.dart.)
     await ref.read(bibleProgressCacheProvider(userId).notifier).refresh();
+    // Lumen celebrates — global emotion state shifts to celebrating.
+    ref.read(lumenProvider.notifier).celebrate(peak: 0.9);
     // Re-evaluate stickers — Bible completion may unlock "first-bible" + Bible moment stickers
     final track = ref.read(activityTrackerProvider);
     // P1 #4: Bible completion overlay — show "You finished [passage]. Day N of 365."
@@ -184,6 +189,17 @@ class BibleProgramPage extends HookConsumerWidget {
         context,
         passage: '${reading.bookName} ${reading.chapter}',
         dayNumber: reading.dayNumber,
+      );
+    }
+    // Big milestone (every 7th day, 30th, etc.) — full celebration overlay
+    final isMilestone = reading.dayNumber % 7 == 0;
+    if (isMilestone && context.mounted) {
+      await showMilestoneOverlay(
+        context,
+        subtitle: 'DAY $reading.dayNumber COMPLETE',
+        title: 'A week\nrestored',
+        body: 'You have walked seven days with the Word. The next seven are waiting — and so is grace.',
+        icon: Icons.auto_stories_rounded,
       );
     }
     final progress = await ref.read(bibleProgressCacheProvider(userId).notifier).ensure();
@@ -208,17 +224,21 @@ class BibleProgramPage extends HookConsumerWidget {
         : sticker.family == 'streak' ? SoundKind.stickerStreak
         : SoundKind.stickerPractice,
       );
+      // Lumen celebrates globally
+      ref.read(lumenProvider.notifier).celebrate(peak: 1.0);
+      // Show the reverent milestone overlay
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Row(children: [
-              Text(sticker.icon, style: const TextStyle(fontSize: 20)),
-              const SizedBox(width: 8),
-              Expanded(child: Text('Sticker earned: ${sticker.name}')),
-            ]),
-            duration: const Duration(seconds: 3),
-            backgroundColor: HealTokens.rosewood,
-          ),
+        final subtitle = switch (sticker.family) {
+          'streak' => 'STREAK EARNED',
+          'moment' => 'BIBLE STORY EARNED',
+          _ => 'FIRST TIME EARNED',
+        };
+        await showMilestoneOverlay(
+          context,
+          subtitle: subtitle,
+          title: sticker.name,
+          body: sticker.description,
+          icon: Icons.auto_awesome_rounded,
         );
       }
     }

@@ -18,6 +18,7 @@ import 'services/streak_service.dart';
 import 'services/audio_service.dart';
 import 'services/activity_tracker.dart';
 import 'data/bible_progress_cache.dart';
+import 'design/lumen_state.dart';
 import 'data/pb_models.dart';
 import 'services/sticker_book.dart';
 import 'services/sound_service.dart';
@@ -130,11 +131,18 @@ Future<void> main() async {
             completedBibleDays: completedDays,
           );
           if (sticker != null) {
+            // 1. Play the family-matched sound
             await container.read(soundServiceProvider).play(
               sticker.family == 'moment' ? SoundKind.stickerBible
               : sticker.family == 'streak' ? SoundKind.stickerStreak
               : SoundKind.stickerPractice,
             );
+            // 2. Trigger Lumen celebration — drives global emotion state
+            container.read(lumenProvider.notifier).celebrate(peak: 1.0);
+            // 3. The overlay is fired by the listening screen so the user
+            //    actually sees it. main.dart has no BuildContext.
+            // The Bible completion overlay in bible_program_page.dart fires
+            // its own milestone overlay for the day-level celebration.
           }
         } finally {
           debouncer.markInflight(false);

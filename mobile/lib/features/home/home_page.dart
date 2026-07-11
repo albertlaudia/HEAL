@@ -18,7 +18,11 @@ import '../../core/theme.dart';
 import '../../core/time_palette.dart';
 import '../../core/widgets/brass_widgets.dart';
 import '../../design/copy.dart';
+import '../../design/edge_glow.dart';
+import '../../design/emotion_palette.dart';
 import '../../design/lumen.dart';
+import '../../design/lumen_state.dart';
+import '../../design/pressable.dart';
 import '../../services/streak_service.dart';
 import '../../services/voice_calibration_service.dart';
 import '../../data/pb_models.dart';
@@ -33,11 +37,18 @@ class HomePage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final timeOfDay = useState<String>(_timeOfDay());
-    final palette = ref.watch(timePaletteProvider);
+    final timeBased = ref.watch(timePaletteProvider);
+    final palette = ref.watch(emotionPaletteProvider(timeBased));
     final streak = ref.watch(streakServiceProvider);
     final hasVoiceProfile = ref.watch(voiceCalibrationServiceProvider.select(
       (s) => s.hasProfile,
     ));
+    final lumenState = ref.watch(lumenProvider);
+    // Lumen's emotion follows streak state and time of day.
+    // Welcome-back users get weary; deep evenings get resting-but-dim.
+    final lumenEmotion = streak.shouldShowWelcomeBack
+        ? LumenEmotion.weary
+        : lumenState.emotion;
 
     return Scaffold(
       backgroundColor: palette.background,
@@ -59,13 +70,12 @@ class HomePage extends HookConsumerWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // Lumen — quiet presence in the corner.
-                    // Emotion reflects what the user is about to do.
+                    // Lumen — global companion. Emotion follows the lumen
+                    // state machine (which other screens also write to).
                     LumenSlot(
-                      emotion: streak.shouldShowWelcomeBack
-                          ? LumenEmotion.weary
-                          : LumenEmotion.resting,
+                      emotion: lumenEmotion,
                       size: 56,
+                      celebration: lumenState.celebration,
                     ),
                     const SizedBox(width: HealTokens.s12),
                     Expanded(
@@ -280,6 +290,13 @@ class HomePage extends HookConsumerWidget {
           ),
         ),
       ),
+            // EdgeGlow — sits on top of everything, follows emotion state
+            Positioned(
+              top: 0, left: 0, right: 0,
+              child: EdgeGlow(palette: palette),
+            ),
+          ],
+        ),
     );
   }
 
@@ -601,7 +618,16 @@ class _HeroPracticeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return Pressable(
+      onTap: () {
+        HapticFeedback.mediumImpact();
+        onTap();
+      },
+      pressedScale: 0.97,
+      pressedOverlay: Colors.white.withValues(alpha: 0.05),
+      borderRadius: BorderRadius.circular(HealTokens.r24),
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
       onTap: () {
         HapticFeedback.lightImpact();
         onTap();
