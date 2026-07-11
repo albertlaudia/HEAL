@@ -931,70 +931,80 @@ class _StickerBookTile extends ConsumerWidget {
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Stack(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: HealTokens.brass.withValues(alpha: 0.24),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.collections_bookmark_rounded,
-                      color: HealTokens.brass, size: 20),
+            Positioned(
+              top: 0,
+              left: 0,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: HealTokens.brass.withValues(alpha: 0.24),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                Text(
-                  '$earned / $total',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: HealTokens.brass,
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
-              ],
-            ),
-            const Spacer(),
-            Text(
-              'Stickers',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: HealTokens.cream,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              pct == 1.0
-                  ? 'All earned'
-                  : pct == 0
-                      ? 'Begin the journey'
-                      : '$earned more to go',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: HealTokens.creamDim,
-                    fontStyle: FontStyle.italic,
-                    fontSize: 11,
-                  ),
-            ),
-            const SizedBox(height: 8),
-            // Progress bar
-            Container(
-              height: 3,
-              decoration: BoxDecoration(
-                color: HealTokens.creamDim.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(2),
+                child: const Icon(Icons.collections_bookmark_rounded,
+                    color: HealTokens.brass, size: 20),
               ),
-              child: FractionallySizedBox(
-                alignment: Alignment.centerLeft,
-                widthFactor: pct,
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [HealTokens.brassLight, HealTokens.brass],
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Text(
+                '$earned / $total',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: HealTokens.brass,
+                      fontWeight: FontWeight.w700,
                     ),
-                    borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Stickers',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: HealTokens.cream,
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
-                ),
+                  const SizedBox(height: 2),
+                  Text(
+                    pct == 1.0
+                        ? 'All earned'
+                        : pct == 0
+                            ? 'Begin the journey'
+                            : '$earned more to go',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: HealTokens.creamDim,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 11,
+                        ),
+                  ),
+                  const SizedBox(height: 8),
+                  // Progress bar
+                  Container(
+                    height: 3,
+                    decoration: BoxDecoration(
+                      color: HealTokens.creamDim.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                    child: FractionallySizedBox(
+                      alignment: Alignment.centerLeft,
+                      widthFactor: pct,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [HealTokens.brassLight, HealTokens.brass],
+                          ),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
