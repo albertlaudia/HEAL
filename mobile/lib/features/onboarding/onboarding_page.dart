@@ -314,10 +314,15 @@ class _FirstBreathPageState extends State<_FirstBreathPage>
               // Map controller value to breath phase 0..1 for Lumen.
               double t = _started ? _breathCtrl.value : 0;
               double phase;
-              if (!_started) phase = 0.5;
-              else if (_phaseIdx == 0) phase = Curves.easeInOut.transform(t);     // inhale 0→1
-              else if (_phaseIdx == 1) phase = 1.0;                                // hold
-              else phase = 1.0 - Curves.easeInOut.transform(t);                    // exhale 1→0
+              if (!_started) {
+                phase = 0.5;
+              } else if (_phaseIdx == 0) {
+                phase = Curves.easeInOut.transform(t); // inhale 0→1
+              } else if (_phaseIdx == 1) {
+                phase = 1.0; // hold
+              } else {
+                phase = 1.0 - Curves.easeInOut.transform(t); // exhale 1→0
+              }
               return SizedBox(
                 width: 240, height: 240,
                 child: Stack(
@@ -363,6 +368,7 @@ class _FirstBreathPageState extends State<_FirstBreathPage>
                 ),
               );
             },
+          ),
           ),
           const SizedBox(height: HealTokens.s32),
           // Cycle indicator

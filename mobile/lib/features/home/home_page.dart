@@ -38,6 +38,7 @@ class HomePage extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final timeOfDay = useState<String>(_timeOfDay());
     final palette = ref.watch(timePaletteProvider);
+    final emotionPalette = ref.watch(emotionPaletteProvider);
     final streak = ref.watch(streakServiceProvider);
     final hasVoiceProfile = ref.watch(voiceCalibrationServiceProvider.select(
       (s) => s.hasProfile,
@@ -294,7 +295,7 @@ class HomePage extends HookConsumerWidget {
       // EdgeGlow — sits on top of everything, follows emotion state
       Positioned(
         top: 0, left: 0, right: 0,
-        child: EdgeGlow(palette: palette),
+        child: EdgeGlow(palette: emotionPalette),
       ),
     ],
   ),
