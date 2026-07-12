@@ -11,6 +11,7 @@ import '../../data/pb_models.dart';
 import '../../data/bible_progress_cache.dart';
 import '../../design/lumen_state.dart';
 import '../../design/milestone_overlay.dart';
+import '../../design/motion.dart';
 import '../../design/copy.dart';
 
 import '../../data/pb_repositories.dart';

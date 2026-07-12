@@ -115,6 +115,12 @@ abstract class Copy {
   static const profileStatsMinutes = 'minutes';
   static const profileStatsSessions = 'sessions';
 
+  // Home streak stats
+  static const statLongestStreak = 'Longest streak';
+  static const statTotalSessions = 'Total sessions';
+  static const statTotalMinutes = 'Total minutes';
+  static const statLastSession = 'Last session';
+
   // ── Notifications ───────────────────────────────────────────
   static const notifMorningDefault =
       'The Word, today';

@@ -18,6 +18,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../design/lumen.dart';
+import '../../design/copy.dart';
 
 import '../../core/theme.dart';
 import '../../services/notification_service.dart';

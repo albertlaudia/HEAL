@@ -8,8 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/router.dart';
-import 'features/onboarding/permission_gate.dart';
 import 'core/theme.dart';
+import 'design/motion.dart';
+import 'features/onboarding/permission_gate.dart';
 import 'features/onboarding/onboarding_page.dart';
 import 'features/home/splash_page.dart';
 
