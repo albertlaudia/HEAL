@@ -30,7 +30,7 @@ class _HealAppState extends ConsumerState<HealApp> {
   void initState() {
     super.initState();
     _showOnboarding = widget.firstLaunch;
-    Timer(const HealMotion.splashMin, () {
+    Timer(HealMotion.splashMin, () {
       if (mounted) {
         setState(() => _showSplash = false);
         // After splash, decide where to go — use addPostFrameCallback so the

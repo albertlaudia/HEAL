@@ -72,10 +72,10 @@ class _WorldBody extends StatelessWidget {
 
   Color _kindBg() {
     switch (world.promptKind) {
-      case 'challenge': return const HealTokens.worldChallenge;  // deep teal-blue
-      case 'grace':     return const HealTokens.worldGrace;  // deep sage
-      case 'gratitude': return const HealTokens.worldGratitude;  // deep amber
-      default:          return const HealTokens.worldDefault;
+      case 'challenge': return HealTokens.worldChallenge;  // deep teal-blue
+      case 'grace':     return HealTokens.worldGrace;  // deep sage
+      case 'gratitude': return HealTokens.worldGratitude;  // deep amber
+      default:          return HealTokens.worldDefault;
     }
   }
 

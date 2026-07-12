@@ -836,7 +836,7 @@ Future<void> showBibleCompletionOverlay(
   BuildContext context, {
   required String passage,
   required int dayNumber,
-  Duration duration = const HealMotion.bibleCompletionHold,
+  Duration duration = HealMotion.bibleCompletionHold,
 }) async {
   if (!context.mounted) return;
   // Dismiss anything currently up (so repeated marks don't pile up).

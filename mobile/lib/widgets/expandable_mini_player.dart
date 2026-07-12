@@ -87,10 +87,10 @@ class _CollapsedMini extends ConsumerWidget {
               ),
               borderRadius: BorderRadius.circular(HealTokens.r16),
               border: Border.all(color: HealTokens.brass.withValues(alpha: 0.32)),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: HealTokens.black40,
-                  blurRadius: 12, offset: const Offset(0, 4),
+                  blurRadius: 12, offset: Offset(0, 4),
                 ),
               ],
             ),

@@ -1472,15 +1472,15 @@ class _BibleYearHero extends HookConsumerWidget {
                 gradient: const LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: const [HealTokens.practiceStickerFrom, HealTokens.practiceStickerTo],
+                  colors: [HealTokens.practiceStickerFrom, HealTokens.practiceStickerTo],
                 ),
                 borderRadius: BorderRadius.circular(HealTokens.r24),
                 border: Border.all(color: HealTokens.brass.withValues(alpha: 0.32)),
-                boxShadow: <BoxShadow>[
+                boxShadow: const <BoxShadow>[
                   BoxShadow(
                     color: HealTokens.black32,
                     blurRadius: 20,
-                    offset: const Offset(0, 8),
+                    offset: Offset(0, 8),
                   ),
                 ],
               ),
