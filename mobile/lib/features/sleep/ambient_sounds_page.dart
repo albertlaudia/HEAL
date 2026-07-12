@@ -311,7 +311,7 @@ class _AmbientCard extends StatelessWidget {
               : HealTokens.creamSleep08,
         ),
         boxShadow: isPlaying
-            ? [
+            ? const [
                 BoxShadow(
                   color: HealTokens.creamSleep20,
                   blurRadius: 16,
