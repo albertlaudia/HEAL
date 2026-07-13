@@ -1,0 +1,222 @@
+name: Nightly Play Store Build & Upload
+
+on:
+  # Nightly at 1 AM SGT (= 17:00 UTC)
+  schedule:
+    - cron: '0 17 * * *'
+  # Manual trigger from Actions tab
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Force build even without new commits'
+        type: boolean
+        default: false
+      track:
+        description: 'Release track'
+        type: choice
+        options: [internal, alpha, beta, production]
+        default: internal
+
+concurrency:
+  group: nightly-playstore-${{ github.repository }}
+  cancel-in-progress: true
+
+# Restrict default token + add safer defaults
+permissions:
+  contents: read
+  actions: read
+
+env:
+  PACKAGE_NAME: com.pclub.heal
+  APP_NAME: pclub
+  WORKING_DIR: mobile
+  GITHUB_REPO: albertlaudia/HEAL
+
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      has_changes: ${{ steps.check.outputs.has_changes }}
+      last_commit: ${{ steps.check.outputs.last_commit }}
+    steps:
+      - name: Check for new commits since last successful nightly run
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          # Get SHA of last successful nightly run (from workflow API)
+          LAST_SHA=$(gh api \
+            "repos/${REPO}/actions/workflows/nightly.yml/runs?status=success&per_page=1" \
+            --jq '.workflow_runs[0].head_sha // empty' 2>/dev/null || echo "")
+
+          # Get current HEAD
+          CURRENT_SHA=$(gh api "repos/${REPO}/commits/main" --jq '.sha' 2>/dev/null \
+            || gh api "repos/${REPO}/commits/master" --jq '.sha' 2>/dev/null \
+            || echo "")
+
+          if [ -z "$CURRENT_SHA" ]; then
+            echo "❌ Could not determine current HEAD"
+            exit 1
+          fi
+
+          echo "Last successful nightly: ${LAST_SHA:-<none>}"
+          echo "Current HEAD: $CURRENT_SHA"
+
+          if [ "$LAST_SHA" = "$CURRENT_SHA" ]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "✅ No new commits since last nightly run"
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "🚀 New commits detected — will build"
+          fi
+          echo "last_commit=$CURRENT_SHA" >> $GITHUB_OUTPUT
+
+  build:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has_changes == 'true' || inputs.force == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: ${{ env.WORKING_DIR }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+          submodules: recursive
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.3'
+          channel: stable
+          cache: true
+
+      - name: Set up Android SDK
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" >> android/local.properties
+          echo "ANDROID_HOME=$ANDROID_HOME" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate code (if applicable)
+        run: |
+          if grep -q "build_runner" pubspec.yaml; then
+            dart run build_runner build --delete-conflicting-outputs
+          else
+            echo "No build_runner needed"
+          fi
+        continue-on-error: true
+
+      - name: Decode release keystore
+        run: |
+          mkdir -p android/app
+          echo "$RELEASE_KEYSTORE_BASE64" | base64 -d > android/app/release-keystore.jks
+          cat > android/key.properties << PROP
+          storeFile=app/release-keystore.jks
+          storePassword=$RELEASE_KEYSTORE_PASSWORD
+          keyPassword=$RELEASE_KEYSTORE_PASSWORD
+          keyAlias=$RELEASE_KEYSTORE_ALIAS
+          PROP
+          ls -lh android/app/release-keystore.jks
+        env:
+          RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+          RELEASE_KEYSTORE_PASSWORD: ${{ secrets.RELEASE_KEYSTORE_PASSWORD }}
+          RELEASE_KEYSTORE_ALIAS: ${{ secrets.RELEASE_KEYSTORE_ALIAS }}
+
+      - name: Build AAB
+        run: |
+          flutter build appbundle --release \
+            --build-number=${GITHUB_SHA::7} \
+            --dart-define=CI=true 2>&1 | tee /tmp/build.log
+          RC=${PIPESTATUS[0]}
+          if [ $RC -ne 0 ]; then
+            echo "=== BUILD FAILED ==="
+            grep -iE "error|FAILURE" /tmp/build.log | head -20
+            exit 1
+          fi
+          ls -lh build/app/outputs/bundle/release/app-release.aab
+
+      - name: Set up Python + googleapiclient
+        run: pip install --break-system-packages google-api-python-client google-auth
+
+      - name: Upload AAB to Play Console (internal track)
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          TRACK: ${{ inputs.track || 'internal' }}
+          SHORT_SHA: ${{ needs.detect-changes.outputs.last_commit }}
+        run: |
+          echo "$GCP_SA_KEY" > /tmp/sa.json
+          python3 - <<'PYEOF'
+          import os, json
+          from google.oauth2 import service_account
+          from google.auth.transport.requests import Request
+          from googleapiclient.discovery import build
+          from googleapiclient.http import MediaFileUpload
+
+          with open('/tmp/sa.json') as f:
+              creds_data = json.load(f)
+          creds = service_account.Credentials.from_service_account_info(
+              creds_data,
+              scopes=['https://www.googleapis.com/auth/androidpublisher']
+          )
+          creds.refresh(Request())
+          service = build('androidpublisher', 'v3', credentials=creds)
+
+          pkg = os.environ['PACKAGE_NAME']
+          track = os.environ.get('TRACK', 'internal')
+          short_sha = os.environ.get('SHORT_SHA', 'unknown')[:7]
+          aab_path = 'build/app/outputs/bundle/release/app-release.aab'
+
+          print(f"Uploading {aab_path} to {pkg} ({track}) — build {short_sha}")
+
+          # 1. Create edit
+          edit = service.edits().insert(body={}, packageName=pkg).execute()
+          edit_id = edit['id']
+          print(f"Edit created: {edit_id}")
+
+          # 2. Upload AAB
+          media = MediaFileUpload(aab_path, mimetype='application/octet-stream', resumable=True)
+          bundle = service.edits().bundles().upload(
+              editId=edit_id, packageName=pkg, media_body=media
+          ).execute()
+          print(f"Bundle uploaded: v{bundle['versionCode']}")
+
+          # 3. Assign to track
+          service.edits().tracks().update(
+              editId=edit_id, packageName=pkg, track=track,
+              body={'releases': [{
+                  'versionCodes': [str(bundle['versionCode'])],
+                  'status': 'completed',
+                  'releaseNotes': [
+                      {'language': 'en-US', 'text': f'Auto-built {short_sha} from main'}
+                  ]
+              }]}
+          ).execute()
+          print(f"Assigned to {track} track")
+
+          # 4. Commit
+          service.edits().commit(editId=edit_id, packageName=pkg).execute()
+          print(f"✅ v{bundle['versionCode']} live on {track} track")
+          print(f"   https://play.google.com/console → {pkg} → Internal Testing")
+          PYEOF
+
+  skip:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has_changes != 'true' && inputs.force != 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Skipped (no new commits)
+        run: |
+          echo "No new commits since last successful nightly run."
+          echo "Last commit at head: ${{ needs.detect-changes.outputs.last_commit }}"
+          echo "Skipping build to save Actions minutes."
