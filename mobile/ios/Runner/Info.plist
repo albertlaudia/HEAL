@@ -60,5 +60,24 @@
 	<array>
 		<string>audio</string>
 	</array>
+
+	<!-- Google Sign In: REVERSED_CLIENT_ID from GoogleService-Info.plist -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.googleusercontent.apps.355529098583-af67c13qac54rsvk1hhiseals6g6n7f5</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.355529098583-af67c13qac54rsvk1hhiseals6g6n7f5</string>
+			</array>
+		</dict>
+	</array>
+
+	<!-- Apple Sign In -->
+	<key>ASAuthenticationServicesApplication</key>
+	<array>
+		<string>com.apple.developer.applesignin</string>
+	</array>
 </dict>
 </plist>

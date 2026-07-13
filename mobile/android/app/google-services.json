@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "355529098583",
+    "firebase_url": "https://heal-prd-default-rtdb.firebaseio.com",
+    "project_id": "heal-prd",
+    "storage_bucket": "heal-prd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:355529098583:android:a1156a55525a6236e62a12",
+        "android_client_info": {
+          "package_name": "com.pclub.heal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "355529098583-37gekih5tc6klfbsph34b6ru4fb7dj0a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNxGz9LuqSNrNIE70o11Ltu_AFqUpUZik"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "355529098583-37gekih5tc6klfbsph34b6ru4fb7dj0a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "355529098583-4p8qvr42715scf8vgmqn408iievi7oj8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.scaleupcrm.heal",
+                "app_store_id": "6453163861"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

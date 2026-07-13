@@ -175,7 +175,7 @@ class SettingsPage extends HookConsumerWidget {
                   icon: Icons.person_outline_rounded,
                   title: 'Sign in',
                   subtitle: 'Save your practice across devices',
-                  onTap: () {},
+                  onTap: () => context.push('/auth'),
                 ),
               ],
             ),

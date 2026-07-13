@@ -16,6 +16,8 @@ import 'package:audioplayers/audioplayers.dart' hide AVAudioSessionCategory;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'audio_error.dart';
+
 enum AudioSource { meditation, praise, reference, custom }
 
 class AudioTrack {
@@ -120,6 +122,7 @@ class AudioService extends StateNotifier<AudioState> {
   StreamSubscription? _stateSub;
   StreamSubscription? _completeSub;
   StreamSubscription? _positionSub;
+  StreamSubscription? _errorSub;
 
   /// Hook for callers to react to track completion (e.g. record session).
   void Function(AudioTrack track, int durationSeconds)? onTrackComplete;
@@ -162,6 +165,21 @@ class AudioService extends StateNotifier<AudioState> {
       state = state.copyWith(
         playing: ps == PlayerState.playing,
         loading: ps == PlayerState.playing ? false : state.loading,
+      );
+    });
+
+    // Asynchronous error stream: errors that happen AFTER setSource()
+    // (e.g. mid-playback network drop, codec crash). The synchronous catch
+    // around _player.play only catches errors thrown during setSource().
+    _errorSub = _player.onPlayerError.listen((err) {
+      if (!mounted) return;
+      if (kDebugMode) print('AudioService.onPlayerError: $err');
+      final ae = AudioError.from(err);
+      _lastError = ae;
+      state = state.copyWith(
+        error: ae.userMessage,
+        playing: false,
+        loading: false,
       );
     });
 
@@ -249,7 +267,43 @@ class AudioService extends StateNotifier<AudioState> {
       }
     } catch (e) {
       if (kDebugMode) print('AudioService.play error: $e');
-      state = state.copyWith(error: e.toString(), playing: false, loading: false);
+      final ae = AudioError.from(e);
+      state = state.copyWith(
+        error: ae.userMessage,
+        playing: false,
+        loading: false,
+      );
+      // Stash the structured error so the UI can react (retry / next).
+      _lastError = ae;
+    }
+  }
+
+  AudioError? _lastError;
+
+  /// Structured error from the most recent play failure.
+  /// Cleared when the user starts a new play or dismisses.
+  AudioError? get lastError => _lastError;
+  void clearError() {
+    _lastError = null;
+    state = state.copyWith(clearError: true);
+  }
+
+  /// Replay the last requested track. Used by the recovery CTA.
+  Future<void> retry() async {
+    if (state.inPlaylist && state.queueIndex >= 0) {
+      await _playIndex(state.queueIndex);
+    } else if (state.track != null) {
+      await play(state.track!);
+    }
+  }
+
+  /// Skip to the next track in the queue. Used by the recovery CTA when
+  /// the current track is broken.
+  Future<void> nextOrStop() async {
+    if (state.hasNext) {
+      await _playIndex(state.queueIndex + 1);
+    } else {
+      await stop();
     }
   }
 
@@ -280,12 +334,20 @@ class AudioService extends StateNotifier<AudioState> {
 
   Future<void> pause() async {
     try { await _player.pause(); }
-    catch (e) { state = state.copyWith(error: e.toString()); }
+    catch (e) {
+      final ae = AudioError.from(e);
+      state = state.copyWith(error: ae.userMessage);
+      _lastError = ae;
+    }
   }
 
   Future<void> resume() async {
     try { await _player.resume(); }
-    catch (e) { state = state.copyWith(error: e.toString()); }
+    catch (e) {
+      final ae = AudioError.from(e);
+      state = state.copyWith(error: ae.userMessage);
+      _lastError = ae;
+    }
   }
 
   Future<void> stop() async {
@@ -293,7 +355,9 @@ class AudioService extends StateNotifier<AudioState> {
       await _player.stop();
       state = const AudioState();
     } catch (e) {
-      state = state.copyWith(error: e.toString());
+      final ae = AudioError.from(e);
+      state = state.copyWith(error: ae.userMessage);
+      _lastError = ae;
     }
   }
 
@@ -302,7 +366,9 @@ class AudioService extends StateNotifier<AudioState> {
       await _player.seek(position);
       state = state.copyWith(position: position);
     } catch (e) {
-      state = state.copyWith(error: e.toString());
+      final ae = AudioError.from(e);
+      state = state.copyWith(error: ae.userMessage);
+      _lastError = ae;
     }
   }
 
@@ -322,7 +388,9 @@ class AudioService extends StateNotifier<AudioState> {
       await _player.setPlaybackRate(speed);
       state = state.copyWith(speed: speed);
     } catch (e) {
-      state = state.copyWith(error: e.toString());
+      final ae = AudioError.from(e);
+      state = state.copyWith(error: ae.userMessage);
+      _lastError = ae;
     }
   }
 
@@ -345,6 +413,7 @@ class AudioService extends StateNotifier<AudioState> {
     _stateSub?.cancel();
     _completeSub?.cancel();
     _positionSub?.cancel();
+    _errorSub?.cancel();
     _player.dispose();
     super.dispose();
   }

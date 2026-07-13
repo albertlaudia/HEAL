@@ -17,11 +17,14 @@ import 'services/notification_service.dart';
 import 'services/streak_service.dart';
 import 'services/audio_service.dart';
 import 'services/activity_tracker.dart';
+import 'services/auth_service.dart';
 import 'data/bible_progress_cache.dart';
 import 'design/lumen_state.dart';
 import 'data/pb_models.dart';
 import 'services/sticker_book.dart';
 import 'services/sound_service.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase/firebase_options.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 Future<void> main() async {
@@ -40,6 +43,19 @@ Future<void> main() async {
 
     final logger = HealLogger();
     logger.i('App', 'Booting HEAL…');
+
+    // Initialize Firebase (auth + firestore for the user profile doc that
+    // stores the legacy userId on first sign-in). Falls back to a stub if
+    // Firebase isn't configured for this build flavor (e.g. plain
+    // `flutter run` before `flutterfire configure`).
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      logger.i('App', 'Firebase initialized');
+    } catch (e) {
+      logger.w('App', 'Firebase init failed: $e. Continuing without auth.');
+    }
 
     final pb = PocketBase(HealEnv.pocketbaseUrl);
 

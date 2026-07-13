@@ -31,6 +31,7 @@ import '../features/scripture/sit_with_verse_page.dart';
 import '../features/settings/settings_page.dart';
 import '../features/onboarding/onboarding_page.dart';
 import '../features/home/splash_page.dart';
+import '../features/auth/auth_page.dart';
 import '../data/pb_repositories.dart';
 import '../data/pb_models.dart';
 import '../services/audio_service.dart';
@@ -672,6 +673,13 @@ class HealRouter {
         path: '/breathe/calibrate',
         pageBuilder: (context, state) =>
             _sharedAxis(state, const VoiceCalibrationPage()),
+      ),
+      GoRoute(
+        path: '/auth',
+        pageBuilder: (context, state) {
+          final ret = state.uri.queryParameters['returnTo'];
+          return _slideUp(state, AuthPage(returnTo: ret));
+        },
       ),
       GoRoute(
         path: '/sit-with-verse',

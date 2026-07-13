@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/router.dart';
+import 'design/audio_error_banner.dart';
 import 'design/error_boundary.dart';
 import 'design/motion.dart';
 import 'features/onboarding/permission_gate.dart';
@@ -62,7 +63,8 @@ class _HealAppState extends ConsumerState<HealApp> {
         // overlay for splash + onboarding.
         return ErrorBoundary(
           child: PermissionGate(
-            child: Stack(
+            child: AudioErrorListener(
+              child: Stack(
               children: [
                 child ?? const SizedBox(),
                 if (_showSplash)
@@ -71,6 +73,7 @@ class _HealAppState extends ConsumerState<HealApp> {
                     child: SplashPage(),
                   ),
               ],
+            ),
             ),
           ),
         );
