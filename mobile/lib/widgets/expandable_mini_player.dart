@@ -35,21 +35,116 @@ class ExpandableMiniPlayer extends HookConsumerWidget {
     // Use a hook so we keep the "expanded" state across rebuilds.
     final expanded = useState<bool>(false);
 
-    return AnimatedSize(
-      duration: const Duration(milliseconds: 320),
-      curve: Curves.easeOutQuart,
-      alignment: Alignment.topCenter,
-      child: expanded.value
-          ? _ExpandedPlayer(onCollapse: () {
-              HapticFeedback.lightImpact();
-              expanded.value = false;
-            })
-          : _CollapsedMini(
-              onTap: () {
-                HapticFeedback.lightImpact();
-                expanded.value = true;
-              },
+    // When audio is in an error state, show a slim "couldn't play" pill
+    // above the mini-player so the user sees something right away.
+    final hasError = audio.error != null;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (hasError)
+          _ErrorPill(message: audio.error!),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 320),
+          curve: Curves.easeOutQuart,
+          alignment: Alignment.topCenter,
+          child: expanded.value
+              ? _ExpandedPlayer(onCollapse: () {
+                  HapticFeedback.lightImpact();
+                  expanded.value = false;
+                })
+              : _CollapsedMini(
+                  onTap: () {
+                    HapticFeedback.lightImpact();
+                    expanded.value = true;
+                  },
+                ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Slim pill that sits above the mini-player when audio is in an error state.
+class _ErrorPill extends ConsumerWidget {
+  final String message;
+  const _ErrorPill({required this.message});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 6),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: HealTokens.rosewoodLight,
+          borderRadius: BorderRadius.circular(HealTokens.r12),
+          border: Border(
+            left: BorderSide(color: HealTokens.brass, width: 3),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.cloud_off_rounded,
+              size: 16,
+              color: HealTokens.brass,
             ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                message,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: HealTokens.cream,
+                  fontSize: 12,
+                  height: 1.3,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                HapticFeedback.selectionClick();
+                final svc = ref.read(audioServiceProvider.notifier);
+                final audio = ref.read(audioServiceProvider);
+                if (audio.hasNext) {
+                  svc.next();
+                } else {
+                  svc.retry();
+                }
+              },
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+              child: Text(
+                'Try again',
+                style: TextStyle(
+                  color: HealTokens.brass,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.close_rounded,
+                size: 14,
+                color: HealTokens.cream.withValues(alpha: 0.6),
+              ),
+              onPressed: () =>
+                  ref.read(audioServiceProvider.notifier).clearError(),
+              style: IconButton.styleFrom(
+                padding: const EdgeInsets.all(4),
+                minimumSize: Size.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
