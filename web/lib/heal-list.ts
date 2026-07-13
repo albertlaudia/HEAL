@@ -1,9 +1,10 @@
+import { cachedQuery } from './db';
 // HEAL — Generic list route for HEAL_* collections.
 // Reads ?limit=, ?offset=, ?isPublished=, ?dayOfYear=, ?category=, etc.
 // Returns the same JSON shape the mobile app expects from PB.
 
 import { NextRequest, NextResponse } from 'next/server';
-import { listRows, getRow, invalidateCache } from './db';
+import {  getRow, invalidateCache } from './db';
 
 export interface HealListOptions {
   table: string;
@@ -42,12 +43,11 @@ export function buildHealListHandler(opts: HealListOptions) {
       const where = filters.length ? `WHERE ${filters.join(' AND ')}` : '';
       const order = opts.defaultSort || 'sort_order ASC, id ASC';
       const sql = `SELECT * FROM ${opts.table} ${where} ORDER BY ${order} LIMIT ${limit} OFFSET ${offset}`;
-      const rows = await listRows<Record<string, unknown>>(opts.table, {
-        where: where.replace(/\$\d+/g, () => `$${params.indexOf(undefined) + 1}`),
+      const rows = await cachedQuery<Record<string, unknown>>(
+        `list:${opts.table}:${sql}:${JSON.stringify(params)}`,
+        sql,
         params,
-        orderBy: order,
-        limit,
-      });
+      );
 
       return NextResponse.json({ items: rows, total: rows.length, limit, offset });
     } catch (e) {
