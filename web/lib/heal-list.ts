@@ -43,13 +43,25 @@ export function buildHealListHandler(opts: HealListOptions) {
       const where = filters.length ? `WHERE ${filters.join(' AND ')}` : '';
       const order = opts.defaultSort || 'sort_order ASC, id ASC';
       const sql = `SELECT * FROM ${opts.table} ${where} ORDER BY ${order} LIMIT ${limit} OFFSET ${offset}`;
-      const rows = await cachedQuery<Record<string, unknown>>(
-        `list:${opts.table}:${sql}:${JSON.stringify(params)}`,
-        sql,
-        params,
-      );
+      const [rows, totalRes] = await Promise.all([
+        cachedQuery<Record<string, unknown>>(
+          `list:${opts.table}:${sql}:${JSON.stringify(params)}`,
+          sql,
+          params,
+        ),
+        // Total count uses the same WHERE, no LIMIT. Cached separately.
+        cachedQuery<{ count: string }>(
+          `count:${opts.table}:${where}:${JSON.stringify(params)}`,
+          `SELECT count(*)::int AS count FROM ${opts.table} ${where}`,
+          params,
+        ),
+      ]);
 
-      return NextResponse.json({ items: rows, total: rows.length, limit, offset });
+      return NextResponse.json({
+        items: rows,
+        total: parseInt(totalRes[0]?.count || '0', 10),
+        limit, offset,
+      });
     } catch (e) {
       return NextResponse.json({ error: String(e) }, { status: 500 });
     }
