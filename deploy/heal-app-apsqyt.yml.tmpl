@@ -1,0 +1,14 @@
+http:
+  routers:
+    heal-app-apsqyt-router:
+      rule: Host("heal.positiveness.club")
+      service: heal-app-apsqyt-service
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsencrypt
+  services:
+    heal-app-apsqyt-service:
+      loadBalancer:
+        servers:
+          - url: http://__IP__:3000
