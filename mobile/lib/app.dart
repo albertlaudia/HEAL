@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/router.dart';
 import 'design/error_boundary.dart';
+import 'design/motion.dart';
 import 'features/onboarding/permission_gate.dart';
 import 'core/theme.dart';
 import 'features/onboarding/onboarding_page.dart';
@@ -30,7 +31,7 @@ class _HealAppState extends ConsumerState<HealApp> {
   void initState() {
     super.initState();
     _showOnboarding = widget.firstLaunch;
-    Timer(const HealMotion.splashMin, () {
+    Timer(HealMotion.splashMin, () {
       if (mounted) {
         setState(() => _showSplash = false);
         // After splash, decide where to go — use addPostFrameCallback so the
@@ -73,7 +74,6 @@ class _HealAppState extends ConsumerState<HealApp> {
             ),
           ),
         );
-      },
       },
     );
   }
