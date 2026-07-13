@@ -8,9 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/router.dart';
-import 'core/theme.dart';
-import 'design/motion.dart';
+import 'design/error_boundary.dart';
 import 'features/onboarding/permission_gate.dart';
+import 'core/theme.dart';
 import 'features/onboarding/onboarding_page.dart';
 import 'features/home/splash_page.dart';
 
@@ -30,7 +30,7 @@ class _HealAppState extends ConsumerState<HealApp> {
   void initState() {
     super.initState();
     _showOnboarding = widget.firstLaunch;
-    Timer(HealMotion.splashMin, () {
+    Timer(const HealMotion.splashMin, () {
       if (mounted) {
         setState(() => _showSplash = false);
         // After splash, decide where to go — use addPostFrameCallback so the
@@ -56,20 +56,24 @@ class _HealAppState extends ConsumerState<HealApp> {
       themeMode: ThemeMode.dark,
       routerConfig: HealRouter.router,
       builder: (context, child) {
-        // Wrap with PermissionGate (asks for notifications after first session)
-        // + overlay for splash + onboarding
-        return PermissionGate(
-          child: Stack(
-            children: [
-              child ?? const SizedBox(),
-              if (_showSplash)
-                const Material(
-                  color: Colors.transparent,
-                  child: SplashPage(),
-                ),
-            ],
+        // Wrap with ErrorBoundary (reverent fallback if any child throws) +
+        // PermissionGate (asks for notifications after first session) +
+        // overlay for splash + onboarding.
+        return ErrorBoundary(
+          child: PermissionGate(
+            child: Stack(
+              children: [
+                child ?? const SizedBox(),
+                if (_showSplash)
+                  const Material(
+                    color: Colors.transparent,
+                    child: SplashPage(),
+                  ),
+              ],
+            ),
           ),
         );
+      },
       },
     );
   }
