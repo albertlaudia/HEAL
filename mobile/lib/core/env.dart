@@ -17,6 +17,13 @@ class HealEnv {
     defaultValue: 'https://heal.positiveness.club',
   );
 
+  /// Next.js API gateway URL (Postgres-backed). Set to empty to fall back
+  /// to PocketBase for the read paths. See api_repositories.dart.
+  static const String nextApiUrl = String.fromEnvironment(
+    'NEXT_API_URL',
+    defaultValue: 'https://heal.positiveness.club',
+  );
+
   // Firebase (overridden via --dart-define)
   static const String firebaseApiKey = String.fromEnvironment('FIREBASE_API_KEY');
   static const String firebaseProjectId = String.fromEnvironment('FIREBASE_PROJECT_ID');
