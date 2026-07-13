@@ -55,7 +55,6 @@ dependencies:
   dio: ^5.7.0
 
   # ── Utilities ──────────────────────────────────────────────────
-  intl: ^0.19.0
   collection: ^1.18.0
   uuid: ^4.5.1
   rxdart: ^0.28.0 # streams for audio progress + DB updates
