@@ -135,13 +135,18 @@ jobs:
 
       - name: Build AAB
         run: |
+          set +e
           flutter build appbundle --release \
-            --build-number=${GITHUB_SHA::7} \
+            --build-number=${GITHUB_RUN_NUMBER} \
             --dart-define=CI=true 2>&1 | tee /tmp/build.log
           RC=${PIPESTATUS[0]}
+          set -e
           if [ $RC -ne 0 ]; then
-            echo "=== BUILD FAILED ==="
-            grep -iE "error|FAILURE" /tmp/build.log | head -20
+            echo "=== BUILD FAILED (RC=$RC) ==="
+            echo "--- Last 80 lines of build log ---"
+            tail -80 /tmp/build.log
+            echo "--- Error summary ---"
+            grep -iE "error|FAILURE|exception" /tmp/build.log | head -30
             exit 1
           fi
           ls -lh build/app/outputs/bundle/release/app-release.aab
