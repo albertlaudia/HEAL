@@ -121,7 +121,7 @@ class _AudioErrorBanner extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: HealTokens.rosewood,
-                borderRadius: BorderRadius.circular(HealTokens.radius),
+                borderRadius: BorderRadius.circular(HealTokens.r16),
                 border: Border(
                   left: BorderSide(color: HealTokens.brass, width: 4),
                 ),

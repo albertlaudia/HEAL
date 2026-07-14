@@ -18,6 +18,7 @@
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -227,7 +228,7 @@ class _EmailForm extends HookConsumerWidget {
               padding: const EdgeInsets.symmetric(vertical: HealTokens.s16),
               decoration: BoxDecoration(
                 color: HealTokens.brass,
-                borderRadius: BorderRadius.circular(HealTokens.radius),
+                borderRadius: BorderRadius.circular(HealTokens.r16),
               ),
               alignment: Alignment.center,
               child: busy.value
@@ -323,7 +324,7 @@ class _Field extends StatelessWidget {
               filled: true,
               fillColor: HealTokens.rosewood.withValues(alpha: 0.6),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(HealTokens.radius),
+                borderRadius: BorderRadius.circular(HealTokens.r16),
                 borderSide: BorderSide.none,
               ),
               suffixIcon: suffix,
@@ -401,7 +402,7 @@ class _ProviderButtons extends HookConsumerWidget {
                   }),
         ),
         if (showApple) ...[
-          const SizedBox(height: HealTokens.s10),
+          const SizedBox(height: HealTokens.s8),
           _ProviderButton(
             label: 'Continue with Apple',
             icon: Icons.apple_rounded,
@@ -443,10 +444,10 @@ class _ProviderButton extends StatelessWidget {
     return Pressable(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: HealTokens.s14),
+        padding: const EdgeInsets.symmetric(vertical: HealTokens.s12),
         decoration: BoxDecoration(
           color: HealTokens.rosewood.withValues(alpha: 0.6),
-          borderRadius: BorderRadius.circular(HealTokens.radius),
+          borderRadius: BorderRadius.circular(HealTokens.r16),
           border: Border.all(
             color: HealTokens.cream.withValues(alpha: 0.15),
             width: 1,
@@ -504,7 +505,7 @@ class _ErrorText extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: HealTokens.rosewoodLight.withValues(alpha: 0.6),
-        borderRadius: BorderRadius.circular(HealTokens.radius),
+        borderRadius: BorderRadius.circular(HealTokens.r16),
         border: Border(
           left: BorderSide(color: HealTokens.brass.withValues(alpha: 0.7), width: 3),
         ),
@@ -530,7 +531,7 @@ class _InfoText extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: HealTokens.rosewoodLight.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(HealTokens.radius),
+        borderRadius: BorderRadius.circular(HealTokens.r16),
         border: Border(
           left: BorderSide(color: HealTokens.brass, width: 3),
         ),

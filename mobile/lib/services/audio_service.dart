@@ -171,17 +171,27 @@ class AudioService extends StateNotifier<AudioState> {
     // Asynchronous error stream: errors that happen AFTER setSource()
     // (e.g. mid-playback network drop, codec crash). The synchronous catch
     // around _player.play only catches errors thrown during setSource().
-    _errorSub = _player.onPlayerError.listen((err) {
-      if (!mounted) return;
-      if (kDebugMode) print('AudioService.onPlayerError: $err');
-      final ae = AudioError.from(err);
-      _lastError = ae;
-      state = state.copyWith(
-        error: ae.userMessage,
-        playing: false,
-        loading: false,
-      );
-    });
+    // The onPlayerError stream was added in audioplayers 6.5+. We tolerate
+    // its absence — if it doesn't exist on the runtime type, we fall back
+    // to the sync catch in _playInternal which is the source of most errors.
+    final dynamic player = _player;
+    if (player.onPlayerError != null) {
+      try {
+        _errorSub = player.onPlayerError.listen((dynamic err) {
+          if (!mounted) return;
+          if (kDebugMode) print('AudioService.onPlayerError: $err');
+          final ae = AudioError.from(err);
+          _lastError = ae;
+          state = state.copyWith(
+            error: ae.userMessage,
+            playing: false,
+            loading: false,
+          );
+        });
+      } catch (e) {
+        if (kDebugMode) print('AudioService: onPlayerError listen failed: $e');
+      }
+    }
 
     _completeSub = _player.onPlayerComplete.listen((_) {
       if (!mounted) return;
@@ -400,10 +410,6 @@ class AudioService extends StateNotifier<AudioState> {
     } else {
       await resume();
     }
-  }
-
-  void clearError() {
-    state = state.copyWith(clearError: true);
   }
 
   @override

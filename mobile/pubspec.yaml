@@ -21,7 +21,7 @@ dependencies:
   go_router: ^14.8.1
 
   # ── Audio ──────────────────────────────────────────────────────
-  audioplayers: ^6.1.0  # was 6.8.1 — pinned to 6.1 for Flutter 3.29.3 compat (Flutter 3.44 not yet on cirruslabs)
+  audioplayers: ^6.1.0  # was 6.8.1 — pinned to 6.1 for Flutter 3.29.3 compat (Flutter 3.44 not yet on cirruslabs). onPlayerError added in 6.5+ but we tolerate its absence.
   audio_session: ^0.1.25
   record: ^6.2.1
 
