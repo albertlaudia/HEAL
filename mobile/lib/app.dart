@@ -12,6 +12,7 @@ import 'design/audio_error_banner.dart';
 import 'design/error_boundary.dart';
 import 'design/motion.dart';
 import 'features/onboarding/permission_gate.dart';
+import 'features/onboarding/tracking_privacy_notice.dart';
 import 'core/theme.dart';
 import 'features/onboarding/onboarding_page.dart';
 import 'features/home/splash_page.dart';
@@ -64,7 +65,8 @@ class _HealAppState extends ConsumerState<HealApp> {
         return ErrorBoundary(
           child: PermissionGate(
             child: AudioErrorListener(
-              child: Stack(
+              child: TrackingPrivacyNotice(
+                child: Stack(
               children: [
                 child ?? const SizedBox(),
                 if (_showSplash)
@@ -73,6 +75,7 @@ class _HealAppState extends ConsumerState<HealApp> {
                     child: SplashPage(),
                   ),
               ],
+            ),
             ),
             ),
           ),

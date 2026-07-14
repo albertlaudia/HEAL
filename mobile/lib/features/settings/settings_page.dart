@@ -9,7 +9,9 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/theme.dart';
+import '../../core/env.dart';
 import '../../core/widgets/brass_widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../services/notification_service.dart';
 import '../../services/voice_calibration_service.dart';
 
@@ -198,7 +200,7 @@ class SettingsPage extends HookConsumerWidget {
                   icon: Icons.privacy_tip_outlined,
                   title: 'Privacy',
                   subtitle: 'No tracking. No ads. Your data stays yours.',
-                  onTap: () {},
+                  onTap: () => _openPrivacyPolicy(context),
                 ),
               ],
             ),
@@ -277,10 +279,46 @@ class SettingsPage extends HookConsumerWidget {
                   ),
             ),
             const SizedBox(height: HealTokens.s32),
+            Wrap(
+              spacing: 12,
+              runSpacing: 8,
+              children: [
+                TextButton.icon(
+                  icon: const Icon(Icons.privacy_tip_outlined, size: 16),
+                  label: const Text('Privacy policy'),
+                  onPressed: () => _openLink(context, HealEnv.privacyPolicyUrl),
+                ),
+                TextButton.icon(
+                  icon: const Icon(Icons.support_outlined, size: 16),
+                  label: const Text('Support'),
+                  onPressed: () => _openLink(context, HealEnv.supportUrl),
+                ),
+                TextButton.icon(
+                  icon: const Icon(Icons.gavel_outlined, size: 16),
+                  label: const Text('Terms'),
+                  onPressed: () => _openLink(context, HealEnv.termsUrl),
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _openLink(BuildContext context, String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Could not open $url')),
+      );
+    }
+  }
+
+  Future<void> _openPrivacyPolicy(BuildContext context) async {
+    await _openLink(context, HealEnv.privacyPolicyUrl);
   }
 }
 

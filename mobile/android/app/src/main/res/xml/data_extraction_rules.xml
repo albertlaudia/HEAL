@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  HEAL — Data extraction rules (Android 12+).
+  https://developer.android.com/guide/topics/data/backup-restore#xml-changes
+
+  Tells Android's auto-backup + device-to-device transfer what is
+  allowed to leave the device. We mark all HEAL data as
+  "device-transfer allowed but not cloud-backup allowed" because:
+    - SharedPreferences contains the local random user ID, settings,
+      onboarding flag — none of which should be silently uploaded to
+      Google Drive as a backup.
+    - Firebase Auth tokens are already encrypted in their own store.
+    - There is no other PII (no contacts, no photos, no location).
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- Disallow cloud backup entirely. Users can reinstall and start
+             fresh, or sign in with their account to re-sync. -->
+        <exclude domain="sharedpref"/>
+        <exclude domain="database"/>
+        <exclude domain="file"/>
+        <exclude domain="external"/>
+    </cloud-backup>
+
+    <device-transfer>
+        <!-- Device-to-device transfer (Android 12+): allow all of it.
+             This is the user-initiated "switch phones" flow, which we
+             want to support. -->
+        <include domain="sharedpref"/>
+        <include domain="database"/>
+        <include domain="file"/>
+        <include domain="external"/>
+    </device-transfer>
+</data-extraction-rules>

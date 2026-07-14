@@ -35,4 +35,10 @@ class HealEnv {
 
   static const String appName = 'HEAL';
   static const String appTagline = 'A quiet Christian mindfulness practice';
+
+  /// App Store / Play Store metadata links. Shown in the About section
+  /// and the privacy notice. Update before each release.
+  static const String privacyPolicyUrl = 'https://heal.positiveness.club/privacy';
+  static const String supportUrl = 'https://heal.positiveness.club/support';
+  static const String termsUrl = 'https://heal.positiveness.club/terms';
 }

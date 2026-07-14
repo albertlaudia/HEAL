@@ -1,17 +1,36 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Required for HEAL — listen, communicate, play audio -->
+    <!-- ─── Network ─────────────────────────────────────────────────────── -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-    <!-- For background audio playback during practice -->
+
+    <!-- ─── Audio playback ──────────────────────────────────────────────── -->
+    <!-- FOREGROUND_SERVICE: required for audio playback that survives when
+         the user backgrounds the app. -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+    <!-- WAKE_LOCK: keeps the CPU alive during audio playback so audio
+         doesn't stutter when the screen turns off. -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
-    <!-- Microphone is reserved for future guided practice features; not used today. -->
+
+    <!-- ─── Microphone ──────────────────────────────────────────────────── -->
+    <!-- Used by Breath Studio to measure the rhythm of your breath. We never
+         store or upload audio — only the breath timing stays on your device.
+         This permission is only requested if the user opts in to the
+         breath calibration flow. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
-    <!-- For daily reminder notifications -->
+
+    <!-- ─── Notifications ──────────────────────────────────────────────── -->
+    <!-- POST_NOTIFICATIONS (Android 13+): required to show the daily
+         practice reminder. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- RECEIVE_BOOT_COMPLETED: restores scheduled notifications after
+         device reboot. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- SCHEDULE_EXACT_ALARM / USE_EXACT_ALARM: lets flutter_local_notifications
+         fire at the exact user-chosen reminder time. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
     <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <!-- VIBRATE: for haptic feedback on sticker unlock, milestone reached. -->
     <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
@@ -20,7 +39,9 @@
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:allowBackup="false"
-        android:fullBackupContent="false">
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"

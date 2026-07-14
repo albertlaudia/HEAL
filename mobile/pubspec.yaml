@@ -22,7 +22,6 @@ dependencies:
 
   # ── Audio ──────────────────────────────────────────────────────
   audioplayers: ^6.1.0  # was 6.8.1 — pinned to 6.1 for Flutter 3.29.3 compat (Flutter 3.44 not yet on cirruslabs). onPlayerError added in 6.5+ but we tolerate its absence.
-  audio_session: ^0.1.25
   record: ^6.2.1
 
   # ── Backend ────────────────────────────────────────────────────
@@ -32,7 +31,6 @@ dependencies:
   google_sign_in: ^6.2.1
   sign_in_with_apple: ^6.1.1
   crypto: ^3.0.3
-  cloud_firestore: ^5.4.4
 
   # ── Local storage ──────────────────────────────────────────────
   drift: ^2.31.0  # was 2.20.3 — minor upgrade (within 2.x, backwards compat)
@@ -52,20 +50,13 @@ dependencies:
   flutter_hooks: ^0.20.5
   google_fonts: ^6.2.1
   cupertino_icons: ^1.0.8
-  rive: ^0.13.20  # was 0.13.13 — minor upgrade (within 0.13, API stable). Used for the breath ring animation (optional fallback to CustomPainter)
-
-  # ── Networking ─────────────────────────────────────────────────
-  dio: ^5.7.0
 
   # ── Utilities ──────────────────────────────────────────────────
   collection: ^1.18.0
-  uuid: ^4.5.1
-  rxdart: ^0.28.0 # streams for audio progress + DB updates
   visibility_detector: ^0.4.0+2 # for performance-aware animations
-  shimmer: ^3.0.0 # for skeleton loading states
   smooth_page_indicator: ^1.2.1 # for onboarding
-  flutter_svg: ^2.0.10+1
   cached_network_image: ^3.4.1 # for illustration caching
+  url_launcher: ^6.3.0 # for opening the privacy policy / support links
 
 dev_dependencies:
   flutter_test:

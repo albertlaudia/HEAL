@@ -13,6 +13,8 @@
 		97C146F11CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146F01CF9000F007C117D /* LaunchScreen.storyboard */; };
 		97C146F31CF9000F007C117D /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* Info.plist */; };
 		97C146FE1CF9000F007C117D /* Runner-Bridging-Header.h in Sources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Runner-Bridging-Header.h */; };
+		67A98ADDEE94433BA37FF0FF /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 295DF64C89924CE5AC1F9A9F /* PrivacyInfo.xcprivacy */; };
+		19A196836FEE49CE8F4F0A41 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FA2FF993A45846E0ADA26752 /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		97C146F21CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = Runner/Info.plist; sourceTree = "<group>"; };
 		97C146FD1CF9000F007C117D /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Runner.entitlements; path = Runner/Runner.entitlements; sourceTree = "<group>"; };
+		295DF64C89924CE5AC1F9A9F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		FA2FF993A45846E0ADA26752 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +51,8 @@
 				97C146F21CF9000F007C117D /* Info.plist */,
 				97C146FD1CF9000F007C117D /* Runner-Bridging-Header.h */,
 				97C147001CF9000F007C117D /* Runner.entitlements */,
+				295DF64C89924CE5AC1F9A9F /* PrivacyInfo.xcprivacy */,
+				FA2FF993A45846E0ADA26752 /* GoogleService-Info.plist */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -121,6 +127,8 @@
 				97C146EA1CF9000F007C117D /* Main.storyboard in Resources */,
 				97C146EC1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146F31CF9000F007C117D /* Info.plist in Resources */,
+				67A98ADDEE94433BA37FF0FF /* PrivacyInfo.xcprivacy in Resources */,
+				19A196836FEE49CE8F4F0A41 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

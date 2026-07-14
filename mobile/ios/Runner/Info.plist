@@ -47,13 +47,40 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 
-	<!-- Microphone: reserved for future guided-breath recording features -->
-	<key>NSMicrophoneUsageDescription</key>
-	<string>HEAL does not record audio. This permission is reserved for future guided practice features.</string>
+	<!-- ─── Permission usage strings ─────────────────────────────────────── -->
 
-	<!-- Notifications: daily morning + evening reminders -->
+	<!-- Microphone: used by Breath Studio to learn your natural inhale/exhale
+	     duration. We never store or upload audio — only the breath timing. -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>HEAL listens to the rhythm of your breath to learn your natural pace. We never record or upload audio — only the timing stays on your device.</string>
+
+	<!-- Notifications: gentle daily reminders for morning and evening practice.
+	     You can disable these any time in Settings. -->
 	<key>NSUserNotificationsUsageDescription</key>
-	<string>HEAL sends gentle daily reminders for your morning and evening practice. You can disable these anytime in Settings.</string>
+	<string>HEAL sends gentle daily reminders for your morning and evening practice. You can disable these any time in Settings.</string>
+
+	<!-- ─── App Tracking Transparency (iOS 14+) ──────────────────────────── -->
+	<!-- HEAL does NOT track users across apps or websites. We declare this
+	     string so iOS can present the system tracking prompt when the app
+	     first launches. Because we never actually call ATT.request(),
+	     iOS won't show the prompt — but having the key in place is the
+	     App Store policy requirement. If a future feature ever wants to
+	     track, the string below is the one users would see. -->
+	<key>NSUserTrackingUsageDescription</key>
+	<string>This identifier will be used to deliver personalized practice reminders and remember your progress across devices.</string>
+
+	<!-- ─── iOS 17+ Declared Age Range ───────────────────────────────────── -->
+	<!-- HEAL is rated 4+ (kids category). No age range is needed since we
+	     don't gate any features. -->
+
+	<!-- ─── Required reason API declarations ─────────────────────────────── -->
+	<!-- iOS 17 requires apps to declare reasons for using "Required Reason
+	     API" categories. See PrivacyInfo.xcprivacy for the full set. -->
+
+	<!-- ─── Network usage ────────────────────────────────────────────────── -->
+	<!-- HEAL only connects to known endpoints (pocketbase.scaleupcrm.com,
+	     resources.positiveness.club, *.googleapis.com, *.firebaseio.com).
+	     We use ATS (App Transport Security) defaults — HTTPS only. -->
 
 	<!-- Audio background mode: continues playback when device is locked -->
 	<key>UIBackgroundModes</key>

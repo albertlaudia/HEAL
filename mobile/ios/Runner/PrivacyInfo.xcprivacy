@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  HEAL — iOS Privacy Manifest
+	  https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
+
+	  Required since iOS 17 / May 2024. Lists:
+	    1. Tracking domains (none — HEAL does no cross-app tracking)
+	    2. Required Reason API usage (UserDefaults, file timestamp, system boot time, disk space)
+	    3. Data collection summary (account email, audio playback duration, push tokens)
+	-->
+
+	<key>NSPrivacyTracking</key>
+	<false/>
+
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+
+	<!-- ─── Required Reason API declarations ───────────────────────────── -->
+	<!-- Each NSPrivacyAccessedAPIType lists the APIs we use and the reason.
+	     Apple requires this for "Required Reason" APIs that can fingerprint
+	     users if abused. We declare every one we touch. -->
+
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<!-- UserDefaults — to persist practice streak, settings, onboarding
+		     flag, and the random local user ID. -->
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>  <!-- Access info from same app, per documentation -->
+			</array>
+		</dict>
+
+		<!-- File timestamp (NSFileSystem.freeSize etc.) — used by audio cache
+		     to know when to evict old entries. We do NOT track the user. -->
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>C617.1</string>  <!-- Display to user, within app -->
+			</array>
+		</dict>
+
+		<!-- System boot time (ProcessInfo.systemUptime) — used by audio
+		     cache to compute "file age in seconds since boot". -->
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategorySystemBootTime</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>35F9.1</string>  <!-- Measure time elapsed within app -->
+			</array>
+		</dict>
+
+		<!-- Disk space (NSFileSystem.freeSize) — to decide whether to cache
+		     the next audio track for offline playback. -->
+		<dict>
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryDiskSpace</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>E174.1</string>  <!-- Performance, within app -->
+			</array>
+		</dict>
+	</array>
+
+	<!-- ─── Data collection summary ────────────────────────────────────── -->
+	<!-- Apple requires we list every category of data the app collects, even
+	     if we only collect it on-device. "Collected" here means "accessed and
+	     stored on the device in a way the app can read back." -->
+
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array>
+		<!-- Account info: email + display name (only when user explicitly
+		     signs in via Google/Apple/email). Stored locally in Keychain
+		     via Firebase Auth's default storage. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeEmailAddress</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+
+		<!-- Name: from sign-in providers, used as the greeting on the home
+		     screen. Local only. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeName</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+
+		<!-- Usage data: practice session counts, streaks, sticker unlocks.
+		     Stored in SharedPreferences (on-device only). No remote sync. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeUsageData</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+
+		<!-- Audio playback duration: how much of each session you listened
+		     to, used to evaluate sticker unlocks. -->
+		<dict>
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypeAudioData</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

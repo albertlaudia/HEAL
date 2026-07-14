@@ -188,3 +188,68 @@ audio::-webkit-media-controls-panel { background-color: rgba(248,244,237,0.85); 
     animation: none !important;
   }
 }
+
+/* Legal pages (privacy, support, terms) */
+.legal-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem 6rem;
+  color: var(--ink);
+}
+
+.legal-page h1 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.legal-page h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--ink);
+}
+
+.legal-page h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--ink);
+}
+
+.legal-page p {
+  line-height: 1.7;
+  margin-bottom: 1rem;
+  color: var(--ink-soft);
+}
+
+.legal-page ul {
+  margin: 1rem 0 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.legal-page li {
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+  color: var(--ink-soft);
+}
+
+.legal-page a {
+  color: var(--dawn);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.legal-page a:hover {
+  text-decoration: none;
+}
+
+.legal-updated {
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+  font-style: italic;
+  margin-bottom: 2rem;
+}
