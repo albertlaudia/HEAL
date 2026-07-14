@@ -54,7 +54,7 @@ android {
 
     defaultConfig {
         applicationId "com.pclub.heal"
-        minSdkVersion 23  // Required by record_android
+        minSdkVersion flutter.minSdkVersion  // Required by record_android
         targetSdk 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
