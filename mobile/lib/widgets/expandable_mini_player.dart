@@ -79,13 +79,13 @@ class _ErrorPill extends ConsumerWidget {
         decoration: BoxDecoration(
           color: HealTokens.rosewoodLight,
           borderRadius: BorderRadius.circular(HealTokens.r12),
-          border: Border(
+          border: const Border(
             left: BorderSide(color: HealTokens.brass, width: 3),
           ),
         ),
         child: Row(
           children: [
-            Icon(
+            const Icon(
               Icons.cloud_off_rounded,
               size: 16,
               color: HealTokens.brass,
@@ -96,7 +96,7 @@ class _ErrorPill extends ConsumerWidget {
                 message,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
+                style: const TextStyle(
                   color: HealTokens.cream,
                   fontSize: 12,
                   height: 1.3,
@@ -119,7 +119,7 @@ class _ErrorPill extends ConsumerWidget {
                 minimumSize: Size.zero,
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
-              child: Text(
+              child: const Text(
                 'Try again',
                 style: TextStyle(
                   color: HealTokens.brass,
@@ -318,11 +318,15 @@ class _ExpandedPlayer extends HookConsumerWidget {
     final audio = ref.watch(audioServiceProvider);
     final track = audio.track!;
 
-    return DraggableScrollableSheet(
-      initialChildSize: 0.92,
-      minChildSize: 0.4,
-      maxChildSize: 0.96,
-      builder: (_, controller) => GestureDetector(
+    final screenHeight = MediaQuery.sizeOf(context).height;
+
+    return SizedBox(
+      height: screenHeight,
+      child: DraggableScrollableSheet(
+        initialChildSize: 0.92,
+        minChildSize: 0.4,
+        maxChildSize: 0.96,
+        builder: (_, controller) => GestureDetector(
         // Drag down to collapse
         onVerticalDragEnd: (d) {
           if ((d.primaryVelocity ?? 0) > 200) {
@@ -400,6 +404,7 @@ class _ExpandedPlayer extends HookConsumerWidget {
               ),
             ],
           ),
+        ),
         ),
       ),
     );
