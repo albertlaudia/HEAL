@@ -18,12 +18,6 @@
 @import audioplayers_darwin;
 #endif
 
-#if __has_include(<cloud_firestore/FLTFirebaseFirestorePlugin.h>)
-#import <cloud_firestore/FLTFirebaseFirestorePlugin.h>
-#else
-@import cloud_firestore;
-#endif
-
 #if __has_include(<firebase_auth/FLTFirebaseAuthPlugin.h>)
 #import <firebase_auth/FLTFirebaseAuthPlugin.h>
 #else
@@ -40,6 +34,12 @@
 #import <flutter_local_notifications/FlutterLocalNotificationsPlugin.h>
 #else
 @import flutter_local_notifications;
+#endif
+
+#if __has_include(<google_sign_in_ios/FLTGoogleSignInPlugin.h>)
+#import <google_sign_in_ios/FLTGoogleSignInPlugin.h>
+#else
+@import google_sign_in_ios;
 #endif
 
 #if __has_include(<just_audio/JustAudioPlugin.h>)
@@ -60,16 +60,16 @@
 @import record_ios;
 #endif
 
-#if __has_include(<rive_common/RivePlugin.h>)
-#import <rive_common/RivePlugin.h>
-#else
-@import rive_common;
-#endif
-
 #if __has_include(<shared_preferences_foundation/SharedPreferencesPlugin.h>)
 #import <shared_preferences_foundation/SharedPreferencesPlugin.h>
 #else
 @import shared_preferences_foundation;
+#endif
+
+#if __has_include(<sign_in_with_apple/SignInWithApplePlugin.h>)
+#import <sign_in_with_apple/SignInWithApplePlugin.h>
+#else
+@import sign_in_with_apple;
 #endif
 
 #if __has_include(<sqflite_darwin/SqflitePlugin.h>)
@@ -84,22 +84,29 @@
 @import sqlite3_flutter_libs;
 #endif
 
+#if __has_include(<url_launcher_ios/URLLauncherPlugin.h>)
+#import <url_launcher_ios/URLLauncherPlugin.h>
+#else
+@import url_launcher_ios;
+#endif
+
 @implementation GeneratedPluginRegistrant
 
 + (void)registerWithRegistry:(NSObject<FlutterPluginRegistry>*)registry {
   [AudioSessionPlugin registerWithRegistrar:[registry registrarForPlugin:@"AudioSessionPlugin"]];
   [AudioplayersDarwinPlugin registerWithRegistrar:[registry registrarForPlugin:@"AudioplayersDarwinPlugin"]];
-  [FLTFirebaseFirestorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseFirestorePlugin"]];
   [FLTFirebaseAuthPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseAuthPlugin"]];
   [FLTFirebaseCorePlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTFirebaseCorePlugin"]];
   [FlutterLocalNotificationsPlugin registerWithRegistrar:[registry registrarForPlugin:@"FlutterLocalNotificationsPlugin"]];
+  [FLTGoogleSignInPlugin registerWithRegistrar:[registry registrarForPlugin:@"FLTGoogleSignInPlugin"]];
   [JustAudioPlugin registerWithRegistrar:[registry registrarForPlugin:@"JustAudioPlugin"]];
   [PermissionHandlerPlugin registerWithRegistrar:[registry registrarForPlugin:@"PermissionHandlerPlugin"]];
   [RecordIosPlugin registerWithRegistrar:[registry registrarForPlugin:@"RecordIosPlugin"]];
-  [RivePlugin registerWithRegistrar:[registry registrarForPlugin:@"RivePlugin"]];
   [SharedPreferencesPlugin registerWithRegistrar:[registry registrarForPlugin:@"SharedPreferencesPlugin"]];
+  [SignInWithApplePlugin registerWithRegistrar:[registry registrarForPlugin:@"SignInWithApplePlugin"]];
   [SqflitePlugin registerWithRegistrar:[registry registrarForPlugin:@"SqflitePlugin"]];
   [Sqlite3FlutterLibsPlugin registerWithRegistrar:[registry registrarForPlugin:@"Sqlite3FlutterLibsPlugin"]];
+  [URLLauncherPlugin registerWithRegistrar:[registry registrarForPlugin:@"URLLauncherPlugin"]];
 }
 
 @end
