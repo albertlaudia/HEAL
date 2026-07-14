@@ -24,7 +24,6 @@ import 'dart:io' show Platform;
 import 'dart:math';
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore, SetOptions;
 import 'package:firebase_auth/firebase_auth.dart'
     show
         AuthCredential,
@@ -228,23 +227,25 @@ class AuthService {
 
   // ──────────────────────────  Migration  ──────────────────────────
 
-  /// On first sign-in, copy the legacy local random ID to the user's
-  /// Firestore doc as `legacyUserId`. This way we can stitch any existing
-  /// local-only data (bible progress, sticker unlocks) to the new account
-  /// when we're ready to migrate write paths.
+  /// On first sign-in, write the legacy local random ID to a per-user
+  /// SharedPreferences key (`heal.migrated.<uid>`). The actual stitching of
+  /// local-only data to the new account happens lazily on first read:
+  /// the `userIdProvider` below checks this key and re-uses the legacy
+  /// ID's stored data when the user signs in.
+  ///
+  /// We keep the migration in SharedPreferences (not Firestore) so we don't
+  /// take a `cloud_firestore` dependency just for one field. When we're
+  /// ready to upload a real profile to Firestore, we can re-introduce it.
   Future<void> _migrateLegacyUserId(User? u) async {
     if (u == null) return;
     try {
       final legacy = await _local.read();
       if (legacy == null) return;
-      final db = FirebaseFirestore.instance;
-      await db.collection('heal_users').doc(u.uid).set(
-        {
-          'legacyUserId': legacy,
-          'migratedAt': DateTime.now().toUtc().toIso8601String(),
-        },
-        SetOptions(merge: true),
-      );
+      if (legacy == u.uid) return; // already a Firebase uid
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('heal.migrated.${u.uid}', legacy);
+      // Don't clear `heal.user_id.v1` yet — we still need it for first reads
+      // after sign-in until downstream services switch to the Firebase uid.
     } catch (e) {
       if (kDebugMode) print('AuthService._migrateLegacyUserId: $e');
     }
