@@ -160,10 +160,14 @@ class AuthService {
   /// [UnsupportedError] so the caller can hide the button.
   Future<HealUser?> signInWithApple() async {
     if (kIsWeb) {
+      // Apple blocks the cross-origin popup flow, so we have to use
+      // `signInWithRedirect` on the web. We do NOT await a result here —
+      // the page navigates away and back, and the result is picked up by
+      // the auth state stream on the way back. Callers should listen to
+      // [authStateProvider] rather than await this future.
       final provider = OAuthProvider('apple.com')..addScope('email');
-      final cred = await _auth.signInWithPopup(provider);
-      await _migrateLegacyUserId(cred.user);
-      return HealUser.fromFirebase(cred.user!);
+      await _auth.signInWithRedirect(provider);
+      return null;
     }
     if (!Platform.isIOS && !Platform.isMacOS) {
       throw UnsupportedError('Apple Sign In is only available on Apple devices.');

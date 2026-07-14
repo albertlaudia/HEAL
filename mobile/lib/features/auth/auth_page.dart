@@ -341,6 +341,23 @@ class _ProviderButtons extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // After Apple Sign In returns from the web redirect, the auth state
+    // stream emits a new user. We listen for that and route accordingly.
+    // On iOS / Android the auth state change happens INSIDE the sign-in
+    // future, so this listener is mostly a safety net for the web case.
+    ref.listen<AsyncValue<HealUser?>>(
+      authStateProvider,
+      (prev, next) {
+        final user = next.valueOrNull;
+        if (user == null || !user.isSignedIn) return;
+        if (returnTo != null && context.mounted) {
+          context.go(returnTo!);
+        } else if (context.mounted) {
+          context.pop();
+        }
+      },
+    );
+
     final busy = useState(false);
     final errorText = useState<String?>(null);
     final showApple = AuthService.appleSignInAvailable;
@@ -393,7 +410,18 @@ class _ProviderButtons extends HookConsumerWidget {
                 : () => withBusy(() async {
                     final user =
                         await ref.read(authServiceProvider).signInWithApple();
+                    // signInWithApple() returns null in two cases:
+                    //   1. User cancelled the dialog (mobile only).
+                    //   2. We're on web and signInWithRedirect kicked off —
+                    //      the page will navigate; authStateProvider will
+                    //      emit the new user when it returns.
+                    // In case 2, we should NOT navigate away here.
                     if (user == null) {
+                      if (kIsWeb) {
+                        // Don't pop, don't show error. The redirect will
+                        // navigate the page; authStateProvider takes over.
+                        return;
+                      }
                       throw const _CancelledByUser();
                     }
                   }),
