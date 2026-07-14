@@ -12,9 +12,13 @@
 //   - loading flag (true between setSource() and onPlayerStateChanged(playing))
 
 import 'dart:async';
+import 'dart:io';
+
 import 'package:audioplayers/audioplayers.dart' hide AVAudioSessionCategory;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 import 'audio_error.dart';
 
@@ -263,8 +267,21 @@ class AudioService extends StateNotifier<AudioState> {
     );
 
     try {
-      if (localPath != null) {
-        await _player.play(DeviceFileSource(localPath));
+      String? playPath = localPath;
+      // If we're playing from a URL, pre-buffer the file to a temp path first.
+      // This works around a known Android MediaPlayer bug where it fails to
+      // setSource() on certain MP3 files streamed directly from the network
+      // (e.g. those with large ID3v2.4 tags or 32kHz sample rate). Once the
+      // file is on disk, MediaPlayer reads it as a local file and is happy.
+      // iOS / web keep playing from the URL directly.
+      if (playPath == null && !kIsWeb && Platform.isAndroid) {
+        playPath = await _preBufferToTempFile(track);
+        // If pre-buffer failed, _preBufferToTempFile already raised. If it
+        // returned a path, we play from that path.
+      }
+
+      if (playPath != null) {
+        await _player.play(DeviceFileSource(playPath));
       } else {
         await _player.play(UrlSource(track.url));
       }
@@ -285,6 +302,64 @@ class AudioService extends StateNotifier<AudioState> {
       );
       // Stash the structured error so the UI can react (retry / next).
       _lastError = ae;
+    }
+  }
+
+  /// Pre-buffer a URL-based track to a temp .mp3 file so MediaPlayer can
+  /// play it from local storage. Returns the local file path.
+  ///
+  /// Maintains a small LRU cache of recently pre-buffered files so that
+  /// skipping back to a track within the same session doesn't re-download.
+  /// Cache lives in the app's temp directory; OS may purge on its own.
+  ///
+  /// Throws if the download fails — the caller catches and surfaces a
+  /// friendly error.
+  static const int _preBufCacheMax = 6;
+  final Map<String, String> _preBufCache = {}; // trackId -> localPath
+
+  Future<String> _preBufferToTempFile(AudioTrack track) async {
+    // 1. Cache hit? Return it.
+    final hit = _preBufCache[track.id];
+    if (hit != null && await File(hit).exists()) {
+      return hit;
+    }
+
+    final dir = await getTemporaryDirectory();
+    final tmp = File('${dir.path}/heal_prebuf_${track.id}.mp3');
+    if (await tmp.exists()) {
+      // Stale from a previous attempt (different timestamp) — delete and
+      // re-download fresh.
+      try { await tmp.delete(); } catch (_) {}
+    }
+    final client = http.Client();
+    try {
+      final resp = await client.get(Uri.parse(track.url)).timeout(
+            const Duration(seconds: 30),
+            onTimeout: () {
+              throw const SocketException('Timed out downloading audio');
+            },
+          );
+      if (resp.statusCode != 200) {
+        throw HttpException('HTTP ${resp.statusCode} downloading ${track.url}');
+      }
+      await tmp.writeAsBytes(resp.bodyBytes, flush: true);
+      if (kDebugMode) {
+        print('AudioService: pre-buffered ${resp.bodyBytes.length} bytes to ${tmp.path}');
+      }
+      // LRU evict: keep most-recent N
+      _preBufCache[track.id] = tmp.path;
+      if (_preBufCache.length > _preBufCacheMax) {
+        final toRemove = _preBufCache.keys.take(_preBufCache.length - _preBufCacheMax).toList();
+        for (final k in toRemove) {
+          final p = _preBufCache.remove(k);
+          if (p != null) {
+            try { await File(p).delete(); } catch (_) {}
+          }
+        }
+      }
+      return tmp.path;
+    } finally {
+      client.close();
     }
   }
 
