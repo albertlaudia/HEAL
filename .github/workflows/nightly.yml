@@ -16,6 +16,11 @@ on:
         type: choice
         options: [internal, alpha, beta, production]
         default: internal
+  # Programmatic trigger from any other workflow / curl
+  # (We use this from our own scripts since the workflow_dispatch REST
+  # endpoint returns 404 on some PATs)
+  repository_dispatch:
+    types: [manual-nightly-build]
 
 concurrency:
   group: nightly-playstore-${{ github.repository }}
