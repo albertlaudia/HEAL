@@ -7,9 +7,12 @@ class HealEnv {
     defaultValue: 'https://pocketbase.scaleupcrm.com',
   );
 
+  /// CDN base URL. All HEAL media files live under <cdnUrl>/<path>.
+  /// Migrated 2026-07-14 from `https://resources.positiveness.club/heal`
+  /// (which Cloudflare was caching 404s for) to Backblaze B2 public bucket.
   static const String cdnUrl = String.fromEnvironment(
     'CDN_URL',
-    defaultValue: 'https://resources.positiveness.club/heal',
+    defaultValue: 'https://f004.backblazeb2.com/file/GOPResources/heal',
   );
 
   static const String siteUrl = String.fromEnvironment(
@@ -35,7 +38,6 @@ class HealEnv {
 
   static const String appName = 'HEAL';
   static const String appTagline = 'A quiet Christian mindfulness practice';
-
   /// App Store / Play Store metadata links. Shown in the About section
   /// and the privacy notice. Update before each release.
   static const String privacyPolicyUrl = 'https://heal.positiveness.club/privacy';
