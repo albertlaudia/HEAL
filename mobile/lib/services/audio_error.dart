@@ -7,7 +7,7 @@
 // The category lives in `AudioErrorCode` so listeners can branch on it
 // without parsing strings.
 
-import 'dart:io' show SocketException, HttpException;
+import 'dart:io' show SocketException;
 
 /// Coarse category the UI uses to pick copy + recovery action.
 enum AudioErrorCode {

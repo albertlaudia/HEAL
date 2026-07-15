@@ -38,7 +38,7 @@ class _AudioErrorListenerState extends ConsumerState<AudioErrorListener> {
       if (next.error == _shownMessage) return;
       _shownMessage = next.error;
       // Slight delay so the error doesn't pop during a navigation transition.
-      Future.microtask(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         showAudioErrorBanner(context, ref, next.error!);
       });
@@ -122,7 +122,7 @@ class _AudioErrorBanner extends StatelessWidget {
               decoration: BoxDecoration(
                 color: HealTokens.rosewood,
                 borderRadius: BorderRadius.circular(HealTokens.r16),
-                border: Border(
+                border: const Border(
                   left: BorderSide(color: HealTokens.brass, width: 4),
                 ),
                 boxShadow: [
@@ -135,7 +135,7 @@ class _AudioErrorBanner extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.hearing_disabled_rounded,
                     color: HealTokens.brass,
                     size: 22,
@@ -154,7 +154,7 @@ class _AudioErrorBanner extends StatelessWidget {
                   const SizedBox(width: 8),
                   TextButton(
                     onPressed: onAction,
-                    child: Text(
+                    child: const Text(
                       'Try again',
                       style: TextStyle(
                         color: HealTokens.brass,
