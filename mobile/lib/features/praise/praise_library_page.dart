@@ -23,11 +23,12 @@ import '../../services/audio_service.dart';
 import '../../services/favorites_service.dart';
 import '../../services/offline_cache_service.dart';
 import 'karaoke_lyrics.dart';
+import 'song_script_page.dart';
 import 'timed_lyrics.dart';
 
 // ── Library ────────────────────────────────────────────────────────
 
-enum _Tab { all, favorites, downloaded }
+enum _Tab { all, opened, favorites, downloaded }
 
 class PraiseLibraryPage extends HookConsumerWidget {
   const PraiseLibraryPage({super.key});
@@ -60,6 +61,13 @@ class PraiseLibraryPage extends HookConsumerWidget {
           var visible = songs;
           switch (tab.value) {
             case _Tab.favorites:
+              visible = visible.where((s) => favorites.contains(s.slug)).toList();
+              break;
+            case _Tab.opened:
+              // Auto-populated: any song the user has ever opened
+              // is added to favorites, so this == favorites
+              // but it's surfaced as "Your list" to make the
+              // automatic action feel intentional.
               visible = visible.where((s) => favorites.contains(s.slug)).toList();
               break;
             case _Tab.downloaded:
@@ -124,14 +132,14 @@ class PraiseLibraryPage extends HookConsumerWidget {
                         // "Today's praise" — deterministic pick by day-of-year.
                         // Reduces paradox of choice on a 112-song library.
                         // Only show on the All tab.
-                        if (tab.value != _Tab.all) {
+                        if (tab.value != _Tab.all && tab.value != _Tab.opened) {
                           return const SizedBox.shrink();
                         }
                         final today = _praiseOfTheDay(songs, favorites);
                         if (today == null) return const SizedBox.shrink();
-                        return _TodaysPraiseHero(song: today, onTap: () async {
+                        return _TodaysPraiseHero(song: today, onTap: () {
           HapticFeedback.selectionClick();
-          await PraiseLibraryPage._playPlaylist(ref, [today], 0);
+          _openScript(context, song: today);
         });
                       }
                       if (i == 1) {
@@ -173,11 +181,11 @@ class PraiseLibraryPage extends HookConsumerWidget {
                                     ),
                               ),
                               TextButton.icon(
-                                icon: const Icon(Icons.play_circle_filled_rounded,
+                                icon: const Icon(Icons.menu_book_rounded,
                                     color: HealTokens.brass, size: 18),
-                                label: const Text('Play all',
+                                label: const Text('Read all',
                                     style: TextStyle(color: HealTokens.brass)),
-                                onPressed: () => _playPlaylist(ref, visible, 0),
+                                onPressed: () => _openScript(context, song: visible[0]),
                               ),
                             ],
                           ),
@@ -186,7 +194,7 @@ class PraiseLibraryPage extends HookConsumerWidget {
                       final s = visible[i - 1];
                       return _PraiseTile(
                         song: s,
-                        onTap: () => _openPlayer(context, ref, visible, i - 1),
+                        onTap: () => _openScript(context, song: visible[i - 1]),
                       );
                     },
                   ),
@@ -221,29 +229,21 @@ class PraiseLibraryPage extends HookConsumerWidget {
         .playPlaylist(queue, index, localPaths: localPaths);
   }
 
-  static void _openPlayer(BuildContext context, WidgetRef ref, List<PraiseSong> songs, int index) async {
-    final cache = ref.read(offlineCacheProvider.notifier);
-    final localPaths = <String>[];
-    for (final s in songs) {
-      final p = await cache.localPath(s.slug);
-      localPaths.add(p ?? '');
-    }
-    final queue = songs.map((s) => AudioTrack(
-          id: s.id,
-          url: s.cdnAudio,
-          title: s.title,
-          subtitle: s.subtitle,
-          illustrationUrl: s.cdnIllustration,
-          lyrics: s.lyrics,
-          source: AudioSource.praise,
-        )).toList();
-    await ref
-        .read(audioServiceProvider.notifier)
-        .playPlaylist(queue, index, localPaths: localPaths);
-    if (!context.mounted) return;
+  /// Open a song's "script" view (lyrics-first, no audio).
+  /// Auto-favorites and auto-caches on first open.
+  /// Replaces the old _openPlayer since the hymn audio was removed.
+  static void _openScript(BuildContext context, {required PraiseSong song}) {
+    HapticFeedback.selectionClick();
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => PraisePlayerPage(songs: songs, queue: queue, index: index),
+      builder: (_) => SongScriptPage(song: song),
     ));
+  }
+
+  static void _openPlayer(BuildContext context, WidgetRef ref, List<PraiseSong> songs, int index) async {
+    // Legacy method - kept for backward compat with KaraokeLyrics widget.
+    // Praise audio was removed (REMOVE_PRAISE_AUDIO_PLAN.md 2026-07-17).
+    // This method now just navigates to the lyrics view for the first song.
+    _openScript(context, song: songs[index]);
   }
 }
 
@@ -271,6 +271,7 @@ class _PraiseTabs extends StatelessWidget {
         children: [
           _TabButton(label: 'All',          count: null,          active: current == _Tab.all,          onTap: () => onChange(_Tab.all)),
           const SizedBox(width: HealTokens.s8),
+          _TabButton(label: 'Your list',    count: favoritesCount, active: current == _Tab.opened,       onTap: () => onChange(_Tab.opened)),
           _TabButton(label: 'Favorites',    count: favoritesCount, active: current == _Tab.favorites,    onTap: () => onChange(_Tab.favorites)),
           const SizedBox(width: HealTokens.s8),
           _TabButton(label: 'Downloaded',   count: downloadedCount, active: current == _Tab.downloaded, onTap: () => onChange(_Tab.downloaded)),
@@ -336,6 +337,11 @@ class _PraiseEmpty extends StatelessWidget {
   Widget build(BuildContext context) {
     String title; String body; IconData icon;
     switch (tab) {
+      case _Tab.opened:
+        title = 'Your list is empty';
+        body = 'Songs you open will appear here automatically — no need to bookmark anything.';
+        icon = Icons.auto_awesome_rounded;
+        break;
       case _Tab.favorites:
         title = 'No favorites yet';
         body = 'Tap the heart on any song to add it here.';
