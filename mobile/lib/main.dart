@@ -336,4 +336,4 @@ Future<void> main() async {
       return true;
     }());
   });
-}
+}// Last verified: 2026-07-17 v18 build with intl pinned to ^0.19.0 + 12 quick wins
