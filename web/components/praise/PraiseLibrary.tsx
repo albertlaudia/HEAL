@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react';
 import { Search } from 'lucide-react';
 import type { HEALPraise } from '@/lib/pb';
 import { SongCard } from './SongCard';
+import { TodaysPraiseHero } from './TodaysPraiseHero';
 
 type SortKey = 'sort_order' | 'title' | 'newest';
 
@@ -85,6 +86,14 @@ export function PraiseLibrary({
 
   return (
     <div>
+      {/* Today's Praise hero — deterministic by day, surfaces when no filters active */}
+      {!hasFilter && (
+        <TodaysPraiseHero
+          songs={songs}
+          onClearFilters={clearFilters}
+        />
+      )}
+
       {/* Search + sort bar */}
       <div className="mb-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         <div className="relative flex-1">
