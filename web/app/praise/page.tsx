@@ -1,7 +1,8 @@
-import { getPublished, type HEALPraise } from '@/lib/pb';
+import { headers } from 'next/headers';
+import { type HEALPraise } from '@/lib/pb';
 import { PraiseLibrary } from '@/components/praise/PraiseLibrary';
 
-export const revalidate = 3600;
+export const revalidate = 300; // 5 min — picks up new songs faster
 
 export const metadata = {
   title: 'Praise — Songs for the Soul',
@@ -9,11 +10,17 @@ export const metadata = {
 };
 
 export default async function PraisePage() {
-  const songs = (await getPublished(
-    'HEAL_praise',
-    'sort_order,id',
-    'is_published = true'
-  )) as HEALPraise[];
+  // Read from the same Next.js API gateway the mobile app uses.
+  // This is the source of truth (Postgres-backed) so web and mobile
+  // stay in sync. The /api/heal/praise route returns items with the
+  // same shape as the PocketBase records.
+  const hdrs = await headers();
+  const proto = hdrs.get('x-forwarded-proto') || 'https';
+  const host = hdrs.get('host') || 'heal.positiveness.club';
+  const url = `${proto}://${host}/api/heal/praise?limit=200`;
+  const res = await fetch(url, { next: { revalidate: 300 } });
+  const data = await res.json();
+  const songs: HEALPraise[] = data.items || [];
 
   // Extract unique emotions + tags for the filter UI
   const allEmotions = Array.from(
