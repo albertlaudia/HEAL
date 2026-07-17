@@ -184,6 +184,8 @@ class _MeditateDetailPageState extends ConsumerState<MeditateDetailPage> {
               subtitle: m.subtitle,
               illustrationUrl: m.cdnIllustration,
               source: AudioSource.meditation,
+              kind: 'meditation',
+              durationSeconds: m.durationSeconds,
             ));
         HapticFeedback.lightImpact();
         if (mounted) {
@@ -376,6 +378,8 @@ class _PlayerControls extends ConsumerWidget {
                       subtitle: meditation.subtitle,
                       illustrationUrl: meditation.cdnIllustration,
                       source: AudioSource.meditation,
+                      kind: 'meditation',
+                      durationSeconds: meditation.durationSeconds,
                     ));
                   }
                 },

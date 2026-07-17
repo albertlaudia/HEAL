@@ -51,7 +51,8 @@ class _HealAppState extends ConsumerState<HealApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
+    return ForceUpdateGuard(
+      child: MaterialApp.router(
       title: 'HEAL',
       debugShowCheckedModeBanner: false,
       theme: HealTheme.dark,
@@ -81,6 +82,7 @@ class _HealAppState extends ConsumerState<HealApp> {
           ),
         );
       },
+    ),
     );
   }
 }

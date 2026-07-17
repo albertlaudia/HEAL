@@ -28,9 +28,17 @@ dependencies:
   pocketbase: ^0.24.0
   firebase_core: ^3.6.0
   firebase_auth: ^5.3.1
+  firebase_crashlytics: ^4.1.0
+  firebase_analytics: ^11.3.3
+  cloud_firestore: ^5.4.4
   google_sign_in: ^6.2.1
   sign_in_with_apple: ^6.1.1
   crypto: ^3.0.3
+
+  # ── In-app review + deep links ─────────────────────────────────
+  in_app_review: ^2.0.10
+  app_links: ^6.3.2
+  package_info_plus: ^8.0.2
 
   # ── Local storage ──────────────────────────────────────────────
   drift: ^2.31.0  # was 2.20.3 — minor upgrade (within 2.x, backwards compat)
@@ -65,6 +73,21 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   drift_dev: ^2.31.0  # was 2.20.3 — matches drift
   build_runner: ^2.4.13
+  flutter_launcher_icons: ^0.14.1
+
+flutter_launcher_icons:
+  # Run with: dart run flutter_launcher_icons
+  # Source: ../media/app-icon/ios/Icon-App-1024x1024@1x.png (must be 1024x1024)
+  image_path: "../media/app-icon/ios/Icon-App-1024x1024@1x.png"
+  android: true
+  ios: true
+  # Adaptive icon: 108x108 inner safe zone, 432x432 outer canvas.
+  # The XML wrapper is already in mipmap-anydpi-v26/ — we just write the
+  # foreground/background layers.
+  adaptive_icon_background: "../media/app-icon/android/ic_launcher_background.png"
+  adaptive_icon_foreground: "../media/app-icon/android/ic_launcher_foreground.png"
+  adaptive_icon_monochrome: "../media/app-icon/android/ic_launcher_foreground.png"
+  min_sdk_android: 23
 
 flutter:
   uses-material-design: true

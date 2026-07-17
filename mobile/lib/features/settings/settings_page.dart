@@ -1,6 +1,8 @@
 // HEAL — Settings page.
 // Toggle notifications (morning/evening), haptic strength, sign-in, about.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -13,8 +15,12 @@ import '../../core/env.dart';
 import '../../core/widgets/brass_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../services/auth_service.dart';
+import '../../services/analytics_service.dart';
 import '../../services/notification_service.dart';
 import '../../services/voice_calibration_service.dart';
+import '../../services/streak_service.dart';
+import '../../services/sticker_book.dart';
+import '../../data/bible_progress_cache.dart';
 
 final _voiceProfileProvider = Provider<bool>((ref) {
   final cal = ref.watch(voiceCalibrationServiceProvider);
@@ -196,6 +202,29 @@ class SettingsPage extends HookConsumerWidget {
           ),
 
           const SizedBox(height: HealTokens.s32),
+          const SectionHeader(title: 'Re-orient'),
+          GlassCard(
+            padding: EdgeInsets.zero,
+            child: Column(
+              children: [
+                _SettingTile(
+                  icon: Icons.replay_rounded,
+                  title: 'Replay welcome tour',
+                  subtitle: 'See how HEAL works, from the beginning',
+                  onTap: () => _replayOnboarding(context, ref),
+                ),
+                const Divider(height: 1, color: HealTokens.rosewoodLight),
+                _SettingTile(
+                  icon: Icons.cleaning_services_outlined,
+                  title: 'Reset HEAL',
+                  subtitle: 'Clear all practice history on this device',
+                  onTap: () => _confirmReset(context, ref),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: HealTokens.s32),
           const SectionHeader(title: 'About'),
           GlassCard(
             padding: EdgeInsets.zero,
@@ -249,6 +278,107 @@ class SettingsPage extends HookConsumerWidget {
   Future<void> _saveNotif(bool v) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('notifications_enabled', v);
+  }
+
+  /// Show the onboarding flow again. Marks the user as not-onboarded
+  /// and re-navigates to the welcome screen. Doesn't wipe any data.
+  void _replayOnboarding(BuildContext context, WidgetRef ref) async {
+    HapticFeedback.selectionClick();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('onboarding_complete', false);
+    if (!context.mounted) return;
+    // Pop everything and force the splash route to re-evaluate.
+    context.go('/');
+    unawaited(ref.read(analyticsServiceProvider).log(
+      const AnalyticsEvent(HealEvents.onboardingReplay),
+    ));
+  }
+
+  /// Confirmation dialog before wiping all local data. (Signed-in users
+  /// keep their cloud-synced data — only the on-device cache is cleared.)
+  /// After confirm: clear SharedPreferences, reset providers, log the user out.
+  void _confirmReset(BuildContext context, WidgetRef ref) async {
+    HapticFeedback.selectionClick();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: HealTokens.rosewood,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(HealTokens.r24),
+        ),
+        title: Text('Reset HEAL?',
+            style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
+                  color: HealTokens.cream,
+                )),
+        content: Text(
+          'This clears your practice history, favorites, journal entries, '
+          'and sticker book on this device. If you\'re signed in, your cloud '
+          'data is preserved.\n\nThis can\'t be undone.',
+          style: Theme.of(ctx).textTheme.bodyMedium?.copyWith(
+                color: HealTokens.creamDim,
+                height: 1.5,
+              ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text('Cancel',
+                style: TextStyle(color: HealTokens.creamDim)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text('Reset',
+                style: TextStyle(color: HealTokens.brass)),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    if (!context.mounted) return;
+    await _performReset(context, ref);
+  }
+
+  /// The actual reset. Wipes all HEAL keys from SharedPreferences and
+  /// re-hydrates the providers so the UI immediately reflects the
+  /// empty state. Sign-out is preserved (we don't auto-sign-out the user
+  /// — only local caches go).
+  Future<void> _performReset(BuildContext context, WidgetRef ref) async {
+    final analytics = ref.read(analyticsServiceProvider);
+    unawaited(analytics.log(const AnalyticsEvent(HealEvents.resetHealTriggered)));
+    final prefs = await SharedPreferences.getInstance();
+    // Wipe every HEAL-namespaced key.
+    final allKeys = prefs.getKeys().where((k) => k.startsWith('heal.')).toList();
+    for (final k in allKeys) {
+      await prefs.remove(k);
+    }
+    // Also wipe the inline keys that don't have the prefix.
+    for (final k in const [
+      'onboarding_complete',
+      'notifications_enabled',
+      'notif_morning_enabled',
+      'notif_evening_enabled',
+      'haptics_enabled',
+      'selected_voice_profile',
+      'force_update_dismissed_v1',
+    ]) {
+      await prefs.remove(k);
+    }
+    // Reset all in-memory providers.
+    await ref.read(streakServiceProvider.notifier).load();
+    await ref.read(stickerBookProvider.notifier).hydrate();
+    await ref.read(bibleProgressCacheProvider.notifier).clear();
+    unawaited(analytics.log(const AnalyticsEvent(HealEvents.resetHealCompleted)));
+    if (!context.mounted) return;
+    // Hop back to home so the user sees the "fresh HEAL" state.
+    context.go('/');
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: HealTokens.rosewood,
+        content: Text('HEAL has been reset. Welcome back.',
+            style: TextStyle(color: HealTokens.cream)),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   void _showAbout(BuildContext context) {

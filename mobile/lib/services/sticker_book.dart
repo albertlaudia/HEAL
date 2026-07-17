@@ -176,7 +176,13 @@ class StickerBook extends StateNotifier<StickerBookState> {
       lastUnlockedId: newly.last.id,
     );
     await _persist();
-    return newly.last;
+    final unlocked = newly.last;
+    // Fire analytics + smart in-app review for milestone stickers
+    // (7-day streak, 30-day streak, etc. are natural "this is a good
+    // app" moments to ask for a rating).
+    // Skip the wiring here — call sites in main.dart already log sticker
+    // unlocks. Just expose the id so the analytics layer can pick it up.
+    return unlocked;
   }
 
   Sticker _find(String id) => _allStickers.firstWhere((s) => s.id == id);

@@ -82,6 +82,14 @@ class BibleProgressCacheNotifier extends StateNotifier<BibleProgressCacheState> 
       fetchedAt: DateTime.now(),
     );
   }
+
+  /// Wipe the cache (used by Reset HEAL).
+  void clear() {
+    state = BibleProgressCacheState(
+      progress: const [],
+      fetchedAt: DateTime.fromMillisecondsSinceEpoch(0),
+    );
+  }
 }
 
 final bibleProgressCacheProvider = StateNotifierProvider.family<

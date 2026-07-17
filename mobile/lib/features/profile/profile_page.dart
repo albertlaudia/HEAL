@@ -169,9 +169,9 @@ class ProfilePage extends HookConsumerWidget {
                     Expanded(
                       child: _QuickAction(
                         icon: Icons.favorite_outline_rounded,
-                        label: 'Favorites',
+                        label: 'Library',
                         count: '',
-                        onTap: () => context.push('/favorites'),
+                        onTap: () => context.push('/library'),
                       ),
                     ),
                   ],

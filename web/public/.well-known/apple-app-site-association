@@ -1,0 +1,31 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appIDs": [
+          "TEAMID.com.pclub.heal"
+        ],
+        "components": [
+          { "/": "/meditate/*",   "comment": "Matches https://heal.positiveness.club/meditate/<slug>" },
+          { "/": "/praise/*",     "comment": "Matches https://heal.positiveness.club/praise/<slug>" },
+          { "/": "/prayer/*",     "comment": "Matches https://heal.positiveness.club/prayer/<slug>" },
+          { "/": "/scripture/*",  "comment": "Matches https://heal.positiveness.club/scripture/<slug>" },
+          { "/": "/essay/*",      "comment": "Matches https://heal.positiveness.club/essay/<slug>" },
+          { "/": "/world/*",      "comment": "Matches https://heal.positiveness.club/world/<slug>" },
+          { "/": "/bible",        "comment": "Matches https://heal.positiveness.club/bible" },
+          { "/": "/library",      "comment": "Matches https://heal.positiveness.club/library" },
+          { "/": "/search",       "comment": "Matches https://heal.positiveness.club/search" },
+          { "/": "/settings",     "comment": "Matches https://heal.positiveness.club/settings" },
+          { "/": "/stickers",     "comment": "Matches https://heal.positiveness.club/stickers" },
+          { "/": "/profile",      "comment": "Matches https://heal.positiveness.club/profile" }
+        ]
+      }
+    ]
+  },
+  "webcredentials": {
+    "apps": [
+      "TEAMID.com.pclub.heal"
+    ]
+  }
+}

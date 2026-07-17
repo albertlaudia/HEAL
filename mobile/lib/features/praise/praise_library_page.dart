@@ -223,6 +223,8 @@ class PraiseLibraryPage extends HookConsumerWidget {
           illustrationUrl: s.cdnIllustration,
           lyrics: s.lyrics,
           source: AudioSource.praise,
+          kind: 'praise',
+          durationSeconds: 0, // filled by audio_service if available
         )).toList();
     await ref
         .read(audioServiceProvider.notifier)
@@ -241,6 +243,27 @@ class PraiseLibraryPage extends HookConsumerWidget {
 
   static void _openPlayer(BuildContext context, WidgetRef ref, List<PraiseSong> songs, int index) async {
     // Legacy method - kept for backward compat with KaraokeLyrics widget.
+    final cache = ref.read(offlineCacheProvider.notifier);
+    final localPaths = <String>[];
+    for (final s in songs) {
+      final p = await cache.localPath(s.slug);
+      localPaths.add(p ?? '');
+    }
+    final queue = songs.map((s) => AudioTrack(
+          id: s.id,
+          url: s.cdnAudio,
+          title: s.title,
+          subtitle: s.subtitle,
+          illustrationUrl: s.cdnIllustration,
+          lyrics: s.lyrics,
+          source: AudioSource.praise,
+          kind: 'praise',
+          durationSeconds: 0, // filled by audio_service if available
+        )).toList();
+    await ref
+        .read(audioServiceProvider.notifier)
+        .playPlaylist(queue, index, localPaths: localPaths);
+    if (!context.mounted) return;
     // Praise audio was removed (REMOVE_PRAISE_AUDIO_PLAN.md 2026-07-17).
     // This method now just navigates to the lyrics view for the first song.
     _openScript(context, song: songs[index]);

@@ -24,6 +24,8 @@ import '../features/collection/sticker_book_page.dart';
 import '../features/profile/profile_page.dart';
 import '../features/sleep/sleep_stories_page.dart';
 import '../features/sleep/ambient_sounds_page.dart';
+import '../features/search/search_page.dart';
+import '../features/library/library_page.dart';
 import '../widgets/expandable_mini_player.dart';
 import '../features/breathe/breath_studio_page.dart';
 import '../features/breathe/voice_calibration_page.dart';
@@ -658,6 +660,16 @@ class HealRouter {
         path: '/sleep',
         pageBuilder: (context, state) =>
             _sharedAxis(state, const SleepStoriesPage()),
+      ),
+      GoRoute(
+        path: '/search',
+        pageBuilder: (context, state) =>
+            _sharedAxis(state, const SearchPage()),
+      ),
+      GoRoute(
+        path: '/library',
+        pageBuilder: (context, state) =>
+            _sharedAxis(state, const LibraryPage()),
       ),
       GoRoute(
         path: '/ambient',

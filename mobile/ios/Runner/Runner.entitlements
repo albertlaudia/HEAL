@@ -6,5 +6,10 @@
 	<array>
 		<string>Default</string>
 	</array>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:heal.positiveness.club</string>
+		<string>applinks:healf.positiveness.club</string>
+	</array>
 </dict>
 </plist>

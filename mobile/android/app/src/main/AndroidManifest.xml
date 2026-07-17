@@ -58,6 +58,25 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
+            <!-- Deep links: healf://<path> (legacy custom scheme) -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="healf" />
+            </intent-filter>
+
+            <!-- App Links: https://heal.positiveness.club/<path>
+                 Verified via /.well-known/assetlinks.json. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:host="heal.positiveness.club" />
+                <data android:host="healf.positiveness.club" />
+            </intent-filter>
         </activity>
         <meta-data
             android:name="flutterEmbedding"

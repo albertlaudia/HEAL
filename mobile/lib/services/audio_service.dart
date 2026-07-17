@@ -33,6 +33,8 @@ class AudioTrack {
   final String? lyrics;
   final AudioSource source;
   final Duration? startAt;
+  final String kind;          // 'meditation' | 'praise' | 'sleep' | 'breathwork'
+  final int durationSeconds;  // for the history completion ratio
 
   const AudioTrack({
     required this.id,
@@ -43,6 +45,8 @@ class AudioTrack {
     required this.source,
     this.lyrics,
     this.startAt,
+    this.kind = 'meditation',
+    this.durationSeconds = 0,
   });
 }
 

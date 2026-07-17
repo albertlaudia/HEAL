@@ -83,6 +83,7 @@ class HomePage extends HookConsumerWidget {
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             Copy.greetingForHour(DateTime.now().hour),
@@ -103,6 +104,18 @@ class HomePage extends HookConsumerWidget {
                           ),
                         ],
                       ),
+                    ),
+                    // Search entry — small, brass, top-right of greeting row.
+                    IconButton(
+                      onPressed: () {
+                        HapticFeedback.selectionClick();
+                        context.push('/search');
+                      },
+                      icon: const Icon(Icons.search_rounded,
+                          color: HealTokens.brass, size: 22),
+                      tooltip: 'Search',
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
                     ),
                   ],
                 ),
@@ -1153,6 +1166,8 @@ class _TodayShelf extends HookConsumerWidget {
             subtitle: m.subtitle,
             illustrationUrl: m.cdnIllustration,
             source: AudioSource.meditation,
+            kind: 'meditation',
+            durationSeconds: m.durationSeconds,
           ));
     }
 
@@ -1168,6 +1183,7 @@ class _TodayShelf extends HookConsumerWidget {
             illustrationUrl: s.cdnIllustration,
             source: AudioSource.praise,
             lyrics: s.lyrics.isNotEmpty ? s.lyrics : null,
+            kind: 'praise',
           ));
     }
 

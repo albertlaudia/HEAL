@@ -14,6 +14,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'analytics_service.dart';
+
 /// A single logged action.
 @immutable
 class ActivityEvent {
@@ -229,3 +231,65 @@ final activityTrackerProvider =
     StateNotifierProvider<ActivityTracker, ActivityTrackerState>((ref) {
   return ActivityTracker();
 });
+
+/// Optional analytics forwarder: wire this once in main() so that every
+/// activity_tracker.log() also fires a corresponding analytics event.
+/// Skip in tests to keep them hermetic.
+void forwardActivityToAnalytics(
+  Ref ref,
+  AnalyticsService analytics,
+) {
+  ref.listen<ActivityTrackerState>(activityTrackerProvider, (prev, next) {
+    // We only forward NEW events (not initial state).
+    if (prev == null) return;
+    if (next.recent.isEmpty) return;
+    if (next.recent.first == prev.recent.first) return;
+    final e = next.recent.first;
+    // Best-effort mapping from activity kind to a Firebase event name.
+    // (Skip noise like 'session' which fires per app launch.)
+    switch (e.kind) {
+      case 'play_start':
+        unawaited(analytics.log(AnalyticsEvent(HealEvents.trackPlayStart, params: {
+          'target': e.target ?? '',
+          if (e.meta?['kind'] != null) 'kind': e.meta!['kind'],
+        })));
+        break;
+      case 'play_complete':
+        unawaited(analytics.log(AnalyticsEvent(HealEvents.trackPlayComplete, params: {
+          'target': e.target ?? '',
+          if (e.durationMs != null) 'duration_seconds': e.durationMs!.inSeconds,
+        })));
+        break;
+      case 'sticker_unlock':
+        unawaited(analytics.log(AnalyticsEvent(HealEvents.stickerUnlocked, params: {
+          'sticker_id': e.target ?? '',
+        })));
+        break;
+      case 'notification_tap':
+        unawaited(analytics.log(AnalyticsEvent(HealEvents.notificationTap, params: {
+          'target': e.target ?? '',
+        })));
+        break;
+      case 'search':
+        unawaited(analytics.log(AnalyticsEvent(HealEvents.search, params: {
+          'query_length': (e.meta?['query_length'] as int?) ?? 0,
+        })));
+        break;
+      case 'favorite_added':
+        unawaited(analytics.log(AnalyticsEvent(HealEvents.favoriteAdded, params: {
+          'kind': e.target ?? '',
+        })));
+        break;
+      case 'favorite_removed':
+        unawaited(analytics.log(AnalyticsEvent(HealEvents.favoriteRemoved, params: {
+          'kind': e.target ?? '',
+        })));
+        break;
+      case 'deep_link':
+        unawaited(analytics.log(AnalyticsEvent(HealEvents.deepLinkOpened, params: {
+          'path': e.target ?? '',
+        })));
+        break;
+    }
+  });
+}

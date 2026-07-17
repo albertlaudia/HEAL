@@ -99,6 +99,14 @@
 				<string>com.googleusercontent.apps.355529098583-af67c13qac54rsvk1hhiseals6g6n7f5</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.pclub.heal.deeplink</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>healf</string>
+			</array>
+		</dict>
 	</array>
 
 	<!-- Apple Sign In -->
