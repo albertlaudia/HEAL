@@ -12,6 +12,7 @@ import '../../core/theme.dart';
 import '../../core/env.dart';
 import '../../core/widgets/brass_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../services/auth_service.dart';
 import '../../services/notification_service.dart';
 import '../../services/voice_calibration_service.dart';
 
@@ -29,6 +30,7 @@ class SettingsPage extends HookConsumerWidget {
     final morningEnabled = useState<bool>(true);
     final eveningEnabled = useState<bool>(false);
     final hapticsEnabled = useState<bool>(true);
+    final user = ref.watch(currentUserProvider);
 
     useEffect(() {
       _loadPrefs(notifsEnabled, morningEnabled, eveningEnabled, hapticsEnabled);
@@ -173,12 +175,22 @@ class SettingsPage extends HookConsumerWidget {
             padding: EdgeInsets.zero,
             child: Column(
               children: [
-                _SettingTile(
-                  icon: Icons.person_outline_rounded,
-                  title: 'Sign in',
-                  subtitle: 'Save your practice across devices',
-                  onTap: () => context.push('/auth'),
-                ),
+                if (user != null && user.isSignedIn) ...[
+                  _SignedInTile(
+                    user: user,
+                    onSignOut: () async {
+                      HapticFeedback.selectionClick();
+                      await ref.read(authServiceProvider).signOut();
+                    },
+                    onManage: () => context.push('/auth'),
+                  ),
+                ] else
+                  _SettingTile(
+                    icon: Icons.person_outline_rounded,
+                    title: 'Sign in',
+                    subtitle: 'Save your practice across devices',
+                    onTap: () => context.push('/auth'),
+                  ),
               ],
             ),
           ),
@@ -319,6 +331,124 @@ class SettingsPage extends HookConsumerWidget {
 
   Future<void> _openPrivacyPolicy(BuildContext context) async {
     await _openLink(context, HealEnv.privacyPolicyUrl);
+  }
+}
+
+class _SignedInTile extends StatelessWidget {
+  final HealUser user;
+  final VoidCallback onSignOut;
+  final VoidCallback onManage;
+  const _SignedInTile({
+    required this.user,
+    required this.onSignOut,
+    required this.onManage,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final name = (user.displayName?.isNotEmpty ?? false)
+        ? user.displayName!
+        : (user.email ?? 'Signed in');
+    final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: HealTokens.s20,
+        vertical: HealTokens.s12,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              // Avatar circle with the user's initial
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [HealTokens.brass, HealTokens.brassLight],
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  initial,
+                  style: const TextStyle(
+                    color: HealTokens.rosewoodDeep,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        color: HealTokens.cream,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (user.email != null && user.email != name)
+                      Text(
+                        user.email!,
+                        style: TextStyle(
+                          color: HealTokens.creamDim.withValues(alpha: 0.7),
+                          fontSize: 12,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    Text(
+                      'Signed in via ${_providerLabel(user.providerId)}',
+                      style: TextStyle(
+                        color: HealTokens.brass,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              TextButton.icon(
+                icon: const Icon(Icons.swap_horiz_rounded, size: 16),
+                label: const Text('Switch account'),
+                onPressed: onManage,
+              ),
+              const Spacer(),
+              TextButton.icon(
+                icon: const Icon(Icons.logout_rounded, size: 16),
+                label: const Text('Sign out'),
+                style: TextButton.styleFrom(foregroundColor: HealTokens.brass),
+                onPressed: onSignOut,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _providerLabel(String id) {
+    switch (id) {
+      case 'google.com': return 'Google';
+      case 'apple.com': return 'Apple';
+      case 'password': return 'email + password';
+      case 'anonymous': return 'guest';
+      default: return id;
+    }
   }
 }
 
