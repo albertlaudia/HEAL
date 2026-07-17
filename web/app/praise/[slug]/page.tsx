@@ -41,7 +41,7 @@ export default async function PraiseSongPage({ params }: { params: Promise<{ slu
 
   return (
     <div>
-      <TrackView kind="praise" slug={song.slug} title={song.title} />
+      <TrackView kind="praise" slug={song.slug} />
       <PraiseSongDetailClient song={song} more={more} />
     </div>
   );

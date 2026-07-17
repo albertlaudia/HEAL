@@ -35,7 +35,7 @@ export default async function ScripturePage({ params }: { params: Promise<{ slug
 
   return (
     <div>
-      <TrackView kind="scripture" slug={verse.slug} title={verse.title || verse.reference} />
+      <TrackView kind="scripture" slug={verse.slug} />
       <ScriptureDetailClient verse={verse} related={related} />
     </div>
   );
