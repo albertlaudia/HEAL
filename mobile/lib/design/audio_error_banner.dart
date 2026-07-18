@@ -17,6 +17,7 @@
 //   - Errors are caught and logged so a transient UI hiccup never throws.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/theme.dart';
@@ -80,11 +81,10 @@ class _AudioErrorListenerState extends ConsumerState<AudioErrorListener> {
       if (nav != null) return;
       nav = Navigator.maybeOf(c);
       if (nav != null) return;
-      final p = c.findAncestorWidgetOfExactType<Navigator>();
-      if (p?.context != null) {
-        // navigator has a context; its Overlay is the root one.
-        nav = Navigator.maybeOf(p!.context);
-        if (nav != null) return;
+      final p = c.findAncestorStateOfType<NavigatorState>();
+      if (p != null) {
+        nav = p;
+        return;
       }
     }
     visit(ctx);

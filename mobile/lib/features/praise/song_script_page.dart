@@ -18,7 +18,6 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
@@ -67,7 +66,6 @@ class SongScriptPage extends HookConsumerWidget {
               illustrationUrl: song.cdnIllustration,
               source: AudioSource.praise,
               kind: 'praise',
-              durationSeconds: song.durationSeconds,
             ));
         HapticFeedback.lightImpact();
         try {
@@ -169,7 +167,6 @@ class _SongHero extends ConsumerWidget {
                         illustrationUrl: song.cdnIllustration,
                         source: AudioSource.praise,
                         kind: 'praise',
-                        durationSeconds: song.durationSeconds,
                       ));
                     }
                   },
@@ -289,9 +286,10 @@ class _PlayButton extends StatelessWidget {
                 size: 32,
               ),
       ),
-    ).animate(target: isPlaying ? 1 : 0, duration: 300.ms).scale(
+    ).animate(target: isPlaying ? 1 : 0).scale(
           begin: const Offset(1, 1),
           end: const Offset(1.06, 1.06),
+          duration: 300.ms,
         );
   }
 }
@@ -505,8 +503,8 @@ class _SongScriptBody extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: const [
+                const Row(
+                  children: [
                     Icon(Icons.format_quote_rounded,
                         color: HealTokens.brass, size: 18),
                     SizedBox(width: 8),
@@ -708,11 +706,11 @@ class _NoLyricsCard extends StatelessWidget {
           ),
         ),
       ),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            children: const [
+            children: [
               Icon(Icons.headphones_rounded, color: HealTokens.brass, size: 22),
               SizedBox(width: 10),
               Text(
@@ -725,7 +723,7 @@ class _NoLyricsCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
           Text(
             'The full text of this traditional hymn is in the public domain, '
             'and many beautiful versions exist. The version here is a sung '
@@ -809,11 +807,11 @@ class _ShareButton extends StatelessWidget {
         }
       },
       borderRadius: BorderRadius.circular(24),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      child: const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          children: const [
+          children: [
             Icon(Icons.ios_share_rounded, color: HealTokens.brass, size: 18),
             SizedBox(width: 6),
             Text(
