@@ -277,7 +277,7 @@ class _HistoryTab extends ConsumerWidget {
           title: e.title,
           subtitle: '${e.subtitle ?? ''} · ${_relativeTime(e.playedAt)}',
           trailing: e.completionRatio >= 0.95
-              ? Icon(Icons.check_circle_rounded, color: HealTokens.brass, size: 16)
+              ? const Icon(Icons.check_circle_rounded, color: HealTokens.brass, size: 16)
               : null,
           onTap: () => _navigate(context, e.kind, e.slug),
           onRemove: () async {
@@ -345,19 +345,19 @@ class _JournalTab extends ConsumerWidget {
                   context: context,
                   builder: (ctx) => AlertDialog(
                     backgroundColor: HealTokens.rosewood,
-                    title: Text('Delete this entry?',
+                    title: const Text('Delete this entry?',
                         style: TextStyle(color: HealTokens.cream)),
-                    content: Text('This can\'t be undone.',
+                    content: const Text('This can\'t be undone.',
                         style: TextStyle(color: HealTokens.creamDim)),
                     actions: [
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, false),
-                        child: Text('Cancel',
+                        child: const Text('Cancel',
                             style: TextStyle(color: HealTokens.creamDim)),
                       ),
                       TextButton(
                         onPressed: () => Navigator.pop(ctx, true),
-                        child: Text('Delete',
+                        child: const Text('Delete',
                             style: TextStyle(color: HealTokens.brass)),
                       ),
                     ],
@@ -460,7 +460,7 @@ class _LibraryRow extends StatelessWidget {
                   subtitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: HealTokens.creamDim,
                     fontSize: 12,
                   ),
@@ -516,7 +516,7 @@ class _JournalRow extends StatelessWidget {
               children: [
                 Text(
                   DateFormat('MMM d, h:mm a').format(entry.updatedAt),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: HealTokens.brass,
                     fontSize: 11,
                     letterSpacing: 1.0,
@@ -531,7 +531,7 @@ class _JournalRow extends StatelessWidget {
                       textAlign: TextAlign.end,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: HealTokens.creamDim,
                         fontSize: 11,
                         fontStyle: FontStyle.italic,
@@ -539,7 +539,7 @@ class _JournalRow extends StatelessWidget {
                     ),
                   ),
                 IconButton(
-                  icon: Icon(Icons.delete_outline_rounded,
+                  icon: const Icon(Icons.delete_outline_rounded,
                       color: HealTokens.creamDim, size: 18),
                   onPressed: onDelete,
                   padding: EdgeInsets.zero,
@@ -649,7 +649,7 @@ class _JournalEditor extends HookWidget {
               children: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text('Cancel',
+                  child: const Text('Cancel',
                       style: TextStyle(color: HealTokens.creamDim)),
                 ),
                 const Spacer(),
@@ -731,7 +731,7 @@ class _EmptyState extends StatelessWidget {
             Text(
               body,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: HealTokens.creamDim,
                 fontSize: 14,
                 height: 1.5,

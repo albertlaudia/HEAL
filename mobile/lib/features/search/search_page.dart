@@ -102,11 +102,11 @@ class SearchPage extends HookConsumerWidget {
             border: InputBorder.none,
             focusedBorder: InputBorder.none,
             enabledBorder: InputBorder.none,
-            prefixIcon: Icon(Icons.search_rounded, color: HealTokens.brass),
+            prefixIcon: const Icon(Icons.search_rounded, color: HealTokens.brass),
             suffixIcon: query.value.isEmpty
                 ? null
                 : IconButton(
-                    icon: Icon(Icons.close_rounded, color: HealTokens.creamDim),
+                    icon: const Icon(Icons.close_rounded, color: HealTokens.creamDim),
                     onPressed: () {
                       controller.clear();
                       HapticFeedback.selectionClick();
@@ -138,7 +138,7 @@ class SearchPage extends HookConsumerWidget {
       return _emptyState(context, controller);
     }
     if (isLoading) {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(color: HealTokens.brass),
       );
     }
@@ -199,7 +199,7 @@ class SearchPage extends HookConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.search_off_rounded, size: 64, color: HealTokens.creamDim),
+          const Icon(Icons.search_off_rounded, size: 64, color: HealTokens.creamDim),
           const SizedBox(height: HealTokens.s16),
           Text(
             'No matches for "$query"',
@@ -344,7 +344,7 @@ class _ResultTile extends StatelessWidget {
                       if (result.durationSeconds > 0)
                         Text(
                           _formatDuration(result.durationSeconds),
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: HealTokens.creamDim,
                             fontSize: 12,
                           ),
@@ -375,7 +375,7 @@ class _ResultTile extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            Icon(Icons.chevron_right_rounded, color: HealTokens.creamDim),
+            const Icon(Icons.chevron_right_rounded, color: HealTokens.creamDim),
           ],
         ),
       ),

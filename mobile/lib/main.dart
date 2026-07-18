@@ -160,7 +160,7 @@ Future<void> main() async {
           .read(appReviewServiceProvider)
           .requestReview(reason: '5th_session'));
       unawaited(container.read(analyticsServiceProvider).log(
-        AnalyticsEvent(HealEvents.appReviewPrompted, params: {'reason': '5th_session'}),
+        const AnalyticsEvent(HealEvents.appReviewPrompted, params: {'reason': '5th_session'}),
       ));
     }
 

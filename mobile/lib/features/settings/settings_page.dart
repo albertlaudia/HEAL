@@ -322,12 +322,12 @@ class SettingsPage extends HookConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: Text('Cancel',
+            child: const Text('Cancel',
                 style: TextStyle(color: HealTokens.creamDim)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text('Reset',
+            child: const Text('Reset',
                 style: TextStyle(color: HealTokens.brass)),
           ),
         ],
@@ -372,7 +372,7 @@ class SettingsPage extends HookConsumerWidget {
     // Hop back to home so the user sees the "fresh HEAL" state.
     context.go('/');
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         backgroundColor: HealTokens.rosewood,
         content: Text('HEAL has been reset. Welcome back.',
             style: TextStyle(color: HealTokens.cream)),
@@ -494,9 +494,9 @@ class _SignedInTile extends StatelessWidget {
               Container(
                 width: 44,
                 height: 44,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: const LinearGradient(
+                  gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [HealTokens.brass, HealTokens.brassLight],
@@ -539,7 +539,7 @@ class _SignedInTile extends StatelessWidget {
                       ),
                     Text(
                       'Signed in via ${_providerLabel(user.providerId)}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: HealTokens.brass,
                         fontSize: 11,
                       ),

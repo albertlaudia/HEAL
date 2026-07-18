@@ -57,12 +57,12 @@ class ForceUpdateDialog extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (hard)
-            Text(
+            const Text(
               'This version of HEAL needs to be updated before you can keep practicing. It only takes a moment.',
               style: TextStyle(color: HealTokens.creamDim, height: 1.5),
             )
           else
-            Text(
+            const Text(
               'A new version of HEAL is available. It has small fixes and improvements.',
               style: TextStyle(color: HealTokens.creamDim, height: 1.5),
             ),
@@ -70,7 +70,7 @@ class ForceUpdateDialog extends ConsumerWidget {
             const SizedBox(height: HealTokens.s12),
             Text(
               manifest.releaseNotes,
-              style: TextStyle(
+              style: const TextStyle(
                 color: HealTokens.creamDim,
                 fontSize: 12,
                 fontStyle: FontStyle.italic,
@@ -87,7 +87,7 @@ class ForceUpdateDialog extends ConsumerWidget {
               await svc.markSoftDismissed(manifest.latestVersion);
               if (context.mounted) Navigator.pop(context);
             },
-            child: Text('Later',
+            child: const Text('Later',
                 style: TextStyle(color: HealTokens.creamDim)),
           ),
         FilledButton(

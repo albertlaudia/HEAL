@@ -472,8 +472,8 @@ class _MomentsRow extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: HealTokens.s12),
+          const Padding(
+            padding: EdgeInsets.only(bottom: HealTokens.s12),
             child: Text(
               'What moment are you in?',
               style: TextStyle(
@@ -577,7 +577,7 @@ class _FilterIndicator extends StatelessWidget {
         children: [
           Text(
             '$count ${count == 1 ? 'song' : 'songs'}',
-            style: TextStyle(
+            style: const TextStyle(
               color: HealTokens.creamDim,
               fontSize: 13,
             ),
@@ -627,7 +627,7 @@ class _TodaysPraiseHero extends StatelessWidget {
                     color: HealTokens.oxblood,
                   ),
                   errorWidget: (_, __, ___) => Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -693,7 +693,7 @@ class _TodaysPraiseHero extends StatelessWidget {
                           today.subtitle,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: HealTokens.creamDim,
                             fontSize: 13,
                             fontStyle: FontStyle.italic,
@@ -739,7 +739,7 @@ class _RecentlySungCarousel extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: HealTokens.s12),
             child: Row(
               children: [
-                Text(
+                const Text(
                   'Your songs',
                   style: TextStyle(
                     color: HealTokens.cream,
@@ -750,7 +750,7 @@ class _RecentlySungCarousel extends StatelessWidget {
                 const Spacer(),
                 Text(
                   '${recent.length}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: HealTokens.creamDim,
                     fontSize: 12,
                   ),
@@ -867,7 +867,7 @@ class _ListHeader extends StatelessWidget {
         children: [
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               color: HealTokens.cream,
               fontSize: 20,
               fontWeight: FontWeight.w500,
@@ -878,7 +878,7 @@ class _ListHeader extends StatelessWidget {
           if (tab == _Tab.all && moment == null)
             Text(
               '$count',
-              style: TextStyle(
+              style: const TextStyle(
                 color: HealTokens.creamDim,
                 fontSize: 13,
               ),
@@ -971,7 +971,7 @@ class _SongCard extends ConsumerWidget {
                         song.subtitle,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: HealTokens.creamDim,
                           fontSize: 12,
                           fontStyle: FontStyle.italic,
@@ -1106,7 +1106,7 @@ class _EmptyState extends StatelessWidget {
           Text(
             body,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               color: HealTokens.creamDim,
               fontSize: 14,
               height: 1.5,
