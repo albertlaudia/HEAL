@@ -90,6 +90,7 @@ class PraiseSong {
   final int? bpm;
   final bool isPublished;
   final int dayOfYear;
+  final int durationSeconds;
 
   const PraiseSong({
     required this.id,
@@ -114,6 +115,7 @@ class PraiseSong {
     this.bpm,
     this.isPublished = true,
     this.dayOfYear = 0,
+    this.durationSeconds = 0,
   });
 
   factory PraiseSong.fromJson(Map<String, dynamic> json) {
@@ -148,6 +150,7 @@ class PraiseSong {
       bpm: json['bpm'] as int?,
       isPublished: (json['is_published'] ?? true) as bool,
       dayOfYear: (json['day_of_year'] ?? 0) as int,
+      durationSeconds: (json['duration_seconds'] ?? 0) as int,
     );
   }
 

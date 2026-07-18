@@ -72,8 +72,7 @@ class _AudioErrorListenerState extends ConsumerState<AudioErrorListener> {
   }
 
   /// Find a context that is guaranteed to have an Overlay ancestor.
-  /// Walks up from the listener's own context looking for one whose
-  /// `findAncestorStateOfType<NavigatorState>()` is non-null.
+  /// Returns the first context that has a Navigator ancestor.
   BuildContext? _rootOverlayContext() {
     final ctx = context;
     NavigatorState? nav;
