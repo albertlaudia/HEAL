@@ -45,7 +45,7 @@ enum _Moment {
   grateful('Grateful', 'For the small mercies', Icons.eco_rounded, ['gratitude', 'small-things']),
   alone('Alone', 'For the unseen hours', Icons.cabin_rounded, ['invisible', 'lonely', 'unseen']),
   weary('Weary', 'For the long road', Icons.hourglass_bottom_rounded, ['weary-but-faithful', 'weary', 'perseverance']),
-  grieved('Grieving', 'For the empty chair', Icons.candle_rounded, ['grieving', 'grief', 'lament']),
+  grieved('Grieving', 'For the empty chair', Icons.local_fire_department_rounded, ['grieving', 'grief', 'lament']),
   celebrating('Celebrating', 'For the good news', Icons.celebration_rounded, ['joyful', 'open-hearted', 'celebration']);
 
   final String label;
@@ -77,7 +77,7 @@ class PraiseLibraryPage extends HookConsumerWidget {
           var visible = songs;
           switch (tab.value) {
             case _Tab.favorites:
-              visible = visible.where((s) => favorites.contains(s.slug)).toList();
+              visible = visible.where((s) => favorites.contains('praise', s.slug)).toList();
               break;
             case _Tab.saved:
               visible = visible.where((s) => cache.isCached(s.slug)).toList();
@@ -95,9 +95,9 @@ class PraiseLibraryPage extends HookConsumerWidget {
             final q = search.value.toLowerCase().trim();
             visible = visible.where((s) =>
               s.title.toLowerCase().contains(q) ||
-              (s.subtitle?.toLowerCase().contains(q) ?? false) ||
+              s.subtitle.toLowerCase().contains(q) ||
               s.lyrics.toLowerCase().contains(q) ||
-              (s.reflection?.toLowerCase().contains(q) ?? false) ||
+              s.reflection.toLowerCase().contains(q) ||
               (s.category?.toLowerCase().contains(q) ?? false)
             ).toList();
           }
@@ -727,7 +727,7 @@ class _RecentlySungCarousel extends StatelessWidget {
     // Show the user's most-recently-favorited songs (the ones they've
     // actually opened) — this is the "warm" subset.
     final recent = songs
-        .where((s) => favorites.contains(s.slug))
+        .where((s) => favorites.contains('praise', s.slug))
         .take(8)
         .toList();
     if (recent.length < 2) return const SizedBox.shrink();
@@ -900,7 +900,7 @@ class _SongCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final favs = ref.watch(favoritesServiceProvider);
     final cached = ref.watch(offlineCacheProvider);
-    final isFav = favs.contains(song.slug);
+    final isFav = favs.contains('praise', song.slug);
     final isCached = cached.isCached(song.slug);
     return GestureDetector(
       onTap: onTap,
@@ -1002,7 +1002,7 @@ class _SongCard extends ConsumerWidget {
                         if (song.scriptureRefs.isNotEmpty)
                           _MetaChip(
                             label: song.scriptureRefs.first,
-                            color: HealTokens.terracotta,
+                            color: HealTokens.ember,
                           ),
                         if (song.keySignature.isNotEmpty)
                           _MetaChip(
