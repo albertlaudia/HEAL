@@ -16,13 +16,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+String _favoritesKey(String kind, String slug) => '$kind:$slug';
+
 class FavoritesState {
   final Set<String> ids;
   final bool ready;
 
   const FavoritesState({required this.ids, required this.ready});
 
-  bool contains(String kind, String slug) => ids.contains(_key(kind, slug));
+  bool contains(String kind, String slug) => ids.contains(_favoritesKey(kind, slug));
   bool containsAny(String id) => ids.contains(id);
 
   int get count => ids.length;
@@ -36,17 +38,17 @@ class FavoritesState {
 }
 
 class FavoritesService extends StateNotifier<FavoritesState> {
-  static const _key = 'heal.favorites.v2';
+  static const _storageKey = 'heal.favorites.v2';
 
   FavoritesService() : super(const FavoritesState(ids: {}, ready: false)) {
     _load();
   }
 
-  static String _key(String kind, String slug) => '$kind:$slug';
+  static String _key(String kind, String slug) => _favoritesKey(kind, slug);
 
   Future<void> _load() async {
     final prefs = await SharedPreferences.getInstance();
-    final list = prefs.getStringList(_key) ?? const [];
+    final list = prefs.getStringList(_storageKey) ?? const [];
     state = FavoritesState(ids: list.toSet(), ready: true);
   }
 
@@ -60,7 +62,7 @@ class FavoritesService extends StateNotifier<FavoritesState> {
     }
     state = state.copyWith(ids: next);
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(_key, next.toList());
+    await prefs.setStringList(_storageKey, next.toList());
   }
 
   Future<void> add(String kind, String slug) async {
@@ -69,7 +71,7 @@ class FavoritesService extends StateNotifier<FavoritesState> {
     final next = Set<String>.from(state.ids)..add(id);
     state = state.copyWith(ids: next);
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(_key, next.toList());
+    await prefs.setStringList(_storageKey, next.toList());
   }
 
   Future<void> remove(String kind, String slug) async {
@@ -78,13 +80,13 @@ class FavoritesService extends StateNotifier<FavoritesState> {
     final next = Set<String>.from(state.ids)..remove(id);
     state = state.copyWith(ids: next);
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(_key, next.toList());
+    await prefs.setStringList(_storageKey, next.toList());
   }
 
   Future<void> clear() async {
     state = const FavoritesState(ids: {}, ready: true);
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_key);
+    await prefs.remove(_storageKey);
   }
 }
 

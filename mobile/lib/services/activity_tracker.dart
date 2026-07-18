@@ -251,7 +251,7 @@ void forwardActivityToAnalytics(
       case 'play_start':
         unawaited(analytics.log(AnalyticsEvent(HealEvents.trackPlayStart, params: {
           'target': e.target ?? '',
-          if (e.meta?['kind'] != null) 'kind': e.meta!['kind'],
+          if (e.meta['kind'] != null) 'kind': e.meta['kind'],
         })));
         break;
       case 'play_complete':
@@ -272,7 +272,7 @@ void forwardActivityToAnalytics(
         break;
       case 'search':
         unawaited(analytics.log(AnalyticsEvent(HealEvents.search, params: {
-          'query_length': (e.meta?['query_length'] as int?) ?? 0,
+          'query_length': (e.meta['query_length'] as int?) ?? 0,
         })));
         break;
       case 'favorite_added':

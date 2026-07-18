@@ -26,17 +26,10 @@ import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart'
     show
-        AuthCredential,
-        AuthProvider,
-        EmailAuthProvider,
-        FacebookAuthProvider,
         FirebaseAuth,
         GoogleAuthProvider,
         OAuthProvider,
-        PhoneAuthProvider,
-        TwitterAuthProvider,
-        User,
-        UserCredential;
+        User;
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';

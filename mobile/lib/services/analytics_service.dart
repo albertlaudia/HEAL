@@ -58,7 +58,7 @@ class AnalyticsService {
   Future<void> setUser(String? identifier) async {
     if (!isEnabled) return;
     try {
-      await _analytics.setUserId(identifier ?? 'anonymous');
+      await _analytics.setUserId(id: identifier ?? 'anonymous');
     } catch (_) {}
   }
 

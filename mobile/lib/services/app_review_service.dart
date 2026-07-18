@@ -59,7 +59,7 @@ class AppReviewService {
     if (kIsWeb || !_isSupported) return false;
     if (!await isEligible()) return false;
     try {
-      if (!_inAppReview.isAvailable()) {
+      if (!(await _inAppReview.isAvailable())) {
         if (kDebugMode) {
           // ignore: avoid_print
           print('AppReview: not available on this platform');

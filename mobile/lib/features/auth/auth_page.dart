@@ -19,7 +19,6 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -533,7 +532,7 @@ class _InfoText extends StatelessWidget {
       decoration: BoxDecoration(
         color: HealTokens.rosewoodLight.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(HealTokens.r16),
-        border: Border(
+        border: const Border(
           left: BorderSide(color: HealTokens.brass, width: 3),
         ),
       ),

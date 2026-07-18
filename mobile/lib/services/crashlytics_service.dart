@@ -62,7 +62,7 @@ class CrashlyticsService {
       // Set custom keys for context
       await FirebaseCrashlytics.instance.setCustomKey('environment', environment);
       for (final entry in initialKeys.entries) {
-        await FirebaseCrashlytics.instance.setCustomKey(entry.key, entry.value);
+        await FirebaseCrashlytics.instance.setCustomKey(entry.key, entry.value ?? '');
       }
 
       // App version metadata
@@ -107,7 +107,7 @@ class CrashlyticsService {
   Future<void> setKey(String key, Object? value) async {
     if (!isEnabled) return;
     try {
-      await FirebaseCrashlytics.instance.setCustomKey(key, value);
+      await FirebaseCrashlytics.instance.setCustomKey(key, value ?? '');
     } catch (_) {}
   }
 
@@ -121,7 +121,7 @@ class CrashlyticsService {
     if (!isEnabled) return;
     try {
       for (final entry in context.entries) {
-        await FirebaseCrashlytics.instance.setCustomKey(entry.key, entry.value);
+        await FirebaseCrashlytics.instance.setCustomKey(entry.key, entry.value ?? '');
       }
       await FirebaseCrashlytics.instance.log(message);
       if (error != null) {

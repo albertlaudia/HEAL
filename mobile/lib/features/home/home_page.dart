@@ -83,7 +83,6 @@ class HomePage extends HookConsumerWidget {
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             Copy.greetingForHour(DateTime.now().hour),

@@ -16,6 +16,7 @@ import 'features/onboarding/tracking_privacy_notice.dart';
 import 'core/theme.dart';
 import 'features/onboarding/onboarding_page.dart';
 import 'features/home/splash_page.dart';
+import 'widgets/force_update_guard.dart';
 
 class HealApp extends ConsumerStatefulWidget {
   final bool firstLaunch;

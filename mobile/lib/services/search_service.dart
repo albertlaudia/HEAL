@@ -195,13 +195,13 @@ class SearchService {
     try {
       final list = await world.list(limit: 200);
       return list.map((w) {
-        final score = _score(q, [w.title, w.category, w.body]);
+        final score = _score(q, [w.title, w.promptKind ?? '', w.prompt]);
         return SearchResult(
           kind: 'world',
           id: w.id,
           slug: w.slug,
           title: w.title,
-          subtitle: _truncate(w.body, 90),
+          subtitle: _truncate(w.prompt, 90),
           score: score,
           durationSeconds: 0,
         );

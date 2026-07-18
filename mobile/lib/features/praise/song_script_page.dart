@@ -17,8 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:hooks_riverpod/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../core/theme.dart';
@@ -37,15 +36,15 @@ class SongScriptPage extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // Auto-favorite on first open (no waiting, no UI)
-    final favorites = ref.read(favoritesServiceProvider.notifier);
-    if (!favorites.contains(song.slug)) {
+    final favorites = ref.read(favoritesServiceProvider);
+    if (!favorites.contains('praise', song.slug)) {
       // Fire and forget - don't block the page render
-      Future.microtask(() => favorites.toggle(song.slug));
+      Future.microtask(() => ref.read(favoritesServiceProvider.notifier).toggle('praise', song.slug));
     }
 
     // Auto-cache lyrics + illustration locally
     Future.microtask(() async {
-      await _cacheSong(song);
+      await SongLocalCache._cacheSong(song);
     });
 
     // Track this engagement
@@ -362,11 +361,11 @@ class _FavoriteButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final favorites = ref.watch(favoritesServiceProvider);
-    final isFav = favorites.contains(song.slug);
+    final isFav = favorites.contains('praise', song.slug);
 
     return TextButton.icon(
       onPressed: () {
-        ref.read(favoritesServiceProvider.notifier).toggle(song.slug);
+        ref.read(favoritesServiceProvider.notifier).toggle('praise', song.slug);
       },
       icon: Icon(
         isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,

@@ -11,6 +11,8 @@
 // Mirrors the calm/premium feel of the rest of HEAL. Each row is a
 // "tappable card" that navigates to the item's detail page.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
