@@ -67,6 +67,15 @@ Future<void> main() async {
       logger.w('App', 'Firebase init failed: $e. Continuing without auth.');
     }
 
+    // Create PocketBase + root container so providers are available
+    // for all subsequent initialization steps.
+    final pb = PocketBase(HealEnv.pocketbaseUrl);
+    final container = ProviderContainer(
+      overrides: [
+        pocketbaseProvider.overrideWithValue(pb),
+      ],
+    );
+
     // Initialize Crashlytics — must come AFTER Firebase init.
     // (Wires FlutterError.onError + PlatformDispatcher.onError.)
     try {
@@ -134,15 +143,6 @@ Future<void> main() async {
     } catch (e) {
       logger.w('App', 'Force update check failed: $e.');
     }
-
-    final pb = PocketBase(HealEnv.pocketbaseUrl);
-
-    // Create a root container so we can override PB before runApp
-    final container = ProviderContainer(
-      overrides: [
-        pocketbaseProvider.overrideWithValue(pb),
-      ],
-    );
 
     // Init notifications (with timeout so a slow plugin can't block launch)
     await container.read(notificationServiceProvider).init()

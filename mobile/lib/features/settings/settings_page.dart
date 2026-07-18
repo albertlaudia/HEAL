@@ -366,7 +366,7 @@ class SettingsPage extends HookConsumerWidget {
     // Reset all in-memory providers.
     await ref.read(streakServiceProvider.notifier).load();
     await ref.read(stickerBookProvider.notifier).hydrate();
-    await ref.read(bibleProgressCacheProvider.notifier).clear();
+    ref.read(bibleProgressCacheProvider('').notifier).clear();
     unawaited(analytics.log(const AnalyticsEvent(HealEvents.resetHealCompleted)));
     if (!context.mounted) return;
     // Hop back to home so the user sees the "fresh HEAL" state.

@@ -707,7 +707,6 @@ class _TodaysPraiseHero extends StatelessWidget {
           ),
         ),
       ).animate().fadeIn(duration: 600.ms).slideY(begin: 0.05, end: 0),
-      ),
     );
   }
 }

@@ -236,7 +236,7 @@ final activityTrackerProvider =
 /// activity_tracker.log() also fires a corresponding analytics event.
 /// Skip in tests to keep them hermetic.
 void forwardActivityToAnalytics(
-  Ref ref,
+  ProviderContainer ref,
   AnalyticsService analytics,
 ) {
   ref.listen<ActivityTrackerState>(activityTrackerProvider, (prev, next) {

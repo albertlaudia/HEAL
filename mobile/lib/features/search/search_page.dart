@@ -36,6 +36,10 @@ class SearchPage extends HookConsumerWidget {
     final hasSearched = useState<bool>(false);
 
     // Debounce: 250ms after the user stops typing.
+    bool isMounted() {
+      try { return context.mounted; } catch (_) { return false; }
+    }
+
     useEffect(() {
       Timer? debounce;
       controller.addListener(() {
@@ -80,10 +84,6 @@ class SearchPage extends HookConsumerWidget {
       });
       return null;
     }, [query.value]);
-
-    bool isMounted() {
-      try { return context.mounted; } catch (_) { return false; }
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -287,12 +287,12 @@ class _ResultTile extends StatelessWidget {
     'world': 'World',
   };
   static const _kindColor = {
-    'meditation': HealTokens.auroraTeal,
+    'meditation': HealTokens.practiceMeditateFrom,
     'praise': HealTokens.brass,
     'prayer': HealTokens.rosewoodLight,
-    'scripture': HealTokens.terracotta,
-    'essay': HealTokens.forest,
-    'world': HealTokens.sunrise,
+    'scripture': HealTokens.ember,
+    'essay': HealTokens.practiceScriptureFrom,
+    'world': HealTokens.practiceWorldFrom,
   };
 
   @override
