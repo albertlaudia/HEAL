@@ -64,7 +64,7 @@ class Meditation {
 
   String get cdnAudio => audioUrl.isNotEmpty
       ? audioUrl
-      : 'https://f004.backblazeb2.com/file/GOPResources/heal/audio/meditations/$slug.mp3';
+      : 'https://resources.positiveness.club/heal/audio/meditations/$slug.mp3';
 }
 
 class PraiseSong {
@@ -157,7 +157,7 @@ class PraiseSong {
 
   String get cdnAudio => audioUrl.isNotEmpty
       ? audioUrl
-      : 'https://f004.backblazeb2.com/file/GOPResources/heal/audio/praise/$slug.mp3';
+      : 'https://resources.positiveness.club/heal/audio/praise/orig-v2-$slug.mp3';
 }
 
 class Prayer {

@@ -7,6 +7,14 @@
 //
 // Use [AudioErrorListener] at the root of the app to wire it up — it watches
 // [audioServiceProvider] and shows the banner reactively.
+//
+// Robustness:
+//   - The listener registers ONCE in initState (not in build). This avoids
+//     accumulating listeners on every rebuild.
+//   - Before inserting an Overlay, we verify the current state.context has
+//     an Overlay ancestor. This prevents the "No Overlay widget found" error
+//     when the listener fires during a navigation transition.
+//   - Errors are caught and logged so a transient UI hiccup never throws.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -25,34 +33,86 @@ class AudioErrorListener extends ConsumerStatefulWidget {
 
 class _AudioErrorListenerState extends ConsumerState<AudioErrorListener> {
   String? _shownMessage;
+  ProviderSubscription<AudioState>? _sub;
 
   @override
-  Widget build(BuildContext context) {
-    ref.listen<AudioState>(audioServiceProvider, (prev, next) {
-      if (next.error == null) {
-        _shownMessage = null;
-        return;
-      }
-      // Avoid showing the same banner twice in a row (e.g. if state.error
-      // sticks around as we navigate).
-      if (next.error == _shownMessage) return;
-      _shownMessage = next.error;
-      // Slight delay so the error doesn't pop during a navigation transition.
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        showAudioErrorBanner(context, ref, next.error!);
-      });
-    });
-    return widget.child;
+  void initState() {
+    super.initState();
+    // Register the listener ONCE — listening inside build() would
+    // accumulate subscriptions on every rebuild.
+    _sub = ref.listenManual<AudioState>(
+      audioServiceProvider,
+      _onAudioChanged,
+      fireImmediately: false,
+    );
   }
+
+  void _onAudioChanged(AudioState? prev, AudioState next) {
+    if (next.error == null) {
+      _shownMessage = null;
+      return;
+    }
+    if (next.error == _shownMessage) return;
+    _shownMessage = next.error;
+    // Defer to after the frame finishes so the error doesn't pop during a
+    // navigation transition. We use the root Navigator's overlay context
+    // to avoid the "No Overlay widget found" error when the listener's
+    // own context is being torn down.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final rootCtx = _rootOverlayContext();
+      if (rootCtx == null) return;
+      try {
+        showAudioErrorBanner(rootCtx, ref, next.error!);
+      } catch (e) {
+        // Defensive: never let an overlay hiccup crash the app.
+      }
+    });
+  }
+
+  /// Find a context that is guaranteed to have an Overlay ancestor.
+  /// Walks up from the listener's own context looking for one whose
+  /// `findAncestorStateOfType<NavigatorState>()` is non-null.
+  BuildContext? _rootOverlayContext() {
+    final ctx = context;
+    NavigatorState? nav;
+    void visit(BuildContext c) {
+      if (nav != null) return;
+      nav = Navigator.maybeOf(c);
+      if (nav != null) return;
+      final p = c.findAncestorWidgetOfExactType<Navigator>();
+      if (p?.context != null) {
+        // navigator has a context; its Overlay is the root one.
+        nav = Navigator.maybeOf(p!.context);
+        if (nav != null) return;
+      }
+    }
+    visit(ctx);
+    return nav?.context;
+  }
+
+  @override
+  void dispose() {
+    _sub?.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 /// Public entry-point so non-listener code (e.g. an explicit retry button)
 /// can show the same banner.
 void showAudioErrorBanner(BuildContext context, WidgetRef ref, String message) {
-  // We do NOT use ScaffoldMessenger to avoid the giant black snackbar feel.
-  // Instead, a small overlay banner pinned to the bottom.
-  final overlay = Overlay.of(context, rootOverlay: true);
+  // Locate the root Overlay via the nearest Navigator. This avoids the
+  // "No Overlay widget found" error when [context] is from a sub-route
+  // that's being torn down.
+  OverlayState? overlay;
+  final nav = Navigator.maybeOf(context);
+  if (nav != null) {
+    overlay = nav.overlay;
+  }
+  overlay ??= Overlay.of(context, rootOverlay: true);
   late OverlayEntry entry;
   entry = OverlayEntry(
     builder: (_) => _AudioErrorBanner(
@@ -61,7 +121,7 @@ void showAudioErrorBanner(BuildContext context, WidgetRef ref, String message) {
         try {
           ref.read(audioServiceProvider.notifier).clearError();
         } catch (_) {}
-        entry.remove();
+        if (entry.mounted) entry.remove();
       },
       onAction: () {
         final svc = ref.read(audioServiceProvider.notifier);
@@ -80,7 +140,7 @@ void showAudioErrorBanner(BuildContext context, WidgetRef ref, String message) {
             break;
         }
         svc.clearError();
-        entry.remove();
+        if (entry.mounted) entry.remove();
       },
     ),
   );
@@ -109,73 +169,73 @@ class _AudioErrorBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      left: 0,
-      right: 0,
-      bottom: 0,
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: HealTokens.rosewood,
-                borderRadius: BorderRadius.circular(HealTokens.r16),
-                border: const Border(
-                  left: BorderSide(color: HealTokens.brass, width: 4),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.4),
-                    blurRadius: 16,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.hearing_disabled_rounded,
-                    color: HealTokens.brass,
-                    size: 22,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      message,
-                      style: const TextStyle(
-                        color: HealTokens.cream,
-                        fontSize: 14,
-                        height: 1.35,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  TextButton(
-                    onPressed: onAction,
-                    child: const Text(
-                      'Try again',
-                      style: TextStyle(
-                        color: HealTokens.brass,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.close_rounded,
-                      color: HealTokens.cream.withValues(alpha: 0.6),
-                      size: 18,
-                    ),
-                    onPressed: onDismiss,
-                  ),
-                ],
-              ),
+      left: 16,
+      right: 16,
+      bottom: 100,
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(20, 16, 16, 16),
+          decoration: BoxDecoration(
+            color: HealTokens.rosewoodDeep,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: HealTokens.brass.withValues(alpha: 0.4),
+              width: 1,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.4),
+                blurRadius: 20,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.error_outline_rounded,
+                  color: HealTokens.brass, size: 22),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  message,
+                  style: const TextStyle(
+                    color: HealTokens.cream,
+                    fontSize: 14,
+                    height: 1.4,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              TextButton(
+                onPressed: onAction,
+                style: TextButton.styleFrom(
+                  foregroundColor: HealTokens.brass,
+                ),
+                child: const Text(
+                  'Try again',
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+              IconButton(
+                onPressed: onDismiss,
+                icon: const Icon(Icons.close_rounded,
+                    color: HealTokens.creamDim, size: 18),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+            ],
           ),
         ),
-      ),
+      )
+          .animate()
+          .slideY(
+            begin: 1.0,
+            end: 0,
+            duration: 300.ms,
+            curve: Curves.easeOutCubic,
+          )
+          .fadeIn(duration: 200.ms),
     );
   }
 }
