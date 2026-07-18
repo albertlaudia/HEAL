@@ -37,3 +37,6 @@ mobile/ios/Flutter/flutter_export_environment.sh
 __pycache__/
 
 dist/
+
+# Praise TTS audio (generated, served from B2)
+assets/audio/praise/
