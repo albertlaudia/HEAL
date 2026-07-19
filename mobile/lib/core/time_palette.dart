@@ -126,6 +126,18 @@ class TimePaletteController extends StateNotifier<TimePalette> {
   }
 }
 
+/// BuildContext extension for the current TimePalette. Lets any widget
+/// write `context.palette` instead of `ref.watch(timePaletteProvider)`.
+extension TimePaletteContext on BuildContext {
+  TimePalette get palette {
+    // Read the provider via the standard Riverpod lookup. Falls back
+    // to the noon palette if the provider hasn't been initialized yet
+    // (e.g. during the very first frame).
+    final container = ProviderScope.containerOf(this, listen: false);
+    return container.read(timePaletteProvider);
+  }
+}
+
 /// Returns a ColorScheme that overlays the time palette onto the standard
 /// HEAL ColorScheme. Used by widgets that want time-aware theming.
 ColorScheme paletteScheme(BuildContext context, TimePalette p) {
@@ -147,4 +159,4 @@ ColorScheme paletteScheme(BuildContext context, TimePalette p) {
     surfaceContainerHigh: Color.lerp(p.surface, p.primary, 0.12)!,
     surfaceContainerHighest: Color.lerp(p.surface, p.primary, 0.24)!,
   );
-}
+}// 1784479299
