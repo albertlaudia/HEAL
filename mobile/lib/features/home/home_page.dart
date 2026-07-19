@@ -13,6 +13,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../core/theme.dart';
 import '../../core/time_palette.dart';
@@ -196,10 +197,20 @@ class HomePage extends HookConsumerWidget {
               ),
               const SizedBox(height: HealTokens.s24),
 
+              // ── Today's Praise — small featured card ──────────
+              // Brings the deterministic-by-day-of-year song onto the home
+              // page so users who never open the Praise tab still see what
+              // the day has for them. Tapping goes to the song detail.
+              FadeInOnMount(
+                delay: const Duration(milliseconds: 350),
+                child: const _TodaysPraiseHomeCard(),
+              ),
+              const SizedBox(height: HealTokens.s24),
+
               // ── Voice calibration banner (if no profile yet) ─
               if (!hasVoiceProfile) ...[
                 FadeInOnMount(
-                  delay: const Duration(milliseconds: 350),
+                  delay: const Duration(milliseconds: 380),
                   child: _VoiceCalibrationBanner(
                     onTap: () => context.push('/breathe/calibrate'),
                     palette: palette,
@@ -215,33 +226,10 @@ class HomePage extends HookConsumerWidget {
               ),
               const SizedBox(height: HealTokens.s32),
 
-              // ── TODAY'S CONTENT ──────────────────────────────
+              // ── TODAY'S SHELF ─────────────────────────────────
               FadeInOnMount(
-                delay: const Duration(milliseconds: 450),
-                child: Text(
-                  'TODAY',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        letterSpacing: 2.5,
-                        color: palette.primary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
-              ),
-              const SizedBox(height: HealTokens.s8),
-              FadeInOnMount(
-                delay: const Duration(milliseconds: 480),
-                child: Text(
-                  'A small shelf of the day\'s practice.',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: HealTokens.creamDim,
-                        fontStyle: FontStyle.italic,
-                      ),
-                ),
-              ),
-              const SizedBox(height: HealTokens.s16),
-              const FadeInOnMount(
-                delay: Duration(milliseconds: 500),
-                child: _TodayShelf(),
+                delay: const Duration(milliseconds: 500),
+                child: const _TodayShelf(),
               ),
               const SizedBox(height: HealTokens.s40),
 
@@ -743,6 +731,169 @@ class _HeroPracticeCard extends StatelessWidget {
       )),
     );
   }
+}
+
+/// Today's Praise — a small horizontal card that shows the deterministic
+/// song-of-the-day on the home page. Tapping goes to the song detail
+/// page, which auto-plays the audio lead.
+class _TodaysPraiseHomeCard extends HookConsumerWidget {
+  const _TodaysPraiseHomeCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final praiseAsync = ref.watch(praisesProvider);
+    final palette = context.palette;
+
+    return praiseAsync.when(
+      loading: () => const SizedBox.shrink(),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (songs) {
+        if (songs.isEmpty) return const SizedBox.shrink();
+        final today = _praiseOfTheDay(songs);
+        if (today == null) return const SizedBox.shrink();
+        return Pressable(
+          onTap: () {
+            HapticFeedback.selectionClick();
+            context.push('/praise/${today.slug}');
+          },
+          pressedScale: 0.98,
+          pressedOverlay: HealTokens.white05,
+          borderRadius: BorderRadius.circular(HealTokens.r20),
+          child: Container(
+            height: 96,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(HealTokens.r20),
+              color: palette.surface,
+              border: Border.all(
+                color: palette.primary.withValues(alpha: 0.24),
+                width: 0.5,
+              ),
+            ),
+            child: Row(
+              children: [
+                // Illustration thumbnail
+                ClipRRect(
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(HealTokens.r20),
+                    bottomLeft: Radius.circular(HealTokens.r20),
+                  ),
+                  child: SizedBox(
+                    width: 96,
+                    height: 96,
+                    child: today.cdnIllustration.isNotEmpty
+                        ? CachedNetworkImage(
+                            imageUrl: today.cdnIllustration,
+                            fit: BoxFit.cover,
+                            placeholder: (_, __) => Container(
+                              color: HealTokens.rosewoodDeep,
+                            ),
+                            errorWidget: (_, __, ___) => Container(
+                              color: HealTokens.rosewoodDeep,
+                              child: const Icon(
+                                Icons.music_note_rounded,
+                                color: HealTokens.brass,
+                                size: 28,
+                              ),
+                            ),
+                          )
+                        : Container(
+                            color: HealTokens.rosewoodDeep,
+                            child: const Icon(
+                              Icons.music_note_rounded,
+                              color: HealTokens.brass,
+                              size: 28,
+                            ),
+                          ),
+                  ),
+                ),
+                // Text
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: HealTokens.s16,
+                      vertical: HealTokens.s12,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                color: palette.primary,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              "TODAY'S PRAISE",
+                              style: TextStyle(
+                                color: palette.primary,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 1.8,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          today.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: HealTokens.cream,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            height: 1.2,
+                          ),
+                        ),
+                        if (today.subtitle.isNotEmpty) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            today.subtitle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: HealTokens.creamDim,
+                              fontSize: 12,
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+                // Trailing play arrow
+                Padding(
+                  padding: const EdgeInsets.only(right: HealTokens.s16),
+                  child: Icon(
+                    Icons.play_circle_fill_rounded,
+                    color: palette.primary,
+                    size: 28,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+PraiseSong? _praiseOfTheDay(List<PraiseSong> songs) {
+  if (songs.isEmpty) return null;
+  final dayOfYear =
+      DateTime.now().difference(DateTime(DateTime.now().year, 1, 1)).inDays;
+  for (final s in songs) {
+    if (s.dayOfYear == dayOfYear) return s;
+  }
+  return songs[dayOfYear % songs.length];
 }
 
 class _QuickActions extends StatelessWidget {
