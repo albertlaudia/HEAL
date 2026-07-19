@@ -193,17 +193,55 @@ class PraiseLibraryPage extends HookConsumerWidget {
                   ),
                   sliver: SliverList(
                     delegate: SliverChildBuilderDelegate(
-                      (_, i) => Padding(
-                        padding: const EdgeInsets.only(bottom: HealTokens.s12),
-                        child: _SongCard(
-                          song: visible[i],
-                          onTap: () {
-                            HapticFeedback.selectionClick();
-                            _openScript(context, song: visible[i]);
-                          },
-                        ),
-                      ),
-                      childCount: visible.length,
+                      (_, i) {
+                        // Inject a single 'Try first' full-bleed card at
+                        // the top of the list. This breaks the flat
+                        // database-query feel and gives the user a clear
+                        // single starting point.
+                        if (i == 0 && visible.isNotEmpty) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _TryFirstCard(
+                                song: visible.first,
+                                onTap: () {
+                                  HapticFeedback.mediumImpact();
+                                  _openScript(context, song: visible.first);
+                                },
+                              ),
+                              const SizedBox(height: HealTokens.s12),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: HealTokens.s4, bottom: HealTokens.s8,
+                                ),
+                                child: Text(
+                                  activeMoment.value != null
+                                      ? 'More for this moment'
+                                      : 'More songs',
+                                  style: const TextStyle(
+                                    color: HealTokens.creamDim,
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 1.8,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                        final idx = visible[i - 1]; // offset by the 'Try first' slot
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: HealTokens.s12),
+                          child: _SongCard(
+                            song: idx,
+                            onTap: () {
+                              HapticFeedback.selectionClick();
+                              _openScript(context, song: idx);
+                            },
+                          ),
+                        );
+                      },
+                      childCount: visible.isEmpty ? 0 : visible.length,
                     ),
                   ),
                 ),
@@ -890,6 +928,165 @@ class _ListHeader extends StatelessWidget {
 }
 
 // ── Song card (the main list item) ────────────────────────────────
+class _TryFirstCard extends ConsumerWidget {
+  const _TryFirstCard({required this.song, required this.onTap});
+  final PraiseSong song;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final audio = ref.watch(audioServiceProvider);
+    final isCurrent = audio.track?.id == song.id;
+    final isPlaying = isCurrent && audio.playing;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 200,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(HealTokens.r20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.4),
+              blurRadius: 18,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(HealTokens.r20),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Illustration
+              CachedNetworkImage(
+                imageUrl: song.cdnIllustration,
+                fit: BoxFit.cover,
+                placeholder: (_, __) => Container(color: HealTokens.rosewoodDeep),
+                errorWidget: (_, __, ___) => Container(color: HealTokens.rosewoodDeep),
+              ),
+              // Gradient overlay
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withValues(alpha: 0.6),
+                      Colors.black.withValues(alpha: 0.85),
+                    ],
+                    stops: const [0.3, 0.7, 1.0],
+                  ),
+                ),
+              ),
+              // Content
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  HealTokens.s20, HealTokens.s16, HealTokens.s20, HealTokens.s16,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.star_rounded,
+                          color: HealTokens.brass,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 6),
+                        const Text(
+                          'TRY FIRST',
+                          style: TextStyle(
+                            color: HealTokens.brass,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 1.8,
+                          ),
+                        ),
+                        if (isPlaying) ...[
+                          const SizedBox(width: 8),
+                          Container(
+                            width: 6, height: 6,
+                            decoration: const BoxDecoration(
+                              color: HealTokens.brass, shape: BoxShape.circle,
+                            ),
+                          ).animate(onPlay: (c) => c.repeat()).fadeIn(),
+                          const SizedBox(width: 4),
+                          const Text(
+                            'NOW PLAYING',
+                            style: TextStyle(
+                              color: HealTokens.brass,
+                              fontSize: 9,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.5,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      song.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: HealTokens.cream,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
+                        height: 1.2,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    if (song.subtitle.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        song.subtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: HealTokens.creamDim,
+                          fontSize: 13,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              // Trailing play arrow
+              Positioned(
+                right: HealTokens.s20,
+                top: HealTokens.s20,
+                child: Container(
+                  width: 44, height: 44,
+                  decoration: BoxDecoration(
+                    color: HealTokens.brass,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: HealTokens.brass.withValues(alpha: 0.6),
+                        blurRadius: 12,
+                        spreadRadius: 0,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
+                    color: HealTokens.oxblood,
+                    size: 26,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ).animate().fadeIn(duration: 320.ms).slideY(begin: 0.1, end: 0);
+  }
+}
+
 class _SongCard extends ConsumerWidget {
   const _SongCard({required this.song, required this.onTap});
   final PraiseSong song;
