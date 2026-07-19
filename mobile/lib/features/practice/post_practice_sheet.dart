@@ -23,6 +23,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme.dart';
+import '../../core/time_palette.dart';
 import '../../services/audio_service.dart';
 
 class PostPracticeEvent {
@@ -316,3 +317,4 @@ class _Option extends StatelessWidget {
     );
   }
 }
+// 1784479706
