@@ -30,6 +30,8 @@ import 'services/app_review_service.dart';
 import 'data/bible_progress_cache.dart';
 import 'features/settings/force_update_dialog.dart';
 import 'design/lumen_state.dart';
+import 'design/lumen_done_overlay.dart';
+import 'features/practice/post_practice_sheet.dart';
 import 'data/pb_models.dart';
 import 'services/sticker_book.dart';
 import 'services/sound_service.dart';
@@ -202,6 +204,26 @@ Future<void> main() async {
                 durationSeconds: durationSeconds,
               ),
         );
+
+        // Fire the Lumen "Done." overlay — a quiet moment of acknowledgment
+        // that the user just sat with something. The listener widget (in
+        // app.dart) shows the actual overlay; we just set the event here
+        // because main.dart has no BuildContext.
+        container
+            .read(lumenDoneProvider.notifier)
+            .show(LumenDoneEvent(trackTitle: track.title));
+
+        // Also fire the PostPracticeSheet — three gentle next-step options
+        // (1-min breath, today's verse, another song). The sheet appears
+        // for ~30s, then auto-dismisses. Only shown for sessions >= 30s.
+        if (durationSeconds >= 30) {
+          container.read(postPracticeProvider.notifier).show(
+            PostPracticeEvent(
+              trackTitle: track.title,
+              audioSource: track.source,
+            ),
+          );
+        }
 
         // Record the play in the user-facing history list.
         // We use the track's kind for routing in the history list.

@@ -11,12 +11,15 @@ import 'core/router.dart';
 import 'design/audio_error_banner.dart';
 import 'design/error_boundary.dart';
 import 'design/motion.dart';
+import 'design/lumen_done_overlay.dart';
+import 'features/practice/post_practice_sheet.dart';
 import 'features/onboarding/permission_gate.dart';
 import 'features/onboarding/tracking_privacy_notice.dart';
 import 'core/theme.dart';
 import 'features/onboarding/onboarding_page.dart';
 import 'features/home/splash_page.dart';
 import 'widgets/force_update_guard.dart';
+import 'widgets/now_playing_strip.dart';
 
 class HealApp extends ConsumerStatefulWidget {
   final bool firstLaunch;
@@ -67,16 +70,27 @@ class _HealAppState extends ConsumerState<HealApp> {
         return ErrorBoundary(
           child: PermissionGate(
             child: AudioErrorListener(
+              child: LumenDoneListener(
+              child: PostPracticeListener(
               child: TrackingPrivacyNotice(
                 child: Stack(
               children: [
                 child ?? const SizedBox(),
+                // Persistent Now Playing pill — lives OUTSIDE any route
+                // Scaffold so it's always visible, even on detail pages
+                // where the bottom mini player is hidden. Tapping pops
+                // back to the main shell where the user can manage
+                // playback. Hides itself on the main shell (the bottom
+                // mini player is already visible there).
+                const NowPlayingPill(),
                 if (_showSplash)
                   const Material(
                     color: Colors.transparent,
                     child: SplashPage(),
                   ),
               ],
+            ),
+            ),
             ),
             ),
             ),
