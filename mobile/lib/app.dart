@@ -18,6 +18,7 @@ import 'core/theme.dart';
 import 'features/onboarding/onboarding_page.dart';
 import 'features/home/splash_page.dart';
 import 'widgets/force_update_guard.dart';
+import 'widgets/now_playing_strip.dart';
 
 class HealApp extends ConsumerStatefulWidget {
   final bool firstLaunch;
@@ -73,6 +74,13 @@ class _HealAppState extends ConsumerState<HealApp> {
                 child: Stack(
               children: [
                 child ?? const SizedBox(),
+                // Persistent Now Playing pill — lives OUTSIDE any route
+                // Scaffold so it's always visible, even on detail pages
+                // where the bottom mini player is hidden. Tapping pops
+                // back to the main shell where the user can manage
+                // playback. Hides itself on the main shell (the bottom
+                // mini player is already visible there).
+                const NowPlayingPill(),
                 if (_showSplash)
                   const Material(
                     color: Colors.transparent,
