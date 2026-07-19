@@ -11,6 +11,7 @@ import 'core/router.dart';
 import 'design/audio_error_banner.dart';
 import 'design/error_boundary.dart';
 import 'design/motion.dart';
+import 'design/lumen_done_overlay.dart';
 import 'features/onboarding/permission_gate.dart';
 import 'features/onboarding/tracking_privacy_notice.dart';
 import 'core/theme.dart';
@@ -67,6 +68,7 @@ class _HealAppState extends ConsumerState<HealApp> {
         return ErrorBoundary(
           child: PermissionGate(
             child: AudioErrorListener(
+              child: LumenDoneListener(
               child: TrackingPrivacyNotice(
                 child: Stack(
               children: [
@@ -77,6 +79,7 @@ class _HealAppState extends ConsumerState<HealApp> {
                     child: SplashPage(),
                   ),
               ],
+            ),
             ),
             ),
             ),
