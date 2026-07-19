@@ -24,6 +24,7 @@ import '../../design/emotion_palette.dart';
 import '../../design/lumen.dart';
 import '../../design/lumen_state.dart';
 import '../../design/pressable.dart';
+import 'journal_nudge_card.dart';
 import '../../services/streak_service.dart';
 import '../../services/voice_calibration_service.dart';
 import '../../data/pb_models.dart';
@@ -195,7 +196,14 @@ class HomePage extends HookConsumerWidget {
                   palette: palette,
                 ),
               ),
-              const SizedBox(height: HealTokens.s24),
+              const SizedBox(height: HealTokens.s16),
+
+              // ── Journal nudge — gentle prompt, dismissable, once per day ─
+              FadeInOnMount(
+                delay: const Duration(milliseconds: 320),
+                child: const JournalNudgeCard(),
+              ),
+              const SizedBox(height: HealTokens.s20),
 
               // ── Today's Praise — small featured card ──────────
               // Brings the deterministic-by-day-of-year song onto the home
