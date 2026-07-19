@@ -166,15 +166,15 @@ class _LumenDoneSurfaceState extends State<_LumenDoneSurface>
 
     // Text: slide up + fade in 300..700ms, hold, fade out 2000..2400ms
     _textSlide = TweenSequence<double>([
-      TweenSequenceItem(tween: ConstantTween(0), weight: 12),
+      TweenSequenceItem(tween: ConstantTween(0.0), weight: 12),
       TweenSequenceItem(
-        tween: Tween(begin: 12, end: 0)
+        tween: Tween<double>(begin: 12, end: 0)
             .chain(CurveTween(curve: Curves.easeOutCubic)),
         weight: 17,
       ),
-      TweenSequenceItem(tween: ConstantTween(0), weight: 55),
+      TweenSequenceItem(tween: ConstantTween(0.0), weight: 55),
       TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 0.0)
+        tween: Tween<double>(begin: 1.0, end: 0.0)
             .chain(CurveTween(curve: Curves.easeIn)),
         weight: 16,
       ),
